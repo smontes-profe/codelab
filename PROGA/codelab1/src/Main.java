@@ -7,17 +7,15 @@ public class Main {
 // ***************** BLOQUE 1: Variables y Tipos (El Despertar).Casting/Concatenación **********************
         Scanner sc = new Scanner(System.in);
 
-        String nombre = "Aragorn";
+        String nombre = "John Snow";
         int vida = 100;
         int pociones = 3;
         boolean estaVivo = true;
-
 
         System.out.println("=== FICHA DEL HÉROE ===");
 
         System.out.println("Nombre: " + nombre);
         System.out.println("Salud actual: " + vida + " HP");
-        // Error previo: "Salud: " + nombre + vida (Daba error o pegaba los números)
         System.out.println("Salud: " + nombre + vida);
         System.out.println("Inventario: " + pociones + " pociones.");
         System.out.println("*********************");
@@ -25,7 +23,7 @@ public class Main {
         // ********************* BLOQUE 2: Operadores y Lógica - Asiganción ******************************
         System.out.println("\n¡Un Trasgo te embosca y te asesta un golpe!");
 
-        //vida -20;
+        //esta forma de asignar y restar a la vez (operadores de asignación compuesta) la conocéis?
         vida -= 85; // El héroe queda con 15 de vida
         System.out.println("Recibes 85 de daño. Vida restante: " + vida);
 
