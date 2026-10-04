@@ -123,8 +123,7 @@ public class Main {
                 estaVivo = false;
             }
 
-            [poke1, pok2, poke4]
-            Thread.sleep(1000);
+              Thread.sleep(1000);
 
         }
     }
