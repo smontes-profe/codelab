@@ -1,11 +1,10 @@
-import java.util.Scanner;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     public static void main(String[] args) {
 // ***************** BLOQUE 1: Variables y Tipos (El Despertar).Casting/Concatenación **********************
-        Scanner sc = new Scanner(System.in);
+        //Scanner sc = new Scanner(System.in);
 
         String nombre = "John Snow";
         int vida = 100;
@@ -41,6 +40,7 @@ public class Main {
 
         System.out.println("\n--- Comprobando estado crítico ---");
 
+        
         if (vida < 20 && pociones > 0) {
             System.out.println("¡Alerta! Vida baja. Usando poción automáticamente...");
             vida = 50;
