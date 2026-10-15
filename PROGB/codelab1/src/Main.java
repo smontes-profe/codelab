@@ -117,7 +117,7 @@ public class Main {
 // -Los trolls hacen 50 de daño, los trasgos, 25.
 // 3. Modifica el código para que, en lugar de enfrentarse a un trasgo "por
 // decreto"
-// como tenemos ahora, que el jugador tenga 3 enfrentamientos con enemigos,
+// como tenemos ahora, que el jugador tenga 4 enfrentamientos con enemigos,
 // usando la clase Enemigo que acabamos de diseñar.
 // -Por cada enfrentamiento, llamaremos al método hacerDanio de cada Enemigo,
 // pasando como parámetro el personaje del jugador.
