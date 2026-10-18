@@ -1,32 +1,31 @@
 import java.util.Scanner;
 
 public class Juego {
-    private static final int DIFICULTAD_DIFICIL = 1;
-    private static final int DIFICULTAD_MEDIA = 2;
-    private static final int DIFICULTAD_FACIL = 3;
-
-    private static final int DANIO_MINIMO_DIFICIL = 10;
-    private static final int DANIO_MAXIMO_DIFICIL = 50;
-    private static final int DANIO_MINIMO_MEDIO = 30;
-    private static final int DANIO_MAXIMO_MEDIO = 110;
-    private static final int DANIO_MINIMO_FACIL = 50;
-    private static final int DANIO_MAXIMO_FACIL = 100;
-
-    private static final int VIDA_MAXIMA_DIFICIL = 50;
-    private static final int VIDA_MAXIMA_MEDIA = 100;
-    private static final int VIDA_MAXIMA_FACIL = 150;
-    private static final int POCIONES_DIFICIL = 3;
-    private static final int POCIONES_MEDIA = 3;
-    private static final int POCIONES_FACIL = 5;
-    private static final int CURACION_DIFICIL = 35;
-    private static final int CURACION_MEDIA = 55;
-    private static final int CURACION_FACIL = 75;
-    private static final String NOMBRE_DIFICULTAD_DIFICIL = "Difícil";
-    private static final String NOMBRE_DIFICULTAD_MEDIA = "Medio";
-    private static final String NOMBRE_DIFICULTAD_FACIL = "Fácil";
-
-
     public static void main(String[] args) {
+
+        final int DIFICULTAD_DIFICIL = 1;
+        final int DIFICULTAD_MEDIA = 2;
+        final int DIFICULTAD_FACIL = 3;
+
+        final int DANIO_MINIMO_DIFICIL = 10;
+        final int DANIO_MAXIMO_DIFICIL = 50;
+        final int DANIO_MINIMO_MEDIO = 30;
+        final int DANIO_MAXIMO_MEDIO = 110;
+        final int DANIO_MINIMO_FACIL = 50;
+        final int DANIO_MAXIMO_FACIL = 100;
+
+        final int VIDA_MAXIMA_DIFICIL = 50;
+        final int VIDA_MAXIMA_MEDIA = 100;
+        final int VIDA_MAXIMA_FACIL = 150;
+        final int POCIONES_DIFICIL = 3;
+        final int POCIONES_MEDIA = 3;
+        final int POCIONES_FACIL = 5;
+        final int CURACION_DIFICIL = 35;
+        final int CURACION_MEDIA = 55;
+        final int CURACION_FACIL = 75;
+        final String NOMBRE_DIFICULTAD_DIFICIL = "Difícil";
+        final String NOMBRE_DIFICULTAD_MEDIA = "Medio";
+        final String NOMBRE_DIFICULTAD_FACIL = "Fácil";
         int vidaMaxima;
         int numeroPociones;
         int curacionPocion;
@@ -49,7 +48,7 @@ public class Juego {
             System.out.println("Debes introducir un número entero.");
             scanner.close();
             return;
-        }else{
+        } else {
             dificultad = scanner.nextInt();
             if (dificultad < DIFICULTAD_DIFICIL || dificultad > DIFICULTAD_FACIL) {
                 System.out.println("Opción no válida");
@@ -58,21 +57,24 @@ public class Juego {
             }
         }
         //
-        // He dejado la solución con if, pero también se puede hacer con un while 
-        // para que el usuario tenga varias oportunidades de introducir un número válido.
+        // He dejado la solución con if, pero también se puede hacer con un while
+        // para que el usuario tenga varias oportunidades de introducir un número
+        // válido.
         // while (!scanner.hasNextInt()) {
-        //     System.out.println("Debes introducir un número entero.");
-        //     scanner.next();
+        // System.out.println("Debes introducir un número entero.");
+        // scanner.next();
         // }
         // dificultad = scanner.nextInt();
         // if (dificultad < DIFICULTAD_DIFICIL || dificultad > DIFICULTAD_FACIL) {
-        //     System.out.println("Opción no válida");
-        //     scanner.close();
-        //     return;
+        // System.out.println("Opción no válida");
+        // scanner.close();
+        // return;
         // }
 
-        // Mantener juntos los valores de cada dificultad evita configurarlos en varios sitios.
-        switch(dificultad){
+        // Mantener juntos los valores de cada dificultad evita configurarlos en varios
+        // sitios.
+
+        switch (dificultad) {
             case DIFICULTAD_DIFICIL:
                 vidaMaxima = VIDA_MAXIMA_DIFICIL;
                 numeroPociones = POCIONES_DIFICIL;
