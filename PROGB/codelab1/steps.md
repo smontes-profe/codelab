@@ -9,6 +9,8 @@
     - Paleta de comandos (Ctrl+Shift+P)
     - FindAllReferences
     - Mostrar la documentación de una palabra reservada
+    - Debug, breakpoints y evaluación de expresiones.
+        - Recordar aquí el ámbito de las variables
     - Revisión de ortografía incluso en comentarios: 
         - VS Code: 
         - Intellij: Settings, editor, inspecciones. Desactivar "Typo"

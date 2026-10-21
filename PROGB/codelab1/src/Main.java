@@ -23,6 +23,10 @@ class Personaje {
     private int vida;
     private int pociones;
 
+    //éstos parámetros nombre, vida, pociones... 
+    //se pasan por valor o por referencia?
+    //sabéis la diferencia?
+    
     public Personaje(String nombre, int vida, int pociones) {
         // Qué hace el parámetro THIS?
         // puedo no usar "this" en este contexto?
