@@ -1,7 +1,7 @@
 
 //Para nuestra aventura, vamos a querer tener un personaje.
 //Caracteristicas: vida, pociones y nombre.
-//No puede tener menos de 0 de vida, ni mas de 100 de vida.
+//No puede tener menos de 0 de vida, ni más de 100 de vida.
 //Las pociones curan 30 puntos de vida.
 //El personaje tendra dos acciones basicas: atacar y defenderse.
 //Al atacar, recibiremos un daño aleatorio entre 0 y 20.
