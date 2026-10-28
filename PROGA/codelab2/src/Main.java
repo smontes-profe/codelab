@@ -1,7 +1,7 @@
 
 /* 
 * Objetivo de esta sesión: pedimos al usuario nombre del personaje y dificultad engre 2 opciones
-* En esta ocasión vanmos a tener dos tipos de enemigos: Trasgos y trolls. 
+* En esta ocasión vamos a tener dos tipos de enemigos: Trasgos y trolls. 
 * Los trasgos nos haran entre 20 y 35 puntos de daño (nivel fácil)
 * Los trolls nos harán entre 40 y 60 puntos de daño (nivel difícil)
 * En nivel difícil el jugador tendrá menos pociones.
