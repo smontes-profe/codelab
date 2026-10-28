@@ -1,14 +1,17 @@
 
+
 //Para nuestra aventura, vamos a querer tener un personaje.
-//Caracteristicas: vida, pociones y nombre.
+//Características: vida, pociones y nombre.
 //No puede tener menos de 0 de vida, ni más de 100 de vida.
 //Las pociones curan 30 puntos de vida.
-//El personaje tendra dos acciones basicas: atacar y defenderse.
+//El personaje tendrá dos acciones basicas: atacar y defenderse.
 //Al atacar, recibiremos un daño aleatorio entre 0 y 20.
 //Al defendernos, recibiremos un daño aleatorio entre 0 y 10.
 
 //Para implementar todo esto, lo primero que tenemos que hacer es 
-//Crear la clase Personaje, con sus atributos y metodos. 
+//Crear la clase Personaje, con sus atributos y métodos. 
+
+import java.util.Scanner;
 
 class Personaje {
 
@@ -16,6 +19,8 @@ class Personaje {
     // como final, y además static
     // qué hace cada cosa???
     private static final int VIDA_MAXIMA = 100;
+    private static final int POCIONES_INICIO = 2;
+    private static final int CURACION_POCION = 30;
 
     // debería poner "nombre" todo en Mayúsculas aunque no sea static?
     // es "obligatorio"?
@@ -23,20 +28,27 @@ class Personaje {
     private int vida;
     private int pociones;
 
+    public String getNombre(){
+        return nombre;
+    }
+
     //éstos parámetros nombre, vida, pociones... 
     //se pasan por valor o por referencia?
     //sabéis la diferencia?
-    
-    public Personaje(String nombre, int vida, int pociones) {
+
+    public Personaje(String nombre){
         // Qué hace el parámetro THIS?
         // puedo no usar "this" en este contexto?
         this.nombre = nombre;
-        this.vida = vida;
-        this.pociones = pociones;
+        this.vida = VIDA_MAXIMA;
+        this.pociones = POCIONES_INICIO;
     }
 
     // por qué es public? no podría ser private??
     // este tipo de función cuando pertenece a una clase se llama...?
+    /**
+     * Imprime la ficha del personaje usando System out print
+     */
     public void mostrarFicha() {
         System.out.println("Personaje: " + nombre);
         System.out.println("Vida: " + vida);
@@ -47,8 +59,12 @@ class Personaje {
 
     // Los usuarios del castellano tenemos un problema con la "Ñ"
     // o la transoformamos en "n" o buscamos una alternativa
-    // muchos programadores hisanohablantes prefieren escribir su código en inglés
+    // muchos programadores hispanohablantes prefieren escribir su código en inglés
     // para evitar estos problemas y también por otras razones
+    /**
+     * Resta de vida al personaje el daño recibido
+     * @param cantidad daño que hay que restar de la vida del personaje
+     */
     public void recibirDanio(int cantidad) {
         if (cantidad > 0) {
             vida = Math.max(0, vida - cantidad);
@@ -60,13 +76,11 @@ class Personaje {
         // es buena práctica meter un "return" dentro de un "if"
         // No es el caso, pero si tuviera que encadenar varios if/else
         // qué es mejor práctica? encadenarlos o lanzar returns con cada if?
-        if (pociones == 0 || vida == VIDA_MAXIMA) {
-            return false;
-        }
+        if (pociones == 0 || vida == VIDA_MAXIMA) return false;
 
         pociones--;
         // qué estoy haciendo aquí?
-        vida = Math.min(VIDA_MAXIMA, vida + 30);
+        vida = Math.min(VIDA_MAXIMA, vida + CURACION_POCION);
         // qué pasa si uso 3 pociones seguidas y tengo 10 de vida?
         return true;
     }
@@ -81,35 +95,39 @@ class Personaje {
 // Y por ultimo, vamos a mostrar la ficha del personaje para ver si ha cambiado.
 public class Main {
     public static void main(String[] args) {
-        // cómo se llama el méotodo que crea un objeto?
+        // cómo se llama el método que crea un objeto?
         // Sabéis qué son "magic numbers" o "números locos"??
         // Qué sería lo más correcto si "Luna", 80 y 2 son constantes que voy a usar
         // en varios sitios??
-        Personaje personaje = new Personaje("Luna", 80, 2);
+        
+        Personaje miPersonaje = new Personaje("Luna");
 
         System.out.println("=== PREPARANDO LA EXPEDICIÓN ===");
-        personaje.mostrarFicha();
+        miPersonaje.mostrarFicha();
 
-        System.out.println("Un trasgo sorprende a Luna.");
+        System.out.println("Un trasgo sorprende a " + miPersonaje.getNombre());
         // aquí lo mismo: sería interesante definir el daño que hace el trasgo
         // en lugar de poner 25 directamente en el código?
-        personaje.recibirDanio(25);
-        personaje.mostrarFicha();
+        miPersonaje.recibirDanio(25);
+        miPersonaje.mostrarFicha();
 
         // este método usarPocion devuelve un Boolean
         // pero además también hace "cosas" antes de devolverlo
         // es correcto? es buena práctica?
 
-        if (personaje.usarPocion()) {
-            System.out.println("Luna usa una poción.");
+
+        if (miPersonaje.usarPocion()) {
+            System.out.println(miPersonaje.getNombre()+" usa una poción.");
         } else {
             System.out.println("No quedan pociones.");
         }
-        personaje.mostrarFicha();
+        miPersonaje.mostrarFicha();
         // Cómo veis esta forma de trabajar? Os parece mejor que
         // tener un montón de variables sueltas?
     }
 }
+
+
 // DEBERES PARA LA PRÓXIMA SESIÓN:
 // 1. Pedir al usuario que introduzca un nombre para su personaje.
 // 2. Crear una clase "Enemigo" que tenga:
