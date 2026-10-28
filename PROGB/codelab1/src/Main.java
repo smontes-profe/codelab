@@ -1,4 +1,6 @@
+import java.util.Scanner;
 
+<<<<<<< HEAD
 
 //Para nuestra aventura, vamos a querer tener un personaje.
 //Características: vida, pociones y nombre.
@@ -12,22 +14,67 @@
 //Crear la clase Personaje, con sus atributos y métodos. 
 
 import java.util.Scanner;
+=======
+public class Main {
+    public static void main(String[] args) {
+
+        final int MAX_ENEMIGOS = 5;
+
+        Personaje personaje = crearPersonaje();
+
+        System.out.println("=== PREPARANDO LA EXPEDICIÓN ===");
+        personaje.mostrarFicha();
+º
+        for (int i = 0; i < MAX_ENEMIGOS && !personaje.estaMuerto(); i++) {
+            generarEncuentro(personaje);
+        }
+
+        finalizarExpidicion(personaje);
+    }
+
+    public static void finalizarExpidicion(Personaje personaje) {
+        System.out.println("============FIN DE LA EXPEDICIÓN============");
+        if (personaje.estaMuerto()) {
+            System.out.println(personaje.getNombre() + " ha muerto en la expedición. :( ++RIP++ ");
+        } else {
+            System.out.println("¡¡¡¡" + personaje.getNombre() + " ha sobrevivido a la expedición!!! ): ¡ENHORABUENA!");
+        }
+    }
+
+    public static Personaje crearPersonaje() {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Introduce el nombre de tu personaje: ");
+        String nombre = sc.nextLine();
+        sc.close();
+        return new Personaje(nombre);
+    }
+
+    public static void generarEncuentro(Personaje personaje) {
+        Enemigo enemigo = new Enemigo();
+        System.out.println("+===> ¡¡¡NUEVO ENCUENTRO!!! <===+");
+        System.out.println("Un " + enemigo.getTipo() + " sorprende a " + personaje.getNombre());
+        enemigo.hacerDanio(personaje);
+        personaje.usarPocion();
+        personaje.mostrarFicha();
+    }
+}
+>>>>>>> bc9e8a4dabdd80e9ede2d49939756d7e8b274c74
 
 class Personaje {
 
-    // Quién me sabe decir qué difernecia hay entre declarar VIDA_MAXIMA
-    // como final, y además static
-    // qué hace cada cosa???
     private static final int VIDA_MAXIMA = 100;
+<<<<<<< HEAD
     private static final int POCIONES_INICIO = 2;
     private static final int CURACION_POCION = 30;
+=======
+    private static final int POCIONES_INICIALES = 3;
+>>>>>>> bc9e8a4dabdd80e9ede2d49939756d7e8b274c74
 
-    // debería poner "nombre" todo en Mayúsculas aunque no sea static?
-    // es "obligatorio"?
-    private final String nombre;
+    private String nombre;
     private int vida;
     private int pociones;
 
+<<<<<<< HEAD
     public String getNombre(){
         return nombre;
     }
@@ -49,14 +96,30 @@ class Personaje {
     /**
      * Imprime la ficha del personaje usando System out print
      */
+=======
+    public Personaje(String nombre) {
+        this.nombre = nombre;
+        this.vida = VIDA_MAXIMA;
+        this.pociones = POCIONES_INICIALES;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public boolean estaMuerto() {
+        return vida <= 0;
+    }
+
+>>>>>>> bc9e8a4dabdd80e9ede2d49939756d7e8b274c74
     public void mostrarFicha() {
         System.out.println("Personaje: " + nombre);
         System.out.println("Vida: " + vida);
         System.out.println("Pociones: " + pociones);
         System.out.println();
-        // Debería poner aquí "return"? Por qué?¿
     }
 
+<<<<<<< HEAD
     // Los usuarios del castellano tenemos un problema con la "Ñ"
     // o la transoformamos en "n" o buscamos una alternativa
     // muchos programadores hispanohablantes prefieren escribir su código en inglés
@@ -65,12 +128,15 @@ class Personaje {
      * Resta de vida al personaje el daño recibido
      * @param cantidad daño que hay que restar de la vida del personaje
      */
+=======
+>>>>>>> bc9e8a4dabdd80e9ede2d49939756d7e8b274c74
     public void recibirDanio(int cantidad) {
         if (cantidad > 0) {
             vida = Math.max(0, vida - cantidad);
         }
     }
 
+<<<<<<< HEAD
     // Qué creéis que pasa si vida llega a 0?
     public boolean usarPocion() {
         // es buena práctica meter un "return" dentro de un "if"
@@ -110,11 +176,35 @@ public class Main {
         // en lugar de poner 25 directamente en el código?
         miPersonaje.recibirDanio(25);
         miPersonaje.mostrarFicha();
+=======
+    public void usarPocion() {
+        if (pociones > 0 && vida != VIDA_MAXIMA) {
+            pociones--;
+            vida = Math.min(VIDA_MAXIMA, vida + 30);
+            System.out.println(nombre + " usa una poción.");
+            return;
+        }
+        System.out.println("Warning!!! No le quedan pociones a " + nombre);
+    }
+}
 
-        // este método usarPocion devuelve un Boolean
-        // pero además también hace "cosas" antes de devolverlo
-        // es correcto? es buena práctica?
+class Enemigo {
+    public enum Tipo {
+        TRASGO,
+        TROLL
+    }
 
+    private final int DANIO_TROLL = 50;
+    private final int DANIO_TRASGO = 25;
+
+    private Tipo tipo;
+>>>>>>> bc9e8a4dabdd80e9ede2d49939756d7e8b274c74
+
+    public Enemigo() {
+        tipo = Tipo.values()[(int) (Math.random() * Tipo.values().length)];
+    }
+
+<<<<<<< HEAD
 
         if (miPersonaje.usarPocion()) {
             System.out.println(miPersonaje.getNombre()+" usa una poción.");
@@ -149,3 +239,14 @@ public class Main {
 // algún método más para ello, no dudes en crearlo, aunque yo no lo pida
 // explcítamente.
 // Si tenéis dudas, preguntad ahora o por el foro.
+=======
+    public void hacerDanio(Personaje personaje) {
+        int danio = tipo == Tipo.TROLL ? DANIO_TROLL : DANIO_TRASGO;
+        personaje.recibirDanio(danio);
+    }
+
+    public String getTipo() {
+        return tipo.name();
+    }
+}
+>>>>>>> bc9e8a4dabdd80e9ede2d49939756d7e8b274c74
