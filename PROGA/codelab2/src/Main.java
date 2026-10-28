@@ -26,6 +26,9 @@ public class Main {
         final int DANIO_MAX_TRASGO = 35; // daño máximo que puede hacer un trasgo
         final int CURACION = 40; // cantidad de vida que recupera con una poción, aunque no puede superar la vida
                                  // máxima
+        final int ACCION_LUCHAR = 1;
+        final int ACCION_ESQUIVAR = 2;
+        final int ACCION_RETIRARSE = 3;
 
         int dificultad; // variable para almacenar la dificultad elegida por el usuario
         // es mejor dejar estas variables sin asignar o no? qué gano con eso?
@@ -90,7 +93,31 @@ public class Main {
 
         // realizamos el bucle de la batalla
         // conocéis los snippets? Por ejemplo, el del bucle while o del switch
-        while (vidaHeroe > 0 && estaVivo) {
+        while (vidaHeroe > 0) {
+            System.out.println("\n¿Qué quieres hacer?");
+            System.out.println(ACCION_LUCHAR + ". Luchar");
+            System.out.println(ACCION_ESQUIVAR + ". Esquivar este turno");
+            System.out.println(ACCION_RETIRARSE + ". Retirarte");
+            System.out.print("Elige una opción: ");
+            int accion = sc.nextInt();
+
+            if (accion == ACCION_ESQUIVAR) {
+                System.out.println("Esquivas el combate y pasas al siguiente turno.");
+                // continue salta el resto de esta vuelta y vuelve al inicio del while.
+                continue;
+            }
+
+            if (accion == ACCION_RETIRARSE) {
+                System.out.println("Te retiras de la batalla.");
+                // break termina el while y sale de la batalla.
+                break;
+            }
+
+            if (accion != ACCION_LUCHAR) {
+                System.out.println("Opción no válida. Vuelve a intentarlo.");
+                continue;
+            }
+
             // nos aseguramos de que el enemigo sea distinto del anterior
             System.out.println("\nUn enemigo te ataca...");
             // Generamos tipo de enemigo aleatorio: 1 = Trasgo, 2 = Troll
