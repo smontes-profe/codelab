@@ -5,40 +5,14 @@ Código usado durante la sesión en vivo
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     public static void main(String[] args) {
-<<<<<<< HEAD
-        // ***************** BLOQUE 1: Variables y Tipos (El
-        // Despertar).Casting/Concatenación **********************
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("¿Cuál es el nombre del personaje?");
-        String nombre = scanner.nextLine();
-        scanner.close();
-
-        // TAREA 1: Además de pedir el nombre del personaje,pedir al usuario
-        // dificultad (fácil, normal, difícil) y mostrarla en la ficha del héroe.
-        // Además, con dificultad fácil, el héroe empieza con 150 de vida,
-        // con dificultad normal 100 y con dificultad difícil 50.
-
-        // String nombre = "John Snow";
-=======
 // ***************** BLOQUE 1: Variables y Tipos (El Despertar).Casting/Concatenación **********************
         //Scanner sc = new Scanner(System.in);
 
         String nombre = "John Snow";
->>>>>>> bc9e8a4dabdd80e9ede2d49939756d7e8b274c74
         int vida = 100;
         int pociones = 3;
         boolean estaVivo = true;
 
-<<<<<<< HEAD
-        // TAREA 2: Hacer una ficha del héroe más "atractiva"
-        System.out.println("+|===> FICHA DEL HÉROE <===!+");
-        System.out.println("┌─────────────────────────────┐");
-        System.out.println("│ Nombre: " + nombre);
-        System.out.println("│ Salud: " + vida);
-        System.out.println("│ Inventario: " + pociones);
-        System.out.println("└─────────────────────────────┘");
-        System.out.println("*******************************");
-=======
         System.out.println("=== FICHA DEL HÉROE ===");
 
         System.out.println("Nombre: " + nombre);
@@ -46,18 +20,12 @@ public class Main {
         System.out.println("Salud: " + nombre + vida);
         System.out.println("Inventario: " + pociones + " pociones.");
         System.out.println("*********************");
->>>>>>> bc9e8a4dabdd80e9ede2d49939756d7e8b274c74
 
         // ********************* BLOQUE 2: Operadores y Lógica - Asiganción
         // ******************************
         System.out.println("\n¡Un Trasgo te embosca y te asesta un golpe!");
 
-<<<<<<< HEAD
-        // TAREA 3: Que el daño que hace el trasgo sea aleatorio entre 10 y 30. (Pista:
-        // Math.random())
-=======
         //esta forma de asignar y restar a la vez (operadores de asignación compuesta) la conocéis?
->>>>>>> bc9e8a4dabdd80e9ede2d49939756d7e8b274c74
         vida -= 85; // El héroe queda con 15 de vida
         System.out.println("Recibes 85 de daño. Vida restante: " + vida);
 
