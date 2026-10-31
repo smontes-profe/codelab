@@ -2,7 +2,8 @@
 // Enum es una clase en sí con todas las de la ley, por lo que podemos definir atributos
 // y métodos propios de cada tipo.
 public enum TipoEnemigo {
-    // Defino las constantes de mi enum. Cada una de ellas es una instancia de TipoEnemigo
+    // Defino las constantes de mi enum. Cada una de ellas es una instancia de
+    // TipoEnemigo
     TROLL(50),
     TRASGO(25);
 

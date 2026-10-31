@@ -8,6 +8,11 @@ public class Personaje {
     private int vida;
     private int pociones;
 
+    // he creado dos getters aquí para devolver la vida y las pociones restantes
+    // ya que probablemente necesite acceder a ellas desde fuera
+    public int getVida() { return vida; }
+    public int getPociones() { return pociones; }
+
     public Personaje(String nombre) {
         this.nombre = nombre;
         this.vida = VIDA_MAXIMA;
@@ -37,5 +42,9 @@ public class Personaje {
         pociones--;
         vida = Math.min(VIDA_MAXIMA, vida + CURACION_POCION);
         return true;
+    }
+
+    public boolean estaVivo(){
+        return vida>0;
     }
 }
