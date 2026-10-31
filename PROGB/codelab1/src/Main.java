@@ -1,59 +1,18 @@
-//Para nuestra aventura, vamos a querer tener un personaje.
-//Características: vida, pociones y nombre.
-//No puede tener menos de 0 de vida, ni más de 100 de vida.
-//Las pociones curan 30 puntos de vida.
-//El personaje tendrá dos acciones basicas: atacar y defenderse.
-//Al atacar, recibiremos un daño aleatorio entre 0 y 20.
-//Al defendernos, recibiremos un daño aleatorio entre 0 y 10.
+// Para nuestra aventura, vamos a tener un personaje.
+// Características: vida, pociones y nombre.
+// No puede tener menos de 0 de vida, ni más de 100 de vida.
+// Las pociones curan 30 puntos de vida.
 
-//Para implementar todo esto, lo primero que tenemos que hacer es 
-//Crear la clase Personaje, con sus atributos y métodos. 
-
-class Personaje {
-
-    private static final int VIDA_MAXIMA = 100;
-    private static final int POCIONES_INICIO = 2;
-    private static final int CURACION_POCION = 30;
-
-    private final String nombre;
-    private int vida;
-    private int pociones;
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public Personaje(String nombre) {
-        this.nombre = nombre;
-        this.vida = VIDA_MAXIMA;
-        this.pociones = POCIONES_INICIO;
-    }
-
-    public void mostrarFicha() {
-        System.out.println("Personaje: " + nombre);
-        System.out.println("Vida: " + vida);
-        System.out.println("Pociones: " + pociones);
-        System.out.println();
-    }
-
-    public void recibirDanio(int cantidad) {
-        if (cantidad > 0) {
-            vida = Math.max(0, vida - cantidad);
-        }
-    }
-
-    public boolean usarPocion() {
-        if (pociones == 0 || vida == VIDA_MAXIMA)
-            return false;
-        pociones--;
-        vida = Math.min(VIDA_MAXIMA, vida + CURACION_POCION);
-        return true;
-    }
-}
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        Personaje miPersonaje = new Personaje("Luna");
+        // Creación del personaje usando Scanner
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Introduce el nombre de tu personaje: ");
+        // podríamos crear una constante o una variable para guardar el nombre
+        // pero en este caso da igual ya que solo se va a usar una vez
+        Personaje miPersonaje = new Personaje(sc.nextLine());
         System.out.println("=== PREPARANDO LA EXPEDICIÓN ===");
         miPersonaje.mostrarFicha();
         System.out.println("Un trasgo sorprende a " + miPersonaje.getNombre());
@@ -65,8 +24,9 @@ public class Main {
             System.out.println("No quedan pociones.");
         }
         miPersonaje.mostrarFicha();
-    }
 
+        sc.close();
+    }
 }
 
 // DEBERES PARA LA PRÓXIMA SESIÓN:
