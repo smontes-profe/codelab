@@ -19,8 +19,8 @@ public class Mago extends Personaje {
     }
     
     //Y aquí aplicamos el daño de la magia con un mensajito dando ambientación
-    public void usarMagia(Enemigo objetivo) {
-        System.out.printf("✨ %s lanza un conjuro contra %s y le hace %d de daño.%n",
+    private void usarMagia(Enemigo objetivo) {
+        System.out.printf(" %s lanza un conjuro contra %s y le hace %d de daño.%n",
                 getNombre(), objetivo.getNombre(), DANIO_MAGIA);
         objetivo.recibirDanio(DANIO_MAGIA);
     }

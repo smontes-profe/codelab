@@ -50,26 +50,33 @@ public class Main {
         //Aparte de ponerlo más "bonico", este bloque es casi igual a como lo teníamos
         System.out.println();
         System.out.println("╔══════════════════════════════════════╗");
-        System.out.println("║        ⚔️  LEYENDAS DEL CÓDIGO  ⚔️        ║");
+        System.out.println("║             LEYENDAS DEL CÓDIGO      ║ ");
         System.out.println("╚══════════════════════════════════════╝");
-        System.out.print("🧙 Introduce el nombre de tu personaje: ");
+        System.out.print(" Introduce el nombre de tu personaje: ");
         String nombre = sc.nextLine();
 
         //Aquí metemos la parte donde el jugador selecciona su clase
         System.out.println();
         System.out.println("Elige tu profesión:");
-        System.out.println("  1️⃣  Guerrero 🛡️");
-        System.out.println("  2️⃣  Mago     ✨");
+        System.out.println("  1  Guerrero ");
+        System.out.println("  2  Mago     ");
         String profesion = sc.nextLine();
         while (!"1".equals(profesion) && !"2".equals(profesion)) {
-            System.out.println("❌ Opción no válida. Escribe 1 para Guerrero o 2 para Mago.");
+            System.out.println("XX Opción no válida. Escribe 1 para Guerrero o 2 para Mago.");
             profesion = sc.nextLine();
         }
         //Utilizamos directamente el constructor de su clase heredada en función de la opción
         miPersonaje = "1".equals(profesion) ? new Guerrero(nombre) : new Mago(nombre);
+        
+        //Esto es exactamente lo mismo que esto, que igual se entiende mejor:
+        // if("1".equals(profesion)){
+        //     miPersonaje =new Guerrero(nombre);
+        // }else{
+        //     miPersonaje =new Mago(nombre);
+        // }
 
         System.out.println();
-        System.out.println("════════════ 🗺️  PREPARANDO LA EXPEDICIÓN  🗺️ ════════════");
+        System.out.println("════════════   PREPARANDO LA EXPEDICIÓN   ════════════");
         miPersonaje.mostrarFicha();
 
         //El bucle principal es similar, solo que tendremos que introducir un bucle adicional de combate 
@@ -77,7 +84,7 @@ public class Main {
         // además de introducir la lógica de combate a distancia
         for (int i = 1; i <= NUM_ENEMIGOS; i++) {
             System.out.println();
-            System.out.println("━━━━━━━━━━━━ ⚔️  ENFRENTAMIENTO " + i + " / " + NUM_ENEMIGOS + " ⚔️ ━━━━━━━━━━━━");
+            System.out.println("═══════════   ENFRENTAMIENTO " + i + " / " + NUM_ENEMIGOS + "  ═══════════");
 
             Enemigo enemigoActual = crearEnemigo();
             
@@ -86,12 +93,12 @@ public class Main {
             //si está a distancia (distancia=1), resolvemos si el personaje puede atacar desde elejos
             // dependiendo de su clase
             if (distancia == 1) {
-                System.out.println("👀 ¡El enemigo aparece a lo lejos!");
+                System.out.println(" ¡El enemigo aparece a lo lejos!");
                 if (!miPersonaje.atacarADistancia(enemigoActual)) {
-                    System.out.println("🛡️ El guerrero espera: ¡solo puede luchar cuerpo a cuerpo!");
+                    System.out.println(" El guerrero espera: ¡solo puede luchar cuerpo a cuerpo!");
                 }
                 if (enemigoActual.estaVivo()) {
-                    System.out.println("🏃 El enemigo se acerca... ¡ahora está cuerpo a cuerpo!");
+                    System.out.println(" El enemigo se acerca... ¡ahora está cuerpo a cuerpo!");
                 }
             }
 
@@ -114,22 +121,22 @@ public class Main {
             //Comprobamos si el personaje sigue vivo. Si no, GAME OVER, man.
             if (!miPersonaje.estaVivo()) {
                 System.out.println();
-                System.out.println("☠️ ═══════════════ FIN DE LA AVENTURA ═══════════════ ☠️");
+                System.out.println(" ═══════════════ FIN DE LA AVENTURA ═══════════════ ☠️");
                 System.out.println("Has sobrevivido a " + (i - 1) + " enfrentamiento(s).");
                 return finDePartida();
             }
             
             //Si sigue vivo, palmadita en la espalda
-            System.out.println("🎉 ¡Has derrotado al " + enemigoActual.getNombre() + "!");
+            System.out.println(" ¡Has derrotado al " + enemigoActual.getNombre() + "!");
             miPersonaje.mostrarFicha();
-            System.out.println("━━━━━━━━━━━━ 🏁 FIN DEL ENFRENTAMIENTO 🏁 ━━━━━━━━━━━━");
+            System.out.println("═══════════════  FIN DEL ENFRENTAMIENTO  ═══════════════");
         }
 
         //Y si hemos llegado hasta aquí, es que el personaje ha sobrevivido a todos los encuentros
         // así que.. congratulations!
         System.out.println();
-        System.out.println("🏆 ═══════════════ ¡VICTORIA! ═══════════════ 🏆");
-        System.out.println("🌟 ¡Has sobrevivido a toda la expedición, " + miPersonaje.getNombre() + "!");
+        System.out.println(" ═══════════════ ¡VICTORIA! ═══════════════ ");
+        System.out.println(" ¡Has sobrevivido a toda la expedición, " + miPersonaje.getNombre() + "!");
         return finDePartida();
     }
 
@@ -140,10 +147,10 @@ public class Main {
     private static void beberPocion(){
         //básicamente, le preguntamos al jugador si quiere beber poción
         //la comprobación de si tiene pociones ya la hemos hecho antes
-        System.out.println("🧪 ¿Quieres beber una poción? 1. Sí  2. No");
+        System.out.println(" ¿Quieres beber una poción? 1. Sí  2. No");
         String respuesta = sc.nextLine();
         while (!"1".equals(respuesta) && !"2".equals(respuesta)) {
-            System.out.println("❌ Opción no válida. Escribe 1 para Sí o 2 para No.");
+            System.out.println("XX Opción no válida. Escribe 1 para Sí o 2 para No.");
             respuesta = sc.nextLine();
         }
         if ("1".equals(respuesta)) {
@@ -153,27 +160,27 @@ public class Main {
             // Ya que sé seguro que tiene pociones, por lo que si devuelve false,
             // es porque está a toe de vida
             if (miPersonaje.usarPocion()) {
-                System.out.println("💚 " + miPersonaje.getNombre() + " bebe una poción y recupera fuerzas.");
+                System.out.println("- " + miPersonaje.getNombre() + " bebe una poción y recupera fuerzas.");
             } else {
-                System.out.println("💚 Ya tienes la vida al máximo.");
+                System.out.println("- Ya tienes la vida al máximo.");
             }
         } else {
-            System.out.println("➡️ Sigues luchando sin usar una poción.");
+            System.out.println("-> Sigues luchando sin usar una poción.");
         }
     }
     private static boolean finDePartida(){
         //Aquí lo único que he hecho es dejarlo más bonico. Poco más.
         System.out.println();
-        System.out.println("🔁 ¿Quieres volver a intentarlo?");
-        System.out.println("  1️⃣  ¡A por otra aventura!");
-        System.out.println("  2️⃣  Por hoy ya he tenido bastante.");
+        System.out.println(" ¿Quieres volver a intentarlo?");
+        System.out.println("  1  ¡A por otra aventura!");
+        System.out.println("  2  Por hoy ya he tenido bastante.");
         String result = sc.nextLine();
         while (!"1".equals(result) && !"2".equals(result)) {
-            System.out.println("❌ Opción no válida. Escribe 1 o 2.");
+            System.out.println("XX Opción no válida. Escribe 1 o 2.");
             result = sc.nextLine();
         }
         if ("2".equals(result)) {
-            System.out.println("👋 ¡Gracias por jugar! Hasta la próxima.");
+            System.out.println("- ¡Gracias por jugar! Hasta la próxima.");
         }
         return "1".equals(result);
     }

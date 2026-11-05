@@ -1,3 +1,25 @@
+// DEBERES PARA LA PRÓXIMA SESIÓN:
+// 1. Pedir al usuario que introduzca un nombre para su personaje.
+// 2. Crear una clase "Enemigo" que tenga:
+// -Tipo: puede ser trasgo o troll
+// -Método constructor:
+// -al generer un nuevo enemigo determina al azar el tipo
+// -Método "hacerDanio" que reciba como parámetro un objeto de tipo Personaje.
+// -Dicho método hará un daño determinado al Personaje que recibe como parámetro
+// -Los trolls hacen 50 de daño, los trasgos, 25.
+// 3. Modifica el código para que, en lugar de enfrentarse a un trasgo "por
+// decreto"
+// como tenemos ahora, que el jugador tenga 4 enfrentamientos con enemigos,
+// usando la clase Enemigo que acabamos de diseñar.
+// -Por cada enfrentamiento, llamaremos al método hacerDanio de cada Enemigo,
+// pasando como parámetro el personaje del jugador.
+// después de cada enfrentamiento, intentaremos que el personaje
+// use una poción, y mostramos la ficha actualizada.
+// Intentad usar buenas prácticas, si véis que necesitáis
+// algún método más para ello, no dudes en crearlo, aunque yo no lo pida
+// explcítamente.
+// Si tenéis dudas, preguntad ahora o por el foro.
+
 import java.util.Scanner;
 
 //OJO!!! Lo primero que observaréis es que ya no está la clase Personaje

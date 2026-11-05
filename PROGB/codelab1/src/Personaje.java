@@ -12,6 +12,8 @@ public class Personaje {
     // ya que probablemente necesite acceder a ellas desde fuera
     public int getVida() { return vida; }
     public int getPociones() { return pociones; }
+    public String getNombre() { return nombre; }
+    public boolean estaVivo(){ return vida>0; }
 
     public Personaje(String nombre) {
         this.nombre = nombre;
@@ -19,10 +21,10 @@ public class Personaje {
         this.pociones = POCIONES_INICIO;
     }
 
-    public String getNombre() {
-        return nombre;
-    }
-
+    
+    /**
+     * Muestra por pantalla la ficha del personaje, con su nombre, vida y pociones restantes
+     */
     public void mostrarFicha() {
         System.out.println("Personaje: " + nombre);
         System.out.println("Vida: " + vida);
@@ -30,12 +32,20 @@ public class Personaje {
         System.out.println();
     }
 
+    /**
+     * Recibe daño y actualiza la vida del personaje, asegurándose de que no baje de 0
+     * @param cantidad la cantidad de daño a recibir
+     */
     public void recibirDanio(int cantidad) {
         if (cantidad > 0) {
             vida = Math.max(0, vida - cantidad);
         }
     }
 
+    /**
+     * Usa una poción para curar al personaje. Si no hay pociones o la vida está al máximo, no hace nada.
+     * @return true si se usó una poción y se curó al personaje, false en caso contrario
+     */
     public boolean usarPocion() {
         if (pociones == 0 || vida == VIDA_MAXIMA)
             return false;
@@ -44,7 +54,5 @@ public class Personaje {
         return true;
     }
 
-    public boolean estaVivo(){
-        return vida>0;
-    }
+    
 }

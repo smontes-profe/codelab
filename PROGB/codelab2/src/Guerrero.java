@@ -5,6 +5,7 @@ public class Guerrero extends Personaje {
     private static final String CLASE_STRING="Guerrero";
 
     public Guerrero(String nombre) {
+        //do some stuff
         super(nombre,CLASE_STRING, VIDA_MAXIMA, DANIO);
     }
 
@@ -16,14 +17,14 @@ public class Guerrero extends Personaje {
         if (cantidad > 0) {
             //mensajito para dar ambientación
             // %n añade un salto de línea
-            System.out.printf("🛡️ El escudo reduce el daño de %d a %d.%n", cantidad, danioReducido);
+            System.out.printf(" El escudo reduce el daño de %d a %d.%n", cantidad, danioReducido);
         }
         // aquí, una vez aplicada la reducción de daño, llamamos al método original del padre. 
         // como debe ser, ahorrñandonos duplicidad y facilitando modificación de código.
         super.recibirDanio(danioReducido);
     }
 
-    public int reducirDanio(int cantidad) {
+    private int reducirDanio(int cantidad) {
         //Básicamente: 
         // -Si es 0, reduce 0. Si no:
         // lo reduce a la mitad. 

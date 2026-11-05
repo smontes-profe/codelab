@@ -22,12 +22,16 @@ public class Enemigo {
 
     // Siguiendo el enunciado del ejercicio: recibe un Personaje y le aplica el daño
     // correspondiente
+    /**
+     * Hace daño al personaje objetivo según el tipo de enemigo.
+     * @param objetivo el personaje que recibirá el daño
+     */
     public void hacerDanio(Personaje objetivo) {
         int danio = tipo.getDanio();
         objetivo.recibirDanio(danio);
         // lo típico para mostrar por pantalla el daño sería:
         // System.out.println("-------Un " + tipo + " atacó a " + objetivo.getNombre() +
-        // ". que recibió " + danio + "-----");
+        //  ". que recibió " + danio + "-----");
         // pero podemos hacerlo también así
         System.out.printf("-------Un %s atacó a %s, que recibió %s-----%n", tipo, objetivo.getNombre(), danio);
     }
