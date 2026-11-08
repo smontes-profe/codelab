@@ -282,3 +282,16 @@ public class Main {
         sc.close();
     }
 }
+
+/*
+ * Ejercicios propuestos:
+ * - Añadir un arrayList de enemigos derrotados. Al final del juego, que muestre la lista de enemigos derrotados.
+ *      Ya no necesitaríamos el contadorEnemigos.
+ * - Añadir otro elemento al array de pposible loot: UN amauleto de resurrección.
+ *    Las probabilidades de loot quedarían: 
+        final int[] lootProbabilidades = {50, 75, 95}; 
+        Si el personaje es dorratado pero tiene el amuleto de resurrección:
+        Vuelve a la vida con el máximo de vida, pero pierde todo el inventario
+        (que aparezca un mensaje chulo con un color especial cuando pase!)
+ * Y para la próxima: Try/catch (ya queda poco para poder usar funciones y clases!!!)
+ */
