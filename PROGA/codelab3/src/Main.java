@@ -6,6 +6,7 @@
  * En el codelab de hoy centraremos la atención en el uso de arrays y ArrayLists,
  * que ya habéis visto a nivel teórico, pondremos en práctica connuestro juego de rol.
  * Qué haremos en esta sesión:
+ *  * Vamos a complicar bastante la cosa, así que vamos a eliminar la elección de dificultad.
  *  * Ahora los enemigos tendrán puntos de vida y el héroe podrá atacarlos.
  *  * Tendremos dos bucles en la aventura: 
  *  * * - Un bucle principal que representa la aventura, donde el héroe se enfrenta a enemigos.
@@ -45,222 +46,194 @@
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
+import java.lang.Thread;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
+
+    // Importante añadir "throws InterruptedException" en el main si queremos usar Thread.sleep
+    // ya que arroja una excepción controlada de interrupción
+    // Como no habéis visto aun try catch, lo resolvemos así por ahora.
     public static void main(String[] args) throws InterruptedException {
-// ***************** BLOQUE 1: Variables y Tipos **********************
+
+        //El tiempo de espera en milisegundos entre cada ronda de ataques
+        final int TIEMPO_ESPERA = 1000;
+        final int VIDA_MAXIMA = 100;
+        final int CURACION_POCION = 40;
+        final int DANIO_ESPADA = 25;
+        final int DEFENSA_ESCUDO = 10;
+        //como estamos complicando mucho la cosa, vamos a definir el daño de los enemigos como constantes, 
+        // para que sea más fácil de modificar, y eliminamos las costantes para la dificultad.
+        final int DANIO_TRASGO = 25;
+        final int DANIO_TROLL = 50;
+        final int VIDA_TRASGO = 50;
+        final int VIDA_TROLL = 100;
+        final int ENEMIGO_TRASGO = 1;
+        //modificamos las opciones del menú como habíamos especificado en el enunciado, 
+        // para que el jugador pueda elegir entre beber poción, continuar sin beber poción o retirarse.
+        final int ACCION_POCION = 1;
+        final int ACCION_SIN_POCION = 2;
+        final int ACCION_RETIRARSE = 3;
+        // Pongo aquí las constantes de los objetos del inventario, para que sea más fácil de modificar y mantener el código.
+        final String INVENTARIO_POCION = "Poción de curación";
+        final String INVENTARIO_ESPADA = "Espada";
+        final String INVENTARIO_ESCUDO = "Escudo";
+        final String INVENTARIO_ANILLO_DEFENSA = "Anillo de defensa";
+        final String INVENTARIO_ANILLO_ATAQUE = "Anillo de ataque";
+        final String INVENTARIO_AMULETO = "Amuleto de resurrección";
+        //Aquí definimos los arrays de inventario y loot, que nos servirán para manejar los objetos del juego.
+        final String[] inventarioInicial = {INVENTARIO_POCION,INVENTARIO_POCION, INVENTARIO_ESPADA, INVENTARIO_ESCUDO};
+        final String[] loot = {INVENTARIO_POCION, INVENTARIO_ANILLO_DEFENSA, INVENTARIO_ANILLO_ATAQUE, INVENTARIO_AMULETO};
+        // Probabilidades de loot en porcentaje. Podría metarlas como constantes, pero para simplificar, las dejo aquí.
+        // En lugar de guardar las probabilidades en sí, guardo los valores acumulados, 
+        // para que sea más fácil de calcular el loot al derrotar a un enemigo.
+        final int[] lootProbabilidades = {50, 75, 95, 100}; 
+
+        //He movido aquí la vida del héroe, para que sea más fácil de modificar y mantener el código.
+        int vidaHeroe = VIDA_MAXIMA;
+        // Declaración del inventario
+        ArrayList<String> inventario = new ArrayList<>();
+        // Inicializamos el inventario con los objetos iniciales
+        for (String objeto : inventarioInicial) {
+            inventario.add(objeto);
+        }
+        //Otra manera de hacerlo hubiera esta:
+        // ArrayList<String> inventario = new ArrayList<>(Arrays.asList(inventarioInicial));
+        // Pero  no sé si lo habíais visto en clase, así que lo hago con un bucle for sencillo.
+        // Y otra forma también hubiera sido recorrer el array con un bucle for i:
+        // for(int i = 0; i < inventarioInicial.length; i++) {
+        //     inventario.add(inventarioInicial[i]);
+        // }
+
+        // Como no podemos usar pociones, me pareció lo más sencillo usar una variable para controlar
+        // el número de pociones que tiene el héroe, en lugar de contar cuántas hay en el inventario.
+        int pocionesHeroe = 2;
+   
+        //he movido aquí también la declaración de las variables del enemigo, para que sea más fácil de modificar y mantener el código.
+        int enemigo;
+        String nombreEnemigo;
+        int danoEnemigo;
+        int vidaEnemigo;
+
         Scanner sc = new Scanner(System.in);
-
-        /*****************1 DEBERES ¿Cómo quiero que sea la interactuación con mi usuario? O por defecto
-         o se lo pido por consola **************************
-         /* *********************Si quiere aumentar la dificultad ponga una vida hasta 50 y elija una sola pócima **********************/
-
-
-        System.out.println("==========================================");
-        System.out.println("   ⚔️ BIENVENIDO AL REINO DE JAVA ⚔️   ");
-        System.out.println("==========================================");
-
-        System.out.print("\n➤ Introduce el nombre de tu héroe: ");
+        Random aleatorio = new Random();
+        System.out.println("=================================================");
+        System.out.println("       BIENVENIDO AL REINO DE JAVA THE HUT       ");
+        System.out.println("=================================================");
+        System.out.print("Introduce el nombre de tu héroe: ");
         String nombre = sc.nextLine();
 
-        System.out.println("\n¿Cómo prefieres iniciar tu gesta?");
-        System.out.println("1. Modo Estándar (100 Vida / 3 Pociones)");
-        System.out.println("2. Modo Difícil (Elegir vida hasta 50 / 1 Poción)");
-        System.out.print("Selecciona una opción (1 o 2): ");
-
-        int opcion = sc.nextInt();
-        int vida;
-        int pociones;
-
-        /*switch (opcion) {
-            case 1: System.out.println("La opcion facil");
-            case 2: ......
-        }*/
-
-        if (opcion == 2) {
-
-            System.out.print("➤ Elige tu vida inicial (máximo 50): ");
-            vida = sc.nextInt();
-            pociones = 1;
-            System.out.println("⚠️ Has elegido el camino del guerrero. ¡Suerte!");
-        } else {
-            // Valores por defecto
-            vida = 100;
-            pociones = 3;
-            System.out.println("✅ Partida cargada con valores estándar.");
-        }
-        boolean estaVivo=true;
-
-        // --- 2. FICHA DEL HÉROE "CHULA" ---
-        System.out.println("       📜 FICHA DE PERSONAJE 📜       ");
-        System.out.println(nombre);
-        System.out.println(vida);
-        System.out.println("pociones " + pociones);
-        System.out.println("      ¡La aventura comienza ahora!      \n");
+        // La dificultad cambia el número de pociones; la vida inicial es la misma.
 
 
-        while (vida>=0 && estaVivo) {
-            // ********************* BLOQUE 2: Operadores y Lógica - Asiganción ******************************
-            //System.out.println("\n¡Un Trasgo te embosca y te asesta un golpe!");
+        // Este contador aumenta cuando el héroe sobrevive al ataque del enemigo.
+        int enemigosDerrotados = 0;
+        boolean seHaRetirado = false;
 
-            //**************************************3 DEBER Random --> random en java (entre 50=min y un 85=max?)
+        //Aquí imprimía la ficha, pero lo he movido al final del bucle, para que se vea la ficha actualizada después de cada turno.
+        //Ahora es una aventura, no una batalla!
+        System.out.println("\n+|=========> ¡COMIENZA LA AVENTURA! <=========|+");
 
-        /*int golpeEnemigo = new Random().nextInt(36) + 50;
+        /* ----------GAME LOOP---------- */
+        /* El bucle principal de la aventura. Se repite hasta que el héroe se retira o muere. 
+         * He cambiado el bucle while por un do-while, para que al menos se ejecute una vez.
+         */
+        do {
 
-        vida = vida - golpeEnemigo;
+            /* ----------FICHA DEL HÉROE---------- */
+            System.out.println("\n+|=========> FICHA DEL HÉROE <=========|+");
+            System.out.println("Nombre: " + nombre);
+            System.out.println("Salud: " + vidaHeroe + " HP");
+            System.out.println("Inventario: ");
+            for (String objeto : inventario) {
+                System.out.println("- " + objeto);
+            }
 
-        System.out.println("Recibes " + golpeEnemigo +" de daño. Vida restante: " + vida);
-
-        if (vida <= 0) {
-            System.out.println("¡" + nombre + " ha caído en combate!");
-            estaVivo = false;
-        }
-
-    */
-
-
-            // **********************BLOQUE 3: El Desafío (Cura Crítica) *************************
-            // Objetivo: Si vida < 20 Y tiene pociones, curar automáticamente.
-
-            System.out.println("\n--- Comprobando estado crítico ---");
-
-            if (vida < 20 && pociones > 0) {
-                System.out.println("¡Alerta! Vida baja. Usando poción automáticamente...");
-                vida = 50;
-                pociones--; // Gastamos una poción: pociones = pociones - 1
-
-                System.out.println(">>> Curación exitosa. Nueva vida: " + vida);
-                System.out.println(">>> Pociones restantes: " + pociones);
-
-            } else if (vida < 20 && pociones == 0) {
-                System.out.println("¡ESTÁS EN PELIGRO! No te quedan pociones.");
+            /* ----------Selección del seiguiente enemigo.---------- */
+            enemigo = aleatorio.nextInt(2) + 1;
+            if (enemigo == ENEMIGO_TRASGO) {
+                nombreEnemigo = "Trasgo";
+                danoEnemigo = DANIO_TRASGO;
+                vidaEnemigo = VIDA_TRASGO;
             } else {
-                System.out.println("Estado estable. No es necesario gastar recursos.");
+                nombreEnemigo = "Troll";
+                danoEnemigo = DANIO_TROLL;
+                vidaEnemigo = VIDA_TROLL;
             }
+            System.out.println("\n ========== NUEVO ENCUENTRO ==========");
+            System.out.println("\n¡Un " + nombreEnemigo + " salvaje aparece!");
 
-
-            // ***************** BLOQUE 4: Bucles (La Batalla Continúa) **********************
-            System.out.println("\n--- ¡COMIENZA LA BATALLA REAL! ---");
-
-
-                System.out.println("\nUn enemigo te ataca...");
-
-                // Generamos daño aleatorio entre 10 y 30 para que dure la pelea
-
-                int golpeEnemigo2 = new Random().nextInt(21) + 10;
-                vida -= golpeEnemigo2;
-                //vida = vida - golpeEnemigo2;
-
-                System.out.println("Recibes " + golpeEnemigo2 + " de daño. Vida actual: " + vida);
-
-                // Lógica de curación automática (tu Bloque 3 dentro del bucle)
-                if (vida < 25 && pociones > 0) {
-                    System.out.println("¡Emergencia! Usando poción...");
-                    vida += 40; // Curamos 40 de vida
-                    pociones--;
-                    System.out.println("Pociones restantes: " + pociones + " | Vida: " + vida);
-                }
-
-                // Comprobamos si el héroe ha caído
-                if (vida <= 0) {
-                    System.out.println("¡" + nombre + " ha caído en combate!");
-                    estaVivo = false;
-                    break;
-                }
-
-
-                Thread.sleep(1000);
-
-                String miestring="";
-                String []ejeplito = new String[2];
-
-            String[] miarray = {"PEPE", "MARIA", "MANUEL", "ANA"};
-
-            for (int i=0; i<miarray.length;i++){
-                System.out.print(miarray[i]);
-            }
-
-
-            // Bloque 5 ************Agregamos objetos a mi mochila**********
-            // Declaración del inventario
-            ArrayList<String> inventario = new ArrayList<>();
-
-
-
-            // Añadimos objetos iniciales
-            inventario.add("Mapa arrugado");
-            inventario.add("Daga de hierro");
-
-            System.out.println("\n✨ ¡El enemigo ha soltado un 'Amuleto de Java'! ¿Deseas recogerlo?");
-            System.out.println("1. Sí | 2. No");
-            int decision = sc.nextInt();
-
-            switch (decision) {
-                case 1:
-                    inventario.add("Amuleto de Java");
-                    System.out.println("📦 Has guardado el Amuleto en tu mochila.");
-                    break;
-                case 2:
-                    System.out.println("Has dejado pasar la oportunidad");
-            }
-
-            System.out.println("\n=== 🎒 TU MOCHILA ===");
-            for (int i = 0; i < inventario.size(); i++) {
-                System.out.println((i + 1) + ". " + inventario.get(i));
-            }
-
-            // en busqueda del cofre misterioso *************BLOQUE 6*******
-
-            System.out.println("🎁 ¡Has encontrado un cofre misterioso en un rincón oscuro!");
-            System.out.println("1. Abrirlo con cuidado");
-            System.out.println("2. Ignorarlo y seguir adelante");
-            System.out.print("¿Qué decides?: ");
-
-            int eleccionCofre = sc.nextInt();
-
-            switch (eleccionCofre) {
-                case 1:
-                    System.out.println("Abres la tapa lentamente... 🥁");
-                    Thread.sleep(1500); // Pausa dramática
-
-                    // Generamos un destino del 1 al 3
-                    int destino = new Random().nextInt(3) + 1;
-
-                    switch (destino) {
-                        case 1:
-                            System.out.println("💰 ¡TESORO! Encuentras una 'Espada de Código Limpio'.");
-                            inventario.add("Espada de Código Limpio");
-                            for (int i = 0; i < inventario.size(); i++) {
-                                System.out.println((i + 1) + ". " + inventario.get(i));
-                            }
-                            break;
-
-                        case 2:
-                            System.out.println("👾 ¡ES UN MÍMICO! El cofre tiene dientes y te muerde.");
-                            int susto = 15;
-                            vida -= susto;
-                            System.out.println("Pierdes " + susto + " de vida. Vida actual: " + vida);
-                            break;
-
-                        case 3:
-                            System.out.println("💨 El cofre estaba lleno de gas somnífero. No encuentras nada.");
-                            break;
+            /* ----------COMBAT LOOP---------- */
+            // El bucle de combate se repite hasta que el héroe o el enemigo pierden toda su vida.
+            //Ataca el héroe primero, luego el enemigo, y así sucesivamente. Se espera un segundo entre turnos.
+            while (vidaHeroe > 0 && vidaEnemigo > 0) {
+                /* ----------ATAQUE DEL HÉROE---------- */
+                //voy a crear esta variable temporal para almacenar el daño que hace el enemigo o el héroe, 
+                // para poder mostrarlo en el mensaje de ataque.
+                int DanoTemporal;
+                //calculo posibles modificadores de daño por objetos del inventario, 
+                // comprobando si el héroe tiene algún anillo de ataque.
+                // Por cada anillo de ataque, el daño aumenta un 50% acumulativo.
+                int modificadorAtaque = 1;
+                for (String objeto : inventario) {
+                    if (objeto.equals(INVENTARIO_ANILLO_ATAQUE)) {
+                        modificadorAtaque *= 0.5;
                     }
-                    break;
+                }
+                //redondeo usando el casting (int) y muestro el daño que hace el héroe al enemigo.
+                DanoTemporal = (int) (DANIO_ESPADA * modificadorAtaque);
+                System.out.println("\n¡" + nombre + " ataca al " + nombreEnemigo + " con la espada y le hace " + DanoTemporal + " de daño!");
+                vidaEnemigo -= DanoTemporal;
+                //Comprobamos si el enemigo ha muerto, para mostrar un mensaje de victoria y que suelte un objeto.
+                if (vidaEnemigo < 0) {
+                    System.out.println("\n¡" + nombre + " ha derrotado al " + nombreEnemigo + "! El enemigo suelta un objeto.");
+                    //El enemigo suelta un objeto al azar, en base a las probabilidades definidas en el array lootProbabilidades.
+                    int lootRandom = aleatorio.nextInt(100) + 1;
+                    //Recorremos el array de probabilidades acumuladas para determinar qué objeto suelta el enemigo.
+                    for (int i = 0; i < lootProbabilidades.length; i++) {
+                        if (lootRandom <= lootProbabilidades[i]) {
+                            String objetoLoot = loot[i];
+                            inventario.add(objetoLoot);
+                            System.out.println("¡Has conseguido un " + objetoLoot + "! Se añade a tu inventario.");
+                            //una vez eoncontrado el objeto, salimos del bucle for, para no añadir más objetos.
+                            break;
+                        }
+                    }
+                }else {
+                    // Si no ha muerto, mostramos su vida restante y es el turno del enemigo.
+                    System.out.println("Vida del " + nombreEnemigo + ": " + vidaEnemigo + " HP");
+                    /* ----------ATAQUE DEL ENEMIGO---------- */
+                    //calculo posibles modificadores de defensa por objetos del inventario,
+                    // comprobando si el héroe tiene algún anillo de defensa.
+                    // Por cada anillo de defensa, la efectividad del escudo aumenta un 50% acumulativo.
+                    int modificadorDefensa = 1;
+                    for (String objeto : inventario) {
+                        if (objeto.equals(INVENTARIO_ANILLO_DEFENSA)) {
+                            modificadorDefensa *= 0.5;
+                        }
+                    }
+                    DanoTemporal = (int) (danoEnemigo * modificadorDefensa);
+                    System.out.println("\n¡El " + nombreEnemigo + " ataca a " + nombre + " y le hace " + DanoTemporal + " de daño!");
+                }
 
-                case 2:
-                    System.out.println("Prudente... prefieres no arriesgar tu pellejo hoy.");
-                    break;
-
-                default:
-                    System.out.println("Te quedas mirando el cofre tanto tiempo que un murciélago te golpea.");
-                    vida -= 5;
-                    break;
+                // En este punto, tanto el héroe como el enemigo han completado sus ataques.
+                // Dejamos que pase un segundo e iteramos el bucle.
+                Thread.sleep(TIEMPO_ESPERA);
             }
-        }
+            
+            //En este punto se ha roto por fin el bucle de rondas de combate. 
+            // Como dentro controlamos si ele enemigo muere, quiere decir que en este punto, 
+            // el héroe ha derrotado al enemigo y hemos mostrado el mensaje de victoria y le hemos dado la recompensa, 
+            // o el héroe ha muerto. COmprobamos si está vivo, para darle las opciones al jugador
+            if (vidaHeroe>0) {
+                System.out.println("Qué quieres hacer?");
+                //recorremos las posibles opciones
+                
 
+            }
+           
+        }while (vidaHeroe > 0 && !seHaRetirado);
+
+        // Se cierra el Scanner porque ya no se necesitan más datos del teclado.
+        sc.close();
     }
-
 }
