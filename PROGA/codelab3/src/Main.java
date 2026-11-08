@@ -68,11 +68,6 @@ public class Main {
         final int VIDA_TRASGO = 50;
         final int VIDA_TROLL = 100;
         final int ENEMIGO_TRASGO = 1;
-        //modificamos las opciones del menú como habíamos especificado en el enunciado, 
-        // para que el jugador pueda elegir entre beber poción, continuar sin beber poción o retirarse.
-        final int ACCION_POCION = 1;
-        final int ACCION_SIN_POCION = 2;
-        final int ACCION_RETIRARSE = 3;
         // Pongo aquí las constantes de los objetos del inventario, para que sea más fácil de modificar y mantener el código.
         final String INVENTARIO_POCION = "Poción de curación";
         final String INVENTARIO_ESPADA = "Espada";
@@ -107,6 +102,7 @@ public class Main {
         // Como no podemos usar pociones, me pareció lo más sencillo usar una variable para controlar
         // el número de pociones que tiene el héroe, en lugar de contar cuántas hay en el inventario.
         int pocionesHeroe = 2;
+        int contadorEnemigos = 0;
    
         //he movido aquí también la declaración de las variables del enemigo, para que sea más fácil de modificar y mantener el código.
         int enemigo;
@@ -120,13 +116,13 @@ public class Main {
         System.out.println("       BIENVENIDO AL REINO DE JAVA THE HUT       ");
         System.out.println("=================================================");
         System.out.print("Introduce el nombre de tu héroe: ");
-        String nombre = sc.nextLine();
+        String nombreHeroe = sc.nextLine();
 
         // La dificultad cambia el número de pociones; la vida inicial es la misma.
 
 
         // Este contador aumenta cuando el héroe sobrevive al ataque del enemigo.
-        int enemigosDerrotados = 0;
+        
         boolean seHaRetirado = false;
 
         //Aquí imprimía la ficha, pero lo he movido al final del bucle, para que se vea la ficha actualizada después de cada turno.
@@ -140,8 +136,8 @@ public class Main {
         do {
 
             /* ----------FICHA DEL HÉROE---------- */
-            System.out.println("\n+|=========> FICHA DEL HÉROE <=========|+");
-            System.out.println("Nombre: " + nombre);
+            System.out.println("\n=========== FICHA DEL HÉROE ===========");
+            System.out.println("Nombre: " + nombreHeroe);
             System.out.println("Salud: " + vidaHeroe + " HP");
             System.out.println("Inventario: ");
             for (String objeto : inventario) {
@@ -181,11 +177,12 @@ public class Main {
                 }
                 //redondeo usando el casting (int) y muestro el daño que hace el héroe al enemigo.
                 DanoTemporal = (int) (DANIO_ESPADA * modificadorAtaque);
-                System.out.println("\n¡" + nombre + " ataca al " + nombreEnemigo + " con la espada y le hace " + DanoTemporal + " de daño!");
+                System.out.println("\n¡" + nombreHeroe + " ataca al " + nombreEnemigo + " con la espada y le hace " + DanoTemporal + " de daño!");
                 vidaEnemigo -= DanoTemporal;
                 //Comprobamos si el enemigo ha muerto, para mostrar un mensaje de victoria y que suelte un objeto.
                 if (vidaEnemigo < 0) {
-                    System.out.println("\n¡" + nombre + " ha derrotado al " + nombreEnemigo + "! El enemigo suelta un objeto.");
+                    contadorEnemigos++;
+                    System.out.println("\n¡" + nombreHeroe + " ha derrotado al " + nombreEnemigo + "! El enemigo suelta un objeto.");
                     //El enemigo suelta un objeto al azar, en base a las probabilidades definidas en el array lootProbabilidades.
                     int lootRandom = aleatorio.nextInt(100) + 1;
                     //Recorremos el array de probabilidades acumuladas para determinar qué objeto suelta el enemigo.
@@ -193,7 +190,9 @@ public class Main {
                         if (lootRandom <= lootProbabilidades[i]) {
                             String objetoLoot = loot[i];
                             inventario.add(objetoLoot);
-                            System.out.println("¡Has conseguido un " + objetoLoot + "! Se añade a tu inventario.");
+                            System.out.println("¡Has conseguido " + objetoLoot + "! Se añade a tu inventario.");
+                            //Controlamos si el objeto es una poción para incrementar el contador de pociones
+                            if(objetoLoot==INVENTARIO_POCION) pocionesHeroe++;
                             //una vez eoncontrado el objeto, salimos del bucle for, para no añadir más objetos.
                             break;
                         }
@@ -205,14 +204,15 @@ public class Main {
                     //calculo posibles modificadores de defensa por objetos del inventario,
                     // comprobando si el héroe tiene algún anillo de defensa.
                     // Por cada anillo de defensa, la efectividad del escudo aumenta un 50% acumulativo.
-                    int modificadorDefensa = 1;
+                    int modificadorDefensa = DEFENSA_ESCUDO;
                     for (String objeto : inventario) {
                         if (objeto.equals(INVENTARIO_ANILLO_DEFENSA)) {
                             modificadorDefensa *= 0.5;
                         }
                     }
-                    DanoTemporal = (int) (danoEnemigo * modificadorDefensa);
-                    System.out.println("\n¡El " + nombreEnemigo + " ataca a " + nombre + " y le hace " + DanoTemporal + " de daño!");
+                    DanoTemporal = (int) (danoEnemigo - modificadorDefensa);
+                    System.out.println("\n¡El " + nombreEnemigo + " ataca a " + nombreHeroe + " y le hace " + DanoTemporal + " de daño!");
+                    System.out.println("Vida de " + nombreHeroe + ": " + vidaHeroe + " HP");
                 }
 
                 // En este punto, tanto el héroe como el enemigo han completado sus ataques.
@@ -220,19 +220,50 @@ public class Main {
                 Thread.sleep(TIEMPO_ESPERA);
             }
             
-            //En este punto se ha roto por fin el bucle de rondas de combate. 
+            // En este punto se ha roto por fin el bucle de rondas de combate. 
             // Como dentro controlamos si ele enemigo muere, quiere decir que en este punto, 
             // el héroe ha derrotado al enemigo y hemos mostrado el mensaje de victoria y le hemos dado la recompensa, 
             // o el héroe ha muerto. COmprobamos si está vivo, para darle las opciones al jugador
+            /* ----------OPCIONES---------- */
             if (vidaHeroe>0) {
+                // Si sigue vivo, planteamos las opciones
                 System.out.println("Qué quieres hacer?");
-                //recorremos las posibles opciones
-                
-
-            }
-           
+                System.out.println(">1. Retirarte");
+                System.out.println(">2. Continuar sin usar poción");
+                // Si aun tiene pociones, añadimos la tercera opción de usar y continuar
+                if (pocionesHeroe>0) System.out.println(">3. Continuar usando una poción");
+                //recogemos la opciçon del usuario
+                String opcionSeleccionada = sc.nextLine();
+                while (opcionSeleccionada!= "1" && opcionSeleccionada!= "2" && opcionSeleccionada!= "3"){
+                    System.out.println("Opción inválida! Inténtalo de nuevo");
+                    opcionSeleccionada = sc.nextLine();
+                }
+                //marcamos seHaRetirado en función del valor elegido
+                seHaRetirado= (opcionSeleccionada=="1"); 
+                //si se quiere retirar (opción 2) no hay que hacer nada, salimos del bucle y punto
+                //pero si la opción es 3, bebemos antes la poción
+                if (opcionSeleccionada=="3") {
+                    // primero buscamos una poción en el arrayList de inventario y la eliminamos
+                    // y reducimos el contador de pociones disponibles
+                    inventario.remove(INVENTARIO_POCION);
+                    pocionesHeroe--;
+                    //y luego curamos al personaje
+                    vidaHeroe+= CURACION_POCION;
+                }
+            }   
         }while (vidaHeroe > 0 && !seHaRetirado);
-
+        
+        /* ----------MENSAJES DE FIN DE PARTIDA---------- */
+        //Mostramos mensajes de fin de partida
+        //TODO: Dejar bonito
+        if(vidaHeroe<=0){
+            System.out.println(nombreHeroe+" ha sido derrotado!");
+        }else{
+            System.out.println(nombreHeroe+" ha escapado con vida!");
+        }
+        //TODO: Dejar bonito
+        System.out.println("Enemigos derrotados:"+contadorEnemigos);
+        System.out.println("---------- GAME OVER --------------");
         // Se cierra el Scanner porque ya no se necesitan más datos del teclado.
         sc.close();
     }
