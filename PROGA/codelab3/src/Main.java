@@ -1,4 +1,46 @@
 
+/*
+ * Codelab 3 - Arrays y ArrayLists
+ * Fecha: 11-11-2026
+ * Autor: Sergio Montes
+ * En el codelab de hoy centraremos la atención en el uso de arrays y ArrayLists,
+ * que ya habéis visto a nivel teórico, pondremos en práctica connuestro juego de rol.
+ * Qué haremos en esta sesión:
+ *  * Ahora los enemigos tendrán puntos de vida y el héroe podrá atacarlos.
+ *  * Tendremos dos bucles en la aventura: 
+ *  * * - Un bucle principal que representa la aventura, donde el héroe se enfrenta a enemigos.
+ *  * * - Un bucle secundario que representa el combate con un enemigo, donde
+ *  *   el héroe y el enemigo se atacan hasta que uno de los dos pierde toda su vida.
+ *  * (Para simplifcar, automáticamente el héroe atacará primero y luego el enemigo, con una esperade un segundo entre turnos
+ *  y así sucesivamente).
+ * 
+ *  * Vamos a añadir un sistema de inventario (mochila) para el héroe, que le permitirá recoger objetos durante la aventura.
+ *  * Para ello, vamos a crear un ArrayList<String> que representará el inventario.
+ *  * El héroe empezará con los siguientes objetos:
+ *  * * - 2 x pociones de curación: restauran toda la vida.
+ *  * * - 1 x espada. La espada hace 25 de daño.
+ *  * * - 1 x escudo. Reduce el daño recibido en 10 puntos.
+ *  * (Aquí la espada y el escudo son objetos que no se pueden perder, pero las pociones sí. La mostraremos como elementos 
+ *  del inventario, pero a nivel de "stats", tanto ataque como defensa serán constantes, por simplicidad).
+ * 
+ *  * Cada vez que el héroe derrota a un enemigo, éste soltará un objeto al azar en base a un porcentaje de probabilidad: 
+ *  * * - (50%) Poción de curación: restaura toda la vida.
+ *  * * - (25%) Anillo de defensa: aumenta la efectividad del escudo en un 50% (acumulativo).
+ *  * * - (20%) Anillo de ataque: aumenta la efectividad de la espada en un 50% (acumulativo).
+ *  * * - (5%) Amuleto de resurrección: si el héroe muere, revive con 100 de vida, pero se pierde todo el inventario.
+ *  * Ésta lista de elementos, y los elementos iniciales, los manejaremos con un ArrayList.
+ *  * Con esto deberíamos apreciar la diferencia principal entre un array (tamaño fijo) y un ArrayList (tamaño dinámico).
+ *  * Una vez que el héroe derrota a un enemigo, informamos del objeto encuontrado, que pasa a su inventario,
+ *  y mostramos la ficha del héroe, incluyendo ahora el inventario. 
+ * 
+ *  * Y ahora sí le daremos opciones al jugador:
+ *  * * - Beber una poción de curación (si tiene alguna) y continuar la aventura.
+ *  * * - Continuar la aventura sin beber poción.
+ *  * * - Completar la aventura y salir vivo de la mazmorra.
+ * 
+ *  * Al final de la aventura mostraremos un recuento de los enemigos derrotados y si el héroe sobrevivió.
+ */
+
 
 import java.util.ArrayList;
 import java.util.Random;
