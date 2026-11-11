@@ -4,34 +4,41 @@
  * Fecha: 11-11-2026
  * Autor: Sergio Montes
  * En el codelab de hoy centraremos la atención en el uso de arrays y ArrayLists,
- * que ya habéis visto a nivel teórico, pondremos en práctica connuestro juego de rol.
+ * que ya habéis visto a nivel teórico, y lo pondremos en práctica con nuestro juego.
  * Qué haremos en esta sesión:
- *  * Vamos a complicar bastante la cosa, así que vamos a eliminar la elección de dificultad.
+ *  * Como vamos a añadir cierta complejidad, 
+ *  * vamos a eliminar la elección de dificultad, para simplificar.
+ * 
  *  * Ahora los enemigos tendrán puntos de vida y el héroe podrá atacarlos.
  *  * Tendremos dos bucles en la aventura: 
  *  * * - Un bucle principal que representa la aventura, donde el héroe se enfrenta a enemigos.
  *  * * - Un bucle secundario que representa el combate con un enemigo, donde
  *  *   el héroe y el enemigo se atacan hasta que uno de los dos pierde toda su vida.
- *  * (Para simplifcar, automáticamente el héroe atacará primero y luego el enemigo, con una esperade un segundo entre turnos
- *  y así sucesivamente).
+ *  * (Para simplifcar, automáticamente el héroe atacará primero y luego el enemigo, 
+ *  * con una espera de un segundo entre turnos y así sucesivamente).
  * 
- *  * Vamos a añadir un sistema de inventario (mochila) para el héroe, que le permitirá recoger objetos durante la aventura.
+ *  * Vamos a añadir un sistema de inventario (mochila) para el héroe,
+ *  * que le permitirá recoger objetos durante la aventura.
  *  * Para ello, vamos a crear un ArrayList<String> que representará el inventario.
  *  * El héroe empezará con los siguientes objetos:
- *  * * - 2 x pociones de curación: restauran toda la vida.
+ *  * * - 2 x pociones de curación: restauran puntos de vida.
  *  * * - 1 x espada. La espada hace 25 de daño.
  *  * * - 1 x escudo. Reduce el daño recibido en un 25%.
- *  * (Aquí la espada y el escudo son objetos que no se pueden perder, pero las pociones sí. La mostraremos como elementos 
- *  del inventario, pero a nivel de "stats", tanto ataque como defensa serán constantes, por simplicidad).
+ *  * (Aquí la espada y el escudo son objetos que no se pueden perder, pero las pociones sí. 
+ *  * La mostraremos como elementos del inventario, pero a nivel de "stats", 
+ *  * tanto ataque como defensa serán constantes, por simplicidad).
  * 
- *  * Cada vez que el héroe derrota a un enemigo, éste soltará un objeto al azar en base a un porcentaje de probabilidad: 
+ *  * Cada vez que el héroe derrota a un enemigo, éste soltará un objeto al azar
+ *  * en base a un porcentaje de probabilidad: 
  *  * * - (50%) Poción de curación: restaura toda la vida.
  *  * * - (25%) Anillo de defensa: aumenta la efectividad del escudo en un 50% (acumulativo).
  *  * * - (25%) Anillo de ataque: aumenta la efectividad de la espada en un 50% (acumulativo).
- *  * Ésta lista de elementos, y los elementos iniciales, los manejaremos con un ArrayList.
- *  * Con esto deberíamos apreciar la diferencia principal entre un array (tamaño fijo) y un ArrayList (tamaño dinámico).
- *  * Una vez que el héroe derrota a un enemigo, informamos del objeto encuontrado, que pasa a su inventario,
- *  y mostramos la ficha del héroe, incluyendo ahora el inventario. 
+ *  * Ésta lista de elementos, y los elementos iniciales, los manejaremos con un Array.
+ * 
+ *  * Con esto deberíamos apreciar la diferencia principal entre un array (tamaño fijo)
+ *  * y un ArrayList (tamaño dinámico).
+ *  * Una vez que el héroe derrota a un enemigo, informamos del objeto encontrado, 
+ *  * que pasa a su inventario, y mostramos la ficha del héroe, incluyendo ahora el inventario. 
  * 
  *  * Y ahora sí le daremos opciones al jugador:
  *  * * - Beber una poción de curación (si tiene alguna) y continuar la aventura.
@@ -54,7 +61,8 @@ public class Main {
     // Como no habéis visto aun try catch, lo resolvemos así por ahora.
     public static void main(String[] args) throws InterruptedException {
 
-        //He metido también unos colores para los mensajes, para que sea más legible el resultado en la terminal
+        //He metido también unos colores para los mensajes, 
+        // para que sea más legible el resultado en la terminal
         final String COLOR_INFORMATIVO = "\u001B[37m";
         final String COLOR_OPCIONES = "\u001B[33m";
         final String COLOR_JUGADOR = "\u001B[32m";
@@ -65,30 +73,37 @@ public class Main {
         final int VIDA_MAXIMA = 100;
         final int CURACION_POCION = 50;
         final int DANIO_ESPADA = 25;
-        // Lo pongo como 0.25 porque los porcentajes, al multiplicar se expresan como fracciones de 1 y no de 100
-        // es decir, el 100% de 20 es 20x1, no 20x100, y el 50% de 20 sería 20x0.25
+        // Lo pongo como 0.25 porque los porcentajes, 
+        // al multiplicar se expresan como fracciones de 1 y no de 100
+        // es decir, el 100% de 20 es 20x1, no 20x100, y el 50% de 20 sería 20x0.20
         final double DEFENSA_ESCUDO = 0.25;
-        //como estamos complicando mucho la cosa, vamos a definir el daño de los enemigos como constantes, 
+        //como estamos complicando mucho la cosa, vamos a definir el daño
+        //  de los enemigos como constantes, 
         // para que sea más fácil de modificar, y eliminamos las costantes para la dificultad.
         final int DANIO_TRASGO = 20;
         final int DANIO_TROLL = 30;
         final int VIDA_TRASGO = 50;
         final int VIDA_TROLL = 80;
         final int ENEMIGO_TRASGO = 1;
-        // Pongo aquí las constantes de los objetos del inventario, para que sea más fácil de modificar y mantener el código.
+        final String NOMBRE_TRASGO = "Trasgo";
+        final String NOMBRE_TROLL = "Troll";
+        // Pongo aquí las constantes de los objetos del inventario, 
+        // para que sea más fácil de modificar y mantener el código.
         final String INVENTARIO_POCION = "Poción de curación";
         final String INVENTARIO_ESPADA = "Espada";
         final String INVENTARIO_ESCUDO = "Escudo";
         final String INVENTARIO_ANILLO_DEFENSA = "Anillo de defensa";
-        final String INVENTARIO_ANILLO_ATAQUE = "Anillo de ataque";
+        final String INVENTARIO_ANILLO_ATAQUE = "Anillo de mágico de la muerte";
         // Por qué 1.5 en lugar de poner 50 (en porcentaje) o 0.5?
         // Porque lo voy a usar como multiplicador. Lo entederéis mejor cuando lo veáis implementado
         final double INCREMENTO_ANILLO_DEFENSA = 1.5;
         final double INCREMENTO_ANILLO_ATAQUE = 1.5;
-        //Aquí definimos los arrays de inventario y loot, que nos servirán para manejar los objetos del juego.
+        //Aquí definimos los arrays de inventario y loot, 
+        // que nos servirán para manejar los objetos del juego.
         final String[] inventarioInicial = {INVENTARIO_POCION,INVENTARIO_POCION, INVENTARIO_ESPADA, INVENTARIO_ESCUDO};
         final String[] loot = {INVENTARIO_POCION, INVENTARIO_ANILLO_DEFENSA, INVENTARIO_ANILLO_ATAQUE};
-        // Probabilidades de loot en porcentaje. Podría metarlas como constantes, pero para simplificar, las dejo aquí.
+        // Probabilidades de loot en porcentaje. 
+        // Podría metarlas como constantes, pero para simplificar, las dejo aquí.
         // En lugar de guardar las probabilidades en sí, guardo los valores acumulados, 
         // para que sea más fácil de calcular el loot al derrotar a un enemigo.
         final int[] lootProbabilidades = {50, 75, 100}; 
@@ -115,10 +130,11 @@ public class Main {
         int contadorEnemigos = 0;
    
         //he movido aquí también la declaración de las variables del enemigo, para que sea más fácil de modificar y mantener el código.
-        int enemigo;
+        int tipoEnemigo; //1 si es trasgo, 2 si es troll
         String nombreEnemigo;
         int danoEnemigo;
         int vidaEnemigo;
+        
 
         Scanner sc = new Scanner(System.in);
         Random aleatorio = new Random();
@@ -127,13 +143,7 @@ public class Main {
         System.out.println(COLOR_INFORMATIVO + "=================================================");
         System.out.print(COLOR_INFORMATIVO + "Introduce el nombre de tu héroe: ");
         String nombreHeroe = sc.nextLine();
-
-        // La dificultad cambia el número de pociones; la vida inicial es la misma.
-
-
-        // Este contador aumenta cuando el héroe sobrevive al ataque del enemigo.
         
-        boolean seHaRetirado = false;
 
         //Aquí imprimía la ficha, pero lo he movido al final del bucle, para que se vea la ficha actualizada después de cada turno.
         //Ahora es una aventura, no una batalla!
@@ -143,8 +153,11 @@ public class Main {
         /* El bucle principal de la aventura. Se repite hasta que el héroe se retira o muere. 
          * He cambiado el bucle while por un do-while, para que al menos se ejecute una vez.
          */
-        do {
 
+        // Esta variable es para controlar si el jugador se ha retirado o no, 
+        // que es lo que controlamos en el do-while
+        boolean seHaRetirado = false;
+        do {
             /* ----------FICHA DEL HÉROE---------- */
             System.out.println(COLOR_INFORMATIVO + "\n=========== FICHA DEL HÉROE ===========");
             System.out.println(COLOR_INFORMATIVO + "Nombre: " + nombreHeroe);
@@ -154,14 +167,14 @@ public class Main {
                 System.out.println(COLOR_INFORMATIVO + "- " + objeto);
             }
 
-            /* ----------Selección del seiguiente enemigo.---------- */
-            enemigo = aleatorio.nextInt(2) + 1;
-            if (enemigo == ENEMIGO_TRASGO) {
-                nombreEnemigo = "Trasgo";
+            /* ----------Selección del siguiente enemigo.---------- */
+            tipoEnemigo = aleatorio.nextInt(2) + 1;
+            if (tipoEnemigo == ENEMIGO_TRASGO) {
+                nombreEnemigo = NOMBRE_TRASGO;
                 danoEnemigo = DANIO_TRASGO;
                 vidaEnemigo = VIDA_TRASGO;
             } else {
-                nombreEnemigo = "Troll";
+                nombreEnemigo = NOMBRE_TROLL;
                 danoEnemigo = DANIO_TROLL;
                 vidaEnemigo = VIDA_TROLL;
             }
@@ -170,12 +183,14 @@ public class Main {
 
             /* ----------COMBAT LOOP---------- */
             // El bucle de combate se repite hasta que el héroe o el enemigo pierden toda su vida.
-            //Ataca el héroe primero, luego el enemigo, y así sucesivamente. Se espera un segundo entre turnos.
+            //Ataca el héroe primero, luego el enemigo, y así sucesivamente. 
+            // Se espera un segundo entre turnos.
             while (vidaHeroe > 0 && vidaEnemigo > 0) {
                 /* ----------ATAQUE DEL HÉROE---------- */
-                //voy a crear esta variable temporal para almacenar el daño que hace el enemigo o el héroe, 
+                //voy a crear esta variable temporal para almacenar el daño 
+                // que hace el enemigo o el héroe, 
                 // para poder mostrarlo en el mensaje de ataque.
-                int DanoTemporal;
+                int DanoTemporal = DANIO_ESPADA;
                 //calculo posibles modificadores de daño por objetos del inventario, 
                 // comprobando si el héroe tiene algún anillo de ataque.
                 // Por cada anillo de ataque, el daño aumenta un 50% acumulativo.
@@ -184,30 +199,36 @@ public class Main {
                     if (objeto.equals(INVENTARIO_ANILLO_ATAQUE)) {
                         //véis, aquí al ser INCREMENTO_ANILLO_ATAQUE un 50%, 
                         // cada uno de ellos en el inventario multiplicaría el daño por 1,5.
-                        // por ejemplo, si tuviera 2 anillos de ataque, el multiplicador de daño sería:
+                        // por ejemplo, si tuviera 2 anillos de ataque, 
+                        // el multiplicador de daño sería:
                         // 1x1.5x1.5 = 2,25.
                         modificadorAtaque *= INCREMENTO_ANILLO_ATAQUE;
                     }
                 }
                 //redondeo usando el casting (int) y muestro el daño que hace el héroe al enemigo.
-                DanoTemporal = (int) (DANIO_ESPADA * modificadorAtaque);
+                DanoTemporal = (int) (DanoTemporal *  modificadorAtaque);
                 System.out.println(COLOR_JUGADOR + "\n¡" + nombreHeroe + " ataca al " + nombreEnemigo + " con la espada y le hace " + DanoTemporal + " de daño!");
                 vidaEnemigo -= DanoTemporal;
-                //Comprobamos si el enemigo ha muerto, para mostrar un mensaje de victoria y que suelte un objeto.
+                //Comprobamos si el enemigo ha muerto, para mostrar un 
+                // mensaje de victoria y que suelte un objeto.
                 if (vidaEnemigo <= 0) {
                     contadorEnemigos++;
                     System.out.println(COLOR_JUGADOR + "\n¡" + nombreHeroe + " ha derrotado al " + nombreEnemigo + "! El enemigo suelta un objeto.");
-                    //El enemigo suelta un objeto al azar, en base a las probabilidades definidas en el array lootProbabilidades.
+                    //El enemigo suelta un objeto al azar, en base a las probabilidades 
+                    // definidas en el array lootProbabilidades.
                     int lootRandom = aleatorio.nextInt(100) + 1;
-                    //Recorremos el array de probabilidades acumuladas para determinar qué objeto suelta el enemigo.
+                    //Recorremos el array de probabilidades acumuladas para 
+                    // determinar qué objeto suelta el enemigo.
                     for (int i = 0; i < lootProbabilidades.length; i++) {
                         if (lootRandom <= lootProbabilidades[i]) {
                             String objetoLoot = loot[i];
                             inventario.add(objetoLoot);
                             System.out.println(COLOR_INFORMATIVO + "¡Has conseguido " + objetoLoot + "! Se añade a tu inventario.");
-                            //Controlamos si el objeto es una poción para incrementar el contador de pociones
+                            //Controlamos si el objeto es una poción para 
+                            // incrementar el contador de pociones
                             if(objetoLoot==INVENTARIO_POCION) pocionesHeroe++;
-                            //una vez encontrado el objeto, salimos del bucle for, para no añadir más objetos.
+                            //una vez encontrado el objeto, salimos del bucle for, 
+                            // para no añadir más objetos.
                             break;
                         }
                     }
@@ -225,7 +246,8 @@ public class Main {
                         }
                     }
                     DanoTemporal = (int) (danoEnemigo / modificadorDefensa);
-                    //Aquí hago este Math.max para que nunca esté por debajo de 0, que queda feo "vida del Héroe: -4", por ejemplo.
+                    //Aquí hago este Math.max para que nunca esté por debajo de 0, 
+                    // que queda feo "vida del Héroe: -4", por ejemplo.
                     vidaHeroe= Math.max(0, vidaHeroe-DanoTemporal);
                     System.out.println(COLOR_ENEMIGO + "\n¡El " + nombreEnemigo + " ataca a " + nombreHeroe + " y le hace " + DanoTemporal + " de daño!");
                     System.out.println(COLOR_ENEMIGO + "Vida de " + nombreHeroe + ": " + vidaHeroe + " HP");
@@ -238,7 +260,8 @@ public class Main {
             
             // En este punto se ha roto por fin el bucle de rondas de combate. 
             // Como dentro controlamos si ele enemigo muere, quiere decir que en este punto, 
-            // el héroe ha derrotado al enemigo y hemos mostrado el mensaje de victoria y le hemos dado la recompensa, 
+            // el héroe ha derrotado al enemigo y hemos mostrado 
+            // el mensaje de victoria y le hemos dado la recompensa, 
             // o el héroe ha muerto. COmprobamos si está vivo, para darle las opciones al jugador
             /* ----------OPCIONES---------- */
             if (vidaHeroe>0) {
@@ -287,11 +310,11 @@ public class Main {
  * Ejercicios propuestos:
  * - Añadir un arrayList de enemigos derrotados. Al final del juego, que muestre la lista de enemigos derrotados.
  *      Ya no necesitaríamos el contadorEnemigos.
- * - Añadir otro elemento al array de pposible loot: UN amauleto de resurrección.
+ * - Añadir otro elemento al array de posible loot: Un amuleto de resurrección.
  *    Las probabilidades de loot quedarían: 
-        final int[] lootProbabilidades = {50, 75, 95}; 
+        final int[] lootProbabilidades = {50, 75, 95, 100}; 
         Si el personaje es dorratado pero tiene el amuleto de resurrección:
         Vuelve a la vida con el máximo de vida, pero pierde todo el inventario
         (que aparezca un mensaje chulo con un color especial cuando pase!)
- * Y para la próxima: Try/catch (ya queda poco para poder usar funciones y clases!!!)
+ * Y para la próxima: Funciones+Try/catch!
  */
