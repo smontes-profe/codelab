@@ -6,4 +6,11 @@ public class Trasgo extends Enemigo {
     public Trasgo() {
         super(NOMBRE_STR, VIDA, DANIO);
     }
+
+    @Override
+    public void atacarADistancia(Personaje objetivo) {
+        System.out.printf(" ¡El %s lanza una piedra a %s y le hace %d de daño!%n",
+                getNombre(), objetivo.getNombre(), DANIO);
+        objetivo.recibirDanio(DANIO);
+    }
 }

@@ -25,9 +25,6 @@ public abstract class Personaje {
     }
 
     public void mostrarFicha() {
-        // Podríamos habernos ahorrado tener la propiedad "clase" usando esto:
-        // System.out.println("Personaje: " + nombre + " (" + getClass().getSimpleName() + ")");
-        // pero no estaba seguro de si lo habíais visto
         System.out.println("┌──────────────  FICHA DEL HÉROE ──────────────┐");
         System.out.println("   " + nombre + " — " + profesion);
         System.out.println("    Vida: " + vida + "/" + vidaMaxima);
@@ -37,9 +34,6 @@ public abstract class Personaje {
     }
     
     public void atacar(Enemigo objetivo) {
-        //Ya hemos usado esta forma de emplear printf
-        //cada "%loquesea" se reempleza por la variable que le corresponde por orden
-        //%s para Strings, %n para Numbers
         System.out.printf(" %s golpea a %s y le hace %d de daño.%n",
                 nombre, objetivo.getNombre(), danio);
         objetivo.recibirDanio(danio);

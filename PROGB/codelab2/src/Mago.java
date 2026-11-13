@@ -9,16 +9,12 @@ public class Mago extends Personaje {
         super(nombre,CLASE_STRING, VIDA_MAXIMA, DANIO);
     }
 
-    //De forma similar al Guerrero, sobreescribimos la clase atacar a distancia
     @Override
     public boolean atacarADistancia(Enemigo objetivo) {
-        // Pero a diferencia, del Guerrero, aquí lo resolvemos de otra forma
-        //en lugar de llamar a super, es más facil llamar a una propia, ya que super no hace nada
         usarMagia(objetivo);
         return true;
     }
     
-    //Y aquí aplicamos el daño de la magia con un mensajito dando ambientación
     private void usarMagia(Enemigo objetivo) {
         System.out.printf(" %s lanza un conjuro contra %s y le hace %d de daño.%n",
                 getNombre(), objetivo.getNombre(), DANIO_MAGIA);
