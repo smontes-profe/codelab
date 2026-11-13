@@ -1,80 +1,45 @@
+/*
+ * Cambios principales del juego:
+ * - Vamos a dejar todo más limpio y con buenas prácticas: 
+ *      -Main queda como punto de entrada
+ *      -GameLoop gestiona el flujo de las partidas.
+ *      -GameConfig contentrá todos los parámetros del juego.
+ *      -Añadimos JavaDoc a los métodos públicos.
+ * - Los mensajes de terminal usan colores según su tipo y pasan a gestionarse con ColorTerminal
+ * - El combate se resuelve automáticamente, con pausas entre turnos.
+ * - La aventura continúa sin límite de encuentros hasta la derrota o la retirada.
+ * - Vamos a centrarnos como "features" nuevas en Array y AarrayList, mediante la "mochila".
+ * - La mochila usa un ArrayList (puede variar su tamaño y contenido en el tiempo);
+ * - El equipo inicial y el loot posible se definen en arrays (son fijas y no cambian su tamaño).
+ * - Se puede usar un objeto de la mochila por encuentro: curación, ataque o defensa.
+ * - Los enemigos dejan loot y los efectos temporales terminan al acabar el encuentro.
+ */
+import java.util.Scanner;
+
 public class Main {
-    public static void main(String[] args) {
-        Guerrero guerrero = new Guerrero("Bruna", 100, 18);
-        Mago mago = new Mago("Izan", 75, 12);
 
-        System.out.println("=== ENCUENTRO CON EL GUARDIÁN ===");
-        resolverAtaque(guerrero);
-        resolverAtaque(mago);
-    }
-
-    private static void resolverAtaque(Personaje atacante) {
-        int danio = atacante.atacar();
-        System.out.println(atacante.getNombre() + " causa " + danio + " puntos de daño.");
-    }
-}
-
-class Personaje {
-    private final String nombre;
-    private int vida;
-
-    public Personaje(String nombre, int vida) {
-        this.nombre = nombre;
-        this.vida = vida;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void mostrarFicha() {
-        System.out.println(nombre + " | Vida: " + vida);
-    }
-
-    public void recibirDanio(int cantidad) {
-        if (cantidad > 0) {
-            vida = Math.max(0, vida - cantidad);
+    /**
+     * Inicia el juego y cierra la entrada estándar al terminar.
+     *
+     * @param args argumentos de línea de comandos (no se utilizan)
+     * @throws InterruptedException si se interrumpe una pausa durante el juego
+     */
+    public static void main(String[] args) throws InterruptedException {
+        try (Scanner scanner = new Scanner(System.in)) {
+            new GameLoop(scanner).run();
         }
     }
-
-    public int atacar() {
-        return 8;
-    }
 }
 
-class Guerrero extends Personaje {
-    private final int puntosArmadura;
-
-    public Guerrero(String nombre, int vida, int puntosArmadura) {
-        super(nombre, vida);
-        this.puntosArmadura = puntosArmadura;
-    }
-
-    public void mostrarArmadura() {
-        System.out.println(getNombre() + " tiene " + puntosArmadura + " puntos de armadura.");
-    }
-
-    @Override
-    public int atacar() {
-        return 20;
-    }
-}
-
-class Mago extends Personaje {
-    private int mana;
-
-    public Mago(String nombre, int vida, int mana) {
-        super(nombre, vida);
-        this.mana = mana;
-    }
-
-    public void meditar() {
-        mana += 10;
-        System.out.println(getNombre() + " medita y recupera mana. Mana: " + mana);
-    }
-
-    @Override
-    public int atacar() {
-        return 14;
-    }
-}
+/*
+ * Ejercicios propuestos:
+ * - Modificar el equipo inicial para que sea una poción de curación y otra de ataque,
+ *    en lugar de dos de curación.
+ * - Añadir un nuevo tipo de loot: anillo de resurrección.
+ * - Asignarle una probabilidad de un 5%, 
+ *    y las pociones pasarían a tener un 45% en lugar de un 50%
+ * - Efectos del anillo:
+ *    Si el usuario lo activa en un encuentro, 
+ *    y su personaje muere, el anillo lo resucita automáticamente, 
+ *    pero es destruido.
+ */
