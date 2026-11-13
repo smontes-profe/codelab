@@ -42,4 +42,6 @@ public class Main {
  *    Si el usuario lo activa en un encuentro, 
  *    y su personaje muere, el anillo lo resucita automáticamente, 
  *    pero es destruido.
+ * - Generar la documentación del proyecto usando este comando:
+ *   javadoc -d docs -encoding UTF-8 -charset UTF-8 -docencoding UTF-8 (Get-ChildItem .\src\*.java | ForEach-Object { $_.FullName })
  */
