@@ -1,4 +1,7 @@
 
+#javadocs
+docs/
+
 *.iml
 *.idea
 

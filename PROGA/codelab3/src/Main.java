@@ -21,15 +21,14 @@
  *  * que le permitirá recoger objetos durante la aventura.
  *  * Para ello, vamos a crear un ArrayList<String> que representará el inventario.
  *  * El héroe empezará con los siguientes objetos:
- *  * * - 2 x pociones de curación: restauran puntos de vida.
+ *  * * - 2 x pociones de curación: restauran 50 puntos de vida.
  *  * * - 1 x espada. La espada hace 25 de daño.
  *  * * - 1 x escudo. Reduce el daño recibido en un 25%.
  *  * (Aquí la espada y el escudo son objetos que no se pueden perder, pero las pociones sí. 
  *  * La mostraremos como elementos del inventario, pero a nivel de "stats", 
  *  * tanto ataque como defensa serán constantes, por simplicidad).
  * 
- *  * Cada vez que el héroe derrota a un enemigo, éste soltará un objeto al azar
- *  * en base a un porcentaje de probabilidad: 
+ *  * Cada vez que el héroe derrota a un enemigo, éste soltará un objeto al azar en base a un porcentaje de probabilidad: 
  *  * * - (50%) Poción de curación: restaura toda la vida.
  *  * * - (25%) Anillo de defensa: aumenta la efectividad del escudo en un 50% (acumulativo).
  *  * * - (25%) Anillo de ataque: aumenta la efectividad de la espada en un 50% (acumulativo).
@@ -82,13 +81,11 @@ public class Main {
         // para que sea más fácil de modificar, y eliminamos las costantes para la dificultad.
         final int DANIO_TRASGO = 20;
         final int DANIO_TROLL = 30;
+        final String NOMBRE_TROLL = "Troll";
         final int VIDA_TRASGO = 50;
         final int VIDA_TROLL = 80;
         final int ENEMIGO_TRASGO = 1;
-        final String NOMBRE_TRASGO = "Trasgo";
-        final String NOMBRE_TROLL = "Troll";
-        // Pongo aquí las constantes de los objetos del inventario, 
-        // para que sea más fácil de modificar y mantener el código.
+        // Pongo aquí las constantes de los objetos del inventario, para que sea más fácil de modificar y mantener el código.
         final String INVENTARIO_POCION = "Poción de curación";
         final String INVENTARIO_ESPADA = "Espada";
         final String INVENTARIO_ESCUDO = "Escudo";
@@ -98,9 +95,11 @@ public class Main {
         // Porque lo voy a usar como multiplicador. Lo entederéis mejor cuando lo veáis implementado
         final double INCREMENTO_ANILLO_DEFENSA = 1.5;
         final double INCREMENTO_ANILLO_ATAQUE = 1.5;
-        //Aquí definimos los arrays de inventario y loot, 
-        // que nos servirán para manejar los objetos del juego.
+        //Aquí definimos los arrays de inventario y loot, que nos servirán para manejar los objetos del juego.
         final String[] inventarioInicial = {INVENTARIO_POCION,INVENTARIO_POCION, INVENTARIO_ESPADA, INVENTARIO_ESCUDO};
+        // otra manera de declarar el Array, sería:
+        // final int[] inventarioInicial = new int[3];  //asignándole el tamaño
+        // pero no tiene mucho sentido si ya conozco el contenido, como es el caso.
         final String[] loot = {INVENTARIO_POCION, INVENTARIO_ANILLO_DEFENSA, INVENTARIO_ANILLO_ATAQUE};
         // Probabilidades de loot en porcentaje. 
         // Podría metarlas como constantes, pero para simplificar, las dejo aquí.
@@ -167,10 +166,10 @@ public class Main {
                 System.out.println(COLOR_INFORMATIVO + "- " + objeto);
             }
 
-            /* ----------Selección del siguiente enemigo.---------- */
-            tipoEnemigo = aleatorio.nextInt(2) + 1;
-            if (tipoEnemigo == ENEMIGO_TRASGO) {
-                nombreEnemigo = NOMBRE_TRASGO;
+            /* ----------Selección del seiguiente enemigo.---------- */
+            enemigo = aleatorio.nextInt(2) + 1;
+            if (enemigo == ENEMIGO_TRASGO) {
+                nombreEnemigo = "Trasgo";
                 danoEnemigo = DANIO_TRASGO;
                 vidaEnemigo = VIDA_TRASGO;
             } else {
@@ -316,5 +315,5 @@ public class Main {
         Si el personaje es dorratado pero tiene el amuleto de resurrección:
         Vuelve a la vida con el máximo de vida, pero pierde todo el inventario
         (que aparezca un mensaje chulo con un color especial cuando pase!)
- * Y para la próxima: Funciones+Try/catch!
+ * Y para la próxima: Try/catch (ya queda poco para poder usar funciones y clases!!!)
  */
