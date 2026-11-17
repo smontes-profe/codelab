@@ -29,7 +29,7 @@
  *  * tanto ataque como defensa serán constantes, por simplicidad).
  * 
  *  * Cada vez que el héroe derrota a un enemigo, éste soltará un objeto al azar en base a un porcentaje de probabilidad: 
- *  * * - (50%) Poción de curación: restaura toda la vida.
+ *  * * - (50%) Poción de curación: restaura 50 puntos de vida.
  *  * * - (25%) Anillo de defensa: aumenta la efectividad del escudo en un 50% (acumulativo).
  *  * * - (25%) Anillo de ataque: aumenta la efectividad de la espada en un 50% (acumulativo).
  *  * Ésta lista de elementos, y los elementos iniciales, los manejaremos con un Array.
@@ -85,6 +85,7 @@ public class Main {
         final int VIDA_TRASGO = 50;
         final int VIDA_TROLL = 80;
         final int ENEMIGO_TRASGO = 1;
+        final String NOMBRE_TRASGO = "Troll";
         // Pongo aquí las constantes de los objetos del inventario, para que sea más fácil de modificar y mantener el código.
         final String INVENTARIO_POCION = "Poción de curación";
         final String INVENTARIO_ESPADA = "Espada";
@@ -95,7 +96,7 @@ public class Main {
         // Porque lo voy a usar como multiplicador. Lo entederéis mejor cuando lo veáis implementado
         final double INCREMENTO_ANILLO_DEFENSA = 1.5;
         final double INCREMENTO_ANILLO_ATAQUE = 1.5;
-        //Aquí definimos los arrays de inventario y loot, que nos servirán para manejar los objetos del juego.
+        // Aquí definimos los arrays de inventario y loot, que nos servirán para manejar los objetos del juego.
         final String[] inventarioInicial = {INVENTARIO_POCION,INVENTARIO_POCION, INVENTARIO_ESPADA, INVENTARIO_ESCUDO};
         // otra manera de declarar el Array, sería:
         // final int[] inventarioInicial = new int[3];  //asignándole el tamaño
@@ -169,7 +170,7 @@ public class Main {
             /* ----------Selección del seiguiente enemigo.---------- */
             enemigo = aleatorio.nextInt(2) + 1;
             if (enemigo == ENEMIGO_TRASGO) {
-                nombreEnemigo = "Trasgo";
+                nombreEnemigo = NOMBRE_TRASGO;
                 danoEnemigo = DANIO_TRASGO;
                 vidaEnemigo = VIDA_TRASGO;
             } else {
@@ -315,5 +316,5 @@ public class Main {
         Si el personaje es dorratado pero tiene el amuleto de resurrección:
         Vuelve a la vida con el máximo de vida, pero pierde todo el inventario
         (que aparezca un mensaje chulo con un color especial cuando pase!)
- * Y para la próxima: Try/catch (ya queda poco para poder usar funciones y clases!!!)
+ * Y para la próxima: Funciones + Try/catch!
  */
