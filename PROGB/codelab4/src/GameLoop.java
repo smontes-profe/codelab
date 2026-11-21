@@ -39,7 +39,8 @@ public class GameLoop {
         ColorTerminal.INFORMACION.imprimirLinea("║             LEYENDAS DEL CÓDIGO      ║ ");
         ColorTerminal.INFORMACION.imprimirLinea("╚══════════════════════════════════════╝");
 
-        // Consultamos el ranking al empezar cada partida. Si falla, avisamos y dejamos jugar.
+        // Consultamos el ranking al empezar cada partida.
+        // Si falla, avisamos y dejamos jugar.
         try {
             ranking.mostrarRanking();
         } catch (SQLException e) {
@@ -122,14 +123,6 @@ public class GameLoop {
                 ColorTerminal.ENEMIGO.imprimirLinea(" ═══════════════ FIN DE LA AVENTURA ═══════════════ ☠️");
                 ColorTerminal.INFORMACION.imprimirLinea("Has sobrevivido a "
                         + (enfrentamientosSuperados - 1) + " enfrentamiento(s).");
-                // Si el personaje ha muerto, ya hemos salido antes; solo guardamos si sobrevive.
-                try {
-                    ranking.guardarRecord(jugador, miPersonaje.getNombre(), enfrentamientosSuperados);
-                    ColorTerminal.INFORMACION.imprimirLinea(" Tu resultado se ha guardado en el ranking.");
-                } catch (SQLException e) {
-                    ColorTerminal.ERROR.imprimirLinea(" No se ha podido guardar el resultado: " + e.getMessage());
-                }
-
                 return finDePartida();
             }
 
@@ -142,6 +135,14 @@ public class GameLoop {
             miPersonaje.mostrarFicha();
             ColorTerminal.INFORMACION.imprimirLinea("═══════════════  FIN DEL ENFRENTAMIENTO  ═══════════════");
             continuarAventura = decidirContinuacion(enfrentamientosSuperados);
+        }
+
+        // Solo guardamos si sobrevive. Misma jugada con el try/catch
+        try {
+            ranking.guardarRecord(jugador, miPersonaje.getNombre(), enfrentamientosSuperados);
+            ColorTerminal.INFORMACION.imprimirLinea(" ¡Record guardado!");
+        } catch (SQLException e) {
+            ColorTerminal.ERROR.imprimirLinea(" No se ha podido guardar el record: " + e.getMessage());
         }
 
         return finDePartida();

@@ -31,5 +31,10 @@ public class Main {
 
 /*
  * Ejercicios propuestos:
- * - TODO
+ * - Crear una tabla "enemigos_derrotados" con las columnas "tipo_enemigo" y "cantidad"
+ * - Crear dos registros: Troll y Trasgo con 0 en "cantidad" para ambos.
+ * - Durante la partida, cada vez que se derrote un Troll o un Trasgo, 
+ *  que actualice la tabla para el registro que corresponda sumando 1.
+ * - Al final de una partida, que muestre las estadísticas 
+ *   de cuántos enemigos se han derrotado en todas las partidas acumuladas.
  */
