@@ -17,9 +17,12 @@ public class Main {
      * Inicia el juego y cierra la entrada estándar al terminar.
      *
      * @param args argumentos de línea de comandos (no se utilizan)
-     * @throws InterruptedException si se interrumpe una pausa durante el juego
      */
-    public static void main(String[] args) throws InterruptedException {
+
+    // Aquí veréis que he eliminado el throws InterruptedException
+    // Le he metido un try/catch al Thread.sleep y con eso ya no hace falta
+    // propagarlo en cada método
+    public static void main(String[] args) {
         try (Scanner scanner = new Scanner(System.in)) {
             new GameLoop(scanner).run();
         }

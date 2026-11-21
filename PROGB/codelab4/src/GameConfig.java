@@ -29,6 +29,8 @@ public final class GameConfig {
     public static final int TROLL_DANIO = 20;
     public static final int TROLL_REGENERACION = 5;
 
+    public static final int TIEMPO_ESPERA = 1000;
+
     private GameConfig() {
     }
 }

@@ -1,3 +1,4 @@
+import java.sql.SQLException;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -5,6 +6,7 @@ public class GameLoop {
 
     private final Scanner scanner;
     private final Random random;
+    private final Ranking ranking = new Ranking();
     private Personaje miPersonaje;
 
     /**
@@ -23,21 +25,30 @@ public class GameLoop {
 
     /**
      * Ejecuta partidas hasta que el jugador decide dejar de jugar.
-     *
-     * @throws InterruptedException si se interrumpe una pausa entre turnos
      */
-    public void run() throws InterruptedException {
+    public void run() {
         boolean jugarDeNuevo;
         do {
             jugarDeNuevo = jugarPartida();
         } while (jugarDeNuevo);
     }
 
-    private boolean jugarPartida() throws InterruptedException {
+    private boolean jugarPartida() {
         System.out.println();
         ColorTerminal.INFORMACION.imprimirLinea("╔══════════════════════════════════════╗");
         ColorTerminal.INFORMACION.imprimirLinea("║             LEYENDAS DEL CÓDIGO      ║ ");
         ColorTerminal.INFORMACION.imprimirLinea("╚══════════════════════════════════════╝");
+
+        // Consultamos el ranking al empezar cada partida. Si falla, avisamos y dejamos jugar.
+        try {
+            ranking.mostrarRanking();
+        } catch (SQLException e) {
+            ColorTerminal.ERROR.imprimirLinea(" No se ha podido consultar el ranking: " + e.getMessage());
+        }
+
+        // El nombre del jugador y el del personaje se guardan por separado.
+        ColorTerminal.OPCION.imprimir(" Introduce tu nombre de jugador: ");
+        String jugador = scanner.nextLine();
         ColorTerminal.OPCION.imprimir(" Introduce el nombre de tu personaje: ");
         String nombre = scanner.nextLine();
 
@@ -111,6 +122,14 @@ public class GameLoop {
                 ColorTerminal.ENEMIGO.imprimirLinea(" ═══════════════ FIN DE LA AVENTURA ═══════════════ ☠️");
                 ColorTerminal.INFORMACION.imprimirLinea("Has sobrevivido a "
                         + (enfrentamientosSuperados - 1) + " enfrentamiento(s).");
+                // Si el personaje ha muerto, ya hemos salido antes; solo guardamos si sobrevive.
+                try {
+                    ranking.guardarRecord(jugador, miPersonaje.getNombre(), enfrentamientosSuperados);
+                    ColorTerminal.INFORMACION.imprimirLinea(" Tu resultado se ha guardado en el ranking.");
+                } catch (SQLException e) {
+                    ColorTerminal.ERROR.imprimirLinea(" No se ha podido guardar el resultado: " + e.getMessage());
+                }
+
                 return finDePartida();
             }
 
@@ -211,7 +230,13 @@ public class GameLoop {
         return "1".equals(resultado);
     }
 
-    private void pausaEntreTurnos() throws InterruptedException {
-        Thread.sleep(1000);
+    private void pausaEntreTurnos() {
+        try {
+            Thread.sleep(GameConfig.TIEMPO_ESPERA);
+        } catch (InterruptedException e) {
+            // Aquí no habría que hacer nada. Simplemente añadimos el try/catch
+            // para no estar propagando throws InterruptedException en cada método hasta llegar aquí.
+        }
+        
     }
 }
