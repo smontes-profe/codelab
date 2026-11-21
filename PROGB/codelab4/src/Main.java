@@ -1,118 +1,47 @@
+/*
+ * Cambios principales del juego:
+ * - Vamos a dejar todo más limpio y con buenas prácticas: 
+ *      -Main queda como punto de entrada
+ *      -GameLoop gestiona el flujo de las partidas.
+ *      -GameConfig contentrá todos los parámetros del juego.
+ *      -Añadimos JavaDoc a los métodos públicos.
+ * - Los mensajes de terminal usan colores según su tipo y pasan a gestionarse con ColorTerminal
+ * - El combate se resuelve automáticamente, con pausas entre turnos.
+ * - La aventura continúa sin límite de encuentros hasta la derrota o la retirada.
+ * - Vamos a centrarnos como "features" nuevas en Array y AarrayList, mediante la "mochila".
+ * - La mochila usa un ArrayList (puede variar su tamaño y contenido en el tiempo);
+ * - El equipo inicial y el loot posible se definen en arrays (son fijas y no cambian su tamaño).
+ * - Se puede usar un objeto de la mochila por encuentro: curación, ataque o defensa.
+ * - Los enemigos dejan loot y los efectos temporales terminan al acabar el encuentro.
+ */
+import java.util.Scanner;
+
 public class Main {
-    public static void main(String[] args) {
-        Personaje[] expedicion = {
-                new Guerrero("Bruna", 100, 18),
-                new Mago("Izan", 75, 12)
-        };
 
-        char[][] mapa = {
-                {'S', '.', '#', '.', 'T'},
-                {'.', '.', '#', '.', '.'},
-                {'#', '.', '.', '.', 'E'}
-        };
-
-        System.out.println("=== EQUIPO DE LA EXPEDICIÓN ===");
-        for (int i = 0; i < expedicion.length; i++) {
-            System.out.print((i + 1) + ". ");
-            expedicion[i].mostrarFicha();
-            System.out.println("Ataque: " + expedicion[i].atacar());
+    /**
+     * Inicia el juego y cierra la entrada estándar al terminar.
+     *
+     * @param args argumentos de línea de comandos (no se utilizan)
+     * @throws InterruptedException si se interrumpe una pausa durante el juego
+     */
+    public static void main(String[] args) throws InterruptedException {
+        try (Scanner scanner = new Scanner(System.in)) {
+            new GameLoop(scanner).run();
         }
-
-        System.out.println("\n=== MAPA DEL LABERINTO ===");
-        System.out.println("S: inicio | E: salida | #: muro | T: tesoro | .: pasillo");
-        mostrarMapa(mapa);
-
-        int[] tesoro = buscarCasilla(mapa, 'T');
-        if (tesoro != null) {
-            System.out.println("Se ha localizado el tesoro en la fila "
-                    + tesoro[0] + ", columna " + tesoro[1] + ".");
-        } else {
-            System.out.println("No se ha encontrado ningún tesoro.");
-        }
-    }
-
-    private static void mostrarMapa(char[][] mapa) {
-        for (int fila = 0; fila < mapa.length; fila++) {
-            for (int columna = 0; columna < mapa[fila].length; columna++) {
-                System.out.print(mapa[fila][columna] + " ");
-            }
-            System.out.println();
-        }
-    }
-
-    private static int[] buscarCasilla(char[][] mapa, char objetivo) {
-        for (int fila = 0; fila < mapa.length; fila++) {
-            for (int columna = 0; columna < mapa[fila].length; columna++) {
-                if (mapa[fila][columna] == objetivo) {
-                    return new int[]{fila, columna};
-                }
-            }
-        }
-        return null;
     }
 }
 
-class Personaje {
-    private final String nombre;
-    private int vida;
-
-    public Personaje(String nombre, int vida) {
-        this.nombre = nombre;
-        this.vida = vida;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void mostrarFicha() {
-        System.out.println(nombre + " | Vida: " + vida);
-    }
-
-    public void recibirDanio(int cantidad) {
-        if (cantidad > 0) {
-            vida = Math.max(0, vida - cantidad);
-        }
-    }
-
-    public int atacar() {
-        return 8;
-    }
-}
-
-class Guerrero extends Personaje {
-    private final int puntosArmadura;
-
-    public Guerrero(String nombre, int vida, int puntosArmadura) {
-        super(nombre, vida);
-        this.puntosArmadura = puntosArmadura;
-    }
-
-    public void mostrarArmadura() {
-        System.out.println(getNombre() + " tiene " + puntosArmadura + " puntos de armadura.");
-    }
-
-    @Override
-    public int atacar() {
-        return 20;
-    }
-}
-
-class Mago extends Personaje {
-    private int mana;
-
-    public Mago(String nombre, int vida, int mana) {
-        super(nombre, vida);
-        this.mana = mana;
-    }
-
-    public void meditar() {
-        mana += 10;
-        System.out.println(getNombre() + " medita y recupera mana. Mana: " + mana);
-    }
-
-    @Override
-    public int atacar() {
-        return 14;
-    }
-}
+/*
+ * Ejercicios propuestos:
+ * - Modificar el equipo inicial para que sea una poción de curación y otra de ataque,
+ *    en lugar de dos de curación.
+ * - Añadir un nuevo tipo de loot: anillo de resurrección.
+ * - Asignarle una probabilidad de un 5%, 
+ *    y las pociones pasarían a tener un 45% en lugar de un 50%
+ * - Efectos del anillo:
+ *    Si el usuario lo activa en un encuentro, 
+ *    y su personaje muere, el anillo lo resucita automáticamente, 
+ *    pero es destruido.
+ * - Generar la documentación del proyecto usando este comando:
+ *   javadoc -d docs -encoding UTF-8 -charset UTF-8 -docencoding UTF-8 (Get-ChildItem .\src\*.java | ForEach-Object { $_.FullName })
+ */
