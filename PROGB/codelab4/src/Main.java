@@ -1,18 +1,13 @@
 /*
- * Cambios principales del juego:
- * - Vamos a dejar todo más limpio y con buenas prácticas: 
- *      -Main queda como punto de entrada
- *      -GameLoop gestiona el flujo de las partidas.
- *      -GameConfig contentrá todos los parámetros del juego.
- *      -Añadimos JavaDoc a los métodos públicos.
- * - Los mensajes de terminal usan colores según su tipo y pasan a gestionarse con ColorTerminal
- * - El combate se resuelve automáticamente, con pausas entre turnos.
- * - La aventura continúa sin límite de encuentros hasta la derrota o la retirada.
- * - Vamos a centrarnos como "features" nuevas en Array y AarrayList, mediante la "mochila".
- * - La mochila usa un ArrayList (puede variar su tamaño y contenido en el tiempo);
- * - El equipo inicial y el loot posible se definen en arrays (son fijas y no cambian su tamaño).
- * - Se puede usar un objeto de la mochila por encuentro: curación, ataque o defensa.
- * - Los enemigos dejan loot y los efectos temporales terminan al acabar el encuentro.
+ * Codelab 4 - Functions & try/catch
+ * Fecha: 25-11-2026
+ * Autor: Sergio Montes
+ * En el codelab de hoy vamos a aprovechar que ya deberíais controlar de BBDDD
+ * Vamos a crear una BBDD "codelabs" con una tabla única "ranking"
+ * con estos campos: jugador, héroe, enemigos_derrotados
+ * Al comenzar una partida, si hay algún registro de ranking, mostramos el top10
+ * Y cuando termine una partida, antes de preguntar si reinicia partida,
+ * si el héroe sobrevivió, actualizamos la tabla ranking con el record de esa partida. 
  */
 import java.util.Scanner;
 
@@ -33,15 +28,5 @@ public class Main {
 
 /*
  * Ejercicios propuestos:
- * - Modificar el equipo inicial para que sea una poción de curación y otra de ataque,
- *    en lugar de dos de curación.
- * - Añadir un nuevo tipo de loot: anillo de resurrección.
- * - Asignarle una probabilidad de un 5%, 
- *    y las pociones pasarían a tener un 45% en lugar de un 50%
- * - Efectos del anillo:
- *    Si el usuario lo activa en un encuentro, 
- *    y su personaje muere, el anillo lo resucita automáticamente, 
- *    pero es destruido.
- * - Generar la documentación del proyecto usando este comando:
- *   javadoc -d docs -encoding UTF-8 -charset UTF-8 -docencoding UTF-8 (Get-ChildItem .\src\*.java | ForEach-Object { $_.FullName })
+ * - TODO
  */

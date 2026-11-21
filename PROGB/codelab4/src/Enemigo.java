@@ -38,7 +38,6 @@ public abstract class Enemigo {
         return vida - vidaAnterior;
     }
 
-    // Por defecto, los enemigos no tienen estas habilidades.
     /**
      * Intenta atacar a un personaje desde lejos; por defecto no hace nada.
      *

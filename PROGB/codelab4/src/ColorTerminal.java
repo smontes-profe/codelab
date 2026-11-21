@@ -1,7 +1,5 @@
 public enum ColorTerminal {
 
-    // Estas son las distintas opciones que yo he pensado, pero vaya, 
-    // vosotros elegida las vuestras
     INFORMACION("\u001B[36m"),
     FICHA("\u001B[94m"),
     JUGADOR("\u001B[32m"),

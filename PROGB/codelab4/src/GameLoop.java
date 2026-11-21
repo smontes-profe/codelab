@@ -27,8 +27,6 @@ public class GameLoop {
      * @throws InterruptedException si se interrumpe una pausa entre turnos
      */
     public void run() throws InterruptedException {
-        // Lo único reseñable es: por qué lanza una InterruptedException?
-        // Lo veremos al final cuando veamos el uso de Thread.sleep
         boolean jugarDeNuevo;
         do {
             jugarDeNuevo = jugarPartida();
@@ -37,8 +35,6 @@ public class GameLoop {
 
     private boolean jugarPartida() throws InterruptedException {
         System.out.println();
-        // Aquí podéis ver qué fácil es usar la clase enum ColorTerminal
-        // pasándole después del punto el tipo de mensaje y luego usando el método imprimirLinea
         ColorTerminal.INFORMACION.imprimirLinea("╔══════════════════════════════════════╗");
         ColorTerminal.INFORMACION.imprimirLinea("║             LEYENDAS DEL CÓDIGO      ║ ");
         ColorTerminal.INFORMACION.imprimirLinea("╚══════════════════════════════════════╝");
@@ -60,16 +56,11 @@ public class GameLoop {
         ColorTerminal.INFORMACION.imprimirLinea("════════════   PREPARANDO LA EXPEDICIÓN   ════════════");
         miPersonaje.mostrarFicha();
 
-        // Hemos quitado el límite de enfrentamientos, y en su lugar añadimos este contador 
-        // para mostrar al final cuántos enemigos ha superado el jugador
-        // antes de retirarse o morir
         int enfrentamientosSuperados = 0;
         boolean continuarAventura = true;
         while (miPersonaje.estaVivo() && continuarAventura) {
             enfrentamientosSuperados++;
 
-            // Esta parte del bucle principal es casi idéntico a como lo teníamos
-            // simplemente adapatado a la refactorización que hemos hecho
             System.out.println();
             ColorTerminal.INFORMACION.imprimirLinea("═══════════   ENFRENTAMIENTO "
                     + enfrentamientosSuperados + "  ═══════════");
@@ -82,8 +73,6 @@ public class GameLoop {
                 ColorTerminal.ENEMIGO.imprimirLinea(" ¡Un " + enemigoActual.getNombre() + " aparece frente a "
                         + miPersonaje.getNombre() + "!");
             }
-            // Aquí es donde introducimos la novedad: darle la opción al jugador
-            // de usar un objeto del inventario
             elegirObjetoParaEncuentro(enemigoActual);
 
             if (enemigoALejos) {
@@ -91,7 +80,6 @@ public class GameLoop {
                     ColorTerminal.JUGADOR.imprimirLinea(" El guerrero espera: ¡solo puede luchar cuerpo a cuerpo!");
                 }
                 if (enemigoActual.estaVivo() && miPersonaje.estaVivo()) {
-                    // El Trasgo puede atacar desde lejos; los demás enemigos no tienen esta habilidad.
                     enemigoActual.atacarADistancia(miPersonaje);
                 }
                 if (enemigoActual.estaVivo() && miPersonaje.estaVivo()) {
@@ -106,7 +94,6 @@ public class GameLoop {
                     enemigoActual.hacerDanio(miPersonaje);
                 }
                 if (enemigoActual.estaVivo()) {
-                    // El Troll regenera vida al final de cada ronda de combate.
                     int vidaRecuperada = enemigoActual.regenerar();
                     if (vidaRecuperada > 0) {
                         ColorTerminal.ENEMIGO.imprimirLinea(" El " + enemigoActual.getNombre()
@@ -149,29 +136,12 @@ public class GameLoop {
         ColorTerminal.OPCION.imprimirLinea(" ¿Quieres usar un objeto del inventario para enfrentarte al "
                 + enemigo.getNombre() + "?");
         ColorTerminal.OPCION.imprimirLinea("  1. No usar nada.");
-        //Recorremos el ArrayList y mostramos las opciones en consola
         for (int i = 0; i < miPersonaje.getCantidadObjetos(); i++) {
             ColorTerminal.OPCION.imprimirLinea("  " + (i + 2) + ". "
                     + miPersonaje.getObjetoMochila(i).getNombre() + ".");
         }
-        // Otra forma de recorrerlo, sería hacer un "for each" en lugar de un "for i":
-        // int cont=1;
-        // for(Objeto item : miPersonaje.mochila){
-        //    cont++;
-        //    ColorTerminal.OPCION.imprimirLinea("  " + cont+". " + item.getNombre() + ".");
-        // } 
-        // Pero: mochila es private, por motivos de encapsulamiento
-        // y para qué usar un cont si ya al hacer un for i, tengo el contedor i?
-
-        // de nuevo, si mchila no fuera private de Personaje, 
-        // podría haber hecho simplemente miPersonaje.mochila.size
-        // pero de nuevo, por motivos de encapsulamiento, es mejor 
-        // simplemente tener un getter para eso
         int numeroMaximo = miPersonaje.getCantidadObjetos() + 1;
         String respuesta = scanner.nextLine();
-        // En vez de ensuciar esta parte comprobando si la opción es válida, 
-        // delego eso a otro método privado y queda todo mejor
-        // así la puedo usar desde otros puntos si lo necesitara en el futuro.
         while (!esOpcionValida(respuesta, numeroMaximo)) {
             ColorTerminal.ERROR.imprimirLinea("XX Opción no válida. Elige un número de la lista.");
             respuesta = scanner.nextLine();
@@ -184,10 +154,6 @@ public class GameLoop {
     }
 
     private boolean esOpcionValida(String respuesta, int numeroMaximo) {
-        // Si la opción elegida es un número entero 
-        // y está dentro del límite marcado por numeroMaximo, devuelve true
-        // Si no, deveulve false
-        // Y lo hacemos con un try/catch dejándolo todo más fácil
         try {
             int opcion = Integer.parseInt(respuesta);
             return opcion >= 1 && opcion <= numeroMaximo;
@@ -197,44 +163,21 @@ public class GameLoop {
     }
 
     private Objeto obtenerLoot() {
-        // Esta parte es en realidad más sencilla de lo que parece
-        // el nombre del Array de las probabilidades "engorda" bastante esto,
-        // pero ya sabéis que es siempre mejor pecar de abusar al pooner nombres largos
-        // por mor de que quede claro para qué sirven
-        
-        // Esta parte es simplemente un control interno por si al tocar las GameConfig
-        // modificamos el array de loot (por ejemplo, introducimos un nuevo elemento)
-        // pero se nos olvida asignarle una probabilidad
-        // En ese caso lanzaría una excepción manual
         if (GameConfig.PROBABILIDADES_LOOT_ACUMULADAS.length != GameConfig.LOOT_POSIBLE.length) {
             throw new IllegalStateException("Cada posibilidad de loot debe tener una probabilidad asociada.");
         }
 
-        // Esta parte es sencilla, en realidad:
-        // Sacamos un aleatorio entre 1 y 100 
         int tirada = random.nextInt(100) + 1;
-        // Recorremos el array buscando dónde ha tocado
         for (int i = 0; i < GameConfig.PROBABILIDADES_LOOT_ACUMULADAS.length; i++) {
-            //Si el número aleatorio es menor que la probabilidad que comparamos, 
-            // bingo! Ése es el loot que devuelve el enemio:
-            // hacemos return para devolver el objeto y además así no seguir iterando el for
             if (tirada <= GameConfig.PROBABILIDADES_LOOT_ACUMULADAS[i]) {
                 return GameConfig.LOOT_POSIBLE[i];
             }
         }
 
-        // Si hemos llegado hasta aquí es que hemos recorrido el array entero 
-        // Y ninguna probabilidad acumulada era mayor que el número aleatorio
-        // Es decir: la hemos "cagado". O bien el límite del aleatorio lo hemos puesto mal
-        // o las probabilidades acumuladas no estaban bien.
-        // Así que lanzamos un excepción para avisar de que hay que corregir el error.
         throw new IllegalStateException("Las probabilidades de loot no cubren todos los resultados.");
     }
 
     private boolean decidirContinuacion(int enfrentamientosSuperados) {
-        // Aquñí damos las opciones al jugador al final del game loop
-        // Hemos simplificado lo que teníamos y lo hemos sacado aquí por limpieza, 
-        // pero por lo demás, nada nuevo.
         ColorTerminal.OPCION.imprimirLinea(" ¿Qué quieres hacer?");
         ColorTerminal.OPCION.imprimirLinea("  1  Finalizar la aventura (el héroe sobrevive).");
         ColorTerminal.OPCION.imprimirLinea("  2  Continuar la aventura.");
@@ -253,10 +196,6 @@ public class GameLoop {
     }
 
     private boolean finDePartida() {
-        // Hemos añadido estas nuevas opciones cuando decides terminar la aventura
-        // Por si quieres empezar de nuevo de cero creando un nuevo personaje
-        // Nada nuevo aquí, todo controlado.
-
         System.out.println();
         ColorTerminal.OPCION.imprimirLinea(" ¿Quieres volver a intentarlo?");
         ColorTerminal.OPCION.imprimirLinea("  1  ¡A por otra aventura!");
@@ -273,9 +212,6 @@ public class GameLoop {
     }
 
     private void pausaEntreTurnos() throws InterruptedException {
-        // Aquí usamos Thread.sleep para hacer esperar un segundo (1000 milisegundos)
-        // Importante señalar que el uso de Thread.sleep puede lanzar una exepción si se interrumpe
-        // por eso hay que controlarla
         Thread.sleep(1000);
     }
 }
