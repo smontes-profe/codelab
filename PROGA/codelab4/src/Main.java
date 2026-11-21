@@ -1,244 +1,292 @@
 
+/*
+ * Codelab 4 - Functions & try/catch
+ * Fecha: 25-11-2026
+ * Autor: Sergio Montes
+ * En el codelab de hoy vamos a hacer uso de las funciones (por fin!)
+ * y de la instrucción try/catch
+ * Qué haremos en esta sesión:
+ *  * Vamos simplemente a refactorizar nuestro código para usar funciones y try/catch.
+ *  * Puede parecer poco, pero ya veréis cómo nuestro código va a quedar irreconocible,
+ *  * y por supuesto, mucho más legible y optimizado.
+ *  * Aparte de eso (que ya es bastante), vamos a añadir una opción 
+ *  * al final de la partida (al retirarse o morir) para poder reiniciarla
+ */
+
 
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Random;
 import java.util.Scanner;
+import java.lang.Thread;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
-    public static void main(String[] args) throws InterruptedException {
-// ***************** BLOQUE 1: Variables y Tipos **********************
-        Scanner sc = new Scanner(System.in);
 
-        //**** ORGANIZAMOS EL CÓDIGO****
-        int vida = 100;
-        int pociones = 3;
-        boolean estaVivo = true;
+    // Lo ideal sería mover todas estas constantes a una clase aparte GameConfig
+    // pero como aun no habéis visto POO, no nos queda otra que dejarlas accesibles
+    // en toda la clase colocándolas aquí ya haciénolas estáticas
+    private static final String COLOR_INFORMATIVO = "\u001B[37m";
+    private static final String COLOR_OPCIONES = "\u001B[33m";
+    private static final String COLOR_JUGADOR = "\u001B[32m";
+    private static final String COLOR_ENEMIGO = "\u001B[31m";
+    private static final int TIEMPO_ESPERA = 1000;
+    private static final int VIDA_MAXIMA = 100;
+    private static final int CURACION_POCION = 50;
+    private static final int DANIO_ESPADA = 25;
+    private static final double DEFENSA_ESCUDO = 0.25;
+    private static final int DANIO_TRASGO = 20;
+    private static final int DANIO_TROLL = 30;
+    private static final String NOMBRE_TROLL = "Troll";
+    private static final int VIDA_TRASGO = 50;
+    private static final int VIDA_TROLL = 80;
+    private static final int ENEMIGO_TRASGO = 1;
+    private static final String NOMBRE_TRASGO = "Trasgo";
+    private static final String INVENTARIO_POCION = "Poción de curación";
+    private static final String INVENTARIO_ESPADA = "Espada";
+    private static final String INVENTARIO_ESCUDO = "Escudo";
+    private static final String INVENTARIO_ANILLO_DEFENSA = "Anillo de defensa";
+    private static final String INVENTARIO_ANILLO_ATAQUE = "Anillo de mágico de la muerte";
+    private static final double INCREMENTO_ANILLO_DEFENSA = 1.5;
+    private static final double INCREMENTO_ANILLO_ATAQUE = 1.5;
+    private static final String[] inventarioInicial = {INVENTARIO_POCION,INVENTARIO_POCION, INVENTARIO_ESPADA, INVENTARIO_ESCUDO};
+    private static final String[] loot = {INVENTARIO_POCION, INVENTARIO_ANILLO_DEFENSA, INVENTARIO_ANILLO_ATAQUE};
+    private static final int[] lootProbabilidades = {50, 75, 100}; 
 
-         /* *********************Si quiere aumentar la dificultad ponga una vida hasta 50 y elija una sola pócima **********************/
+    // Como vamos a usar ahora funciones, he movido las variables
+    // que vayamos a usar en más de una aquí para hacerlas accesibles.
+    // Antes podíamos permitirnos el lugo de crearlas e instanciarlas en main()
+    // pero si queremos poder acceder a ellas desde todas las funciones,
+    // la solución más sencilla es dejarlas aquí como estáticas
+    private static ArrayList<String> inventario;
+    private static String nombreHeroe;
+    private static int vidaHeroe;
+    private static int pocionesHeroe;
+    private static int contadorEnemigos;
 
+    private static String nombreEnemigo;
+    private static int tipoEnemigo;
+    private static int vidaEnemigo;
+    private static int danioEnemigo;
 
-        System.out.println("==========================================");
-        System.out.println("   ⚔️ BIENVENIDO AL REINO DE JAVA ⚔️   ");
-        System.out.println("==========================================");
+    private static boolean seHaRetirado;
 
-        System.out.print("\n➤ Introduce el nombre de tu héroe: ");
-        String nombre = sc.nextLine();
+    // Por qué usar una variable de la clase Random en todas las partes
+    // en lugar de instanciar variable de ámbito local cada vez?
+    private static Random aleatorio;
+    // Vamos también a usar una variable para guardar el color de los siguientes
+    // mensajes que queramos imprimir
+    // podríamos pasarlo como parámetro, pero la verdad,
+    // y de hecho lo hice así al principio, pero se hacía muy repetitivo e ineficiente
+    private static String colorMensajes;
 
-        //*****METEMOS Try/Catch ******
-        // El objetivo es validar la entrada de datos//
+    // El Scanner también lo vamos a mover aquí y le cambio el nombre para
+    // no perderle la pista, que "sc" para una variable temporal va, pero así ya no...
+    private static Scanner scanner;
 
-        try{
-            System.out.println("\n¿Cómo prefieres iniciar tu gesta?");
-            System.out.println("1. Modo Estándar (100 Vida / 3 Pociones)");
-            System.out.println("2. Modo Difícil (Elegir vida hasta 50 / 1 Poción)");
-            System.out.print("Selecciona una opción (1 o 2): ");
+    //Ésta es nueva para controlar si el jugador quiere reiniciar partida
+    private static boolean continuarJugando;
 
-            int opcion = sc.nextInt();
-
-            if (opcion == 2) {
-
-                System.out.print("➤ Elige tu vida inicial (máximo 50): ");
-                vida = sc.nextInt();
-                pociones = 1;
-                System.out.println("⚠️ Has elegido el camino del guerrero. ¡Suerte!");
-            } else {
-
-            System.out.println("✅ Partida cargada con valores estándar.");
-            }
-        } catch (InputMismatchException e) {
-            // Este bloque se ejecuta SOLO si hubo un error de tipo de dato
-
-            System.out.println("\n❌ ERROR: ¡Has conjurado un hechizo erróneo! (No introdujiste un número).");
-            System.out.println("⚠️ Como castigo, empiezas con 10 de vida por no saber leer.");
-            vida = 10;
-            pociones = 0;
-            sc.nextLine(); // Limpiamos el buffer del scanner para evitar bucles infinitos
+    public static void main(String[] args) {
+        // main ahora lo único que hace es instanciar algunas variables
+        // y llamar a iniciarPartida. Limpio limpio!
+        aleatorio = new Random();
+        scanner = new Scanner(System.in);
+        seHaRetirado=false;
+        continuarJugando=true;
+        while(continuarJugando){
+            iniciarPartida();
         }
-
-
-        // --- 2. FICHA DEL HÉROE "CHULA" ---
-        System.out.println("       📜 FICHA DE PERSONAJE 📜       ");
-        System.out.println(nombre);
-        System.out.println(vida);
-        System.out.println("pociones " + pociones);
-        System.out.println("      ¡La aventura comienza ahora!      \n");
-
-        // ********************* BLOQUE 2: Operadores y Lógica - Asiganción ******************************
-        while (vida>=0 && estaVivo) {
-
-
-            System.out.println("\n--- Comprobando estado crítico ---");
-
-            if (vida < 20 && pociones > 0) {
-                System.out.println("¡Alerta! Vida baja. Usando poción automáticamente...");
-                vida = 50;
-                pociones--; // Gastamos una poción: pociones = pociones - 1
-
-                System.out.println(">>> Curación exitosa. Nueva vida: " + vida);
-                System.out.println(">>> Pociones restantes: " + pociones);
-
-            } else if (vida < 20 && pociones == 0) {
-                System.out.println("¡ESTÁS EN PELIGRO! No te quedan pociones.");
-            } else {
-                System.out.println("Estado estable. No es necesario gastar recursos.");
-            }
-
-
-            // ***************** BLOQUE 3: Bucles (La Batalla Continúa) **********************
-            System.out.println("\n--- ¡COMIENZA LA BATALLA REAL! ---");
-
-
-                System.out.println("\nUn enemigo te ataca...");
-
-                // Generamos daño aleatorio entre 10 y 30 para que dure la pelea
-
-                int golpeEnemigo2 = new Random().nextInt(21) + 10;
-                vida -= golpeEnemigo2;
-                //vida = vida - golpeEnemigo2;
-
-                System.out.println("Recibes " + golpeEnemigo2 + " de daño. Vida actual: " + vida);
-
-                // Lógica de curación automática (tu Bloque 3 dentro del bucle)
-                if (vida < 25 && pociones > 0) {
-                    System.out.println("¡Emergencia! Usando poción...");
-                    vida += 40; // Curamos 40 de vida
-                    pociones--;
-                    System.out.println("Pociones restantes: " + pociones + " | Vida: " + vida);
-                }
-
-                // Comprobamos si el héroe ha caído
-                if (vida <= 0) {
-                    System.out.println("¡" + nombre + " ha caído en combate!");
-                    estaVivo = false;
-                    break;
-                }
-
-
-                Thread.sleep(1000);
-            //****** EJEMPLO DE ARRAY *****//
-                String miestring="";
-                String []ejeplito = new String[2];
-
-            String[] miarray = {"PEPE", "MARIA", "MANUEL", "ANA"};
-
-            for (int i=0; i<miarray.length;i++){
-                System.out.print(miarray[i]);
-            }
-
-
-            // Bloque 5 ************Agregamos objetos a mi mochila**********
-            // Declaración del inventario
-            // ****************** EJEMPLO DE ARRAYLIST ************
-            ArrayList<String> inventario = new ArrayList<>();
-
-
-            // Añadimos objetos iniciales
-            inventario.add("Mapa arrugado");
-            inventario.add("Daga de hierro");
-
-            // ***** OTRO EJEMPLO DE CÓMO UTILIZAR EL TRY/CATCH
-            // *** OTRO TIPO DE ERROR ArithmeticException 10/0
-            try {
-                System.out.println("\nIntentando acceder al objeto secreto en el índice 5 de tu mochila...");
-                // Esto provocará un IndexOutOfBoundsException porque el array solo tiene 2 elementos
-                System.out.println(inventario.get(5));
-            } catch (IndexOutOfBoundsException error) {
-                System.out.println("🚫 INFO: Intentaste buscar un objeto que no existe en tu mochila.");
-            }
-
-            System.out.println("\n✨ ¡El enemigo ha soltado un 'Amuleto de Java'! ¿Deseas recogerlo?");
-            System.out.println("1. Sí | 2. No");
-            int decision = sc.nextInt();
-
-            switch (decision) {
-                case 1:
-                    inventario.add("Amuleto de Java");
-                    System.out.println("📦 Has guardado el Amuleto en tu mochila.");
-                    break;
-                case 2:
-                    System.out.println("Has dejado pasar la oportunidad");
-            }
-
-            System.out.println("\n=== 🎒 TU MOCHILA ===");
-            for (int i = 0; i < inventario.size(); i++) {
-                System.out.println((i + 1) + ". " + inventario.get(i));
-            }
-
-            // en busqueda del cofre misterioso *************BLOQUE 6*******
-
-            System.out.println("🎁 ¡Has encontrado un cofre misterioso en un rincón oscuro!");
-            System.out.println("1. Abrirlo con cuidado");
-            System.out.println("2. Ignorarlo y seguir adelante");
-            System.out.print("¿Qué decides?: ");
-
-            int eleccionCofre = sc.nextInt();
-
-            switch (eleccionCofre) {
-                case 1:
-                    System.out.println("Abres la tapa lentamente... 🥁");
-                    Thread.sleep(1500); // Pausa dramática
-
-                    // Generamos un destino del 1 al 3
-                    int destino = new Random().nextInt(3) + 1;
-
-                    switch (destino) {
-                        case 1:
-                            System.out.println("💰 ¡TESORO! Encuentras una 'Espada de Código Limpio'.");
-                            inventario.add("Espada de Código Limpio");
-                            for (int i = 0; i < inventario.size(); i++) {
-                                System.out.println((i + 1) + ". " + inventario.get(i));
-                            }
-                            break;
-
-                        case 2:
-                            System.out.println("👾 ¡ES UN MÍMICO! El cofre tiene dientes y te muerde.");
-                            int susto = 15;
-                            vida -= susto;
-                            System.out.println("Pierdes " + susto + " de vida. Vida actual: " + vida);
-                            break;
-
-                        case 3:
-                            System.out.println("💨 El cofre estaba lleno de gas somnífero. No encuentras nada.");
-                            break;
-                    }
-                    break;
-
-                case 2:
-                    System.out.println("Prudente... prefieres no arriesgar tu pellejo hoy.");
-                    break;
-
-                default:
-                    System.out.println("Te quedas mirando el cofre tanto tiempo que un murciélago te golpea.");
-                    vida -= 5;
-                    break;
-            }
-
-
-            // MENSAJE DE TEXTO DE UN COMPAÑERO EN EL CAMPUS
-            // Definimos el texto y la velocidad
-            String mensajeFinal = "¡Has sido derrotado! ☠️";
-            int velocidad = 200;
-
-
-            for (int i = 0; i < mensajeFinal.length(); i++) {
-                System.out.print(mensajeFinal.charAt(i));
-
-                // OTRO TRY/CATCH
-                try {
-                    Thread.sleep(velocidad);
-                } catch (InterruptedException e) {
-                    // ESTA EXCEPCIÓN en los hilos es necesario porque
-                    // El sistema necesita saber qué hacer si, mientras el programa espera esos milisegundos
-                    // para imprimir la siguiente letra, algo decide detener el proceso de golpe.
-                    Thread.currentThread().interrupt();
-                }
-            }
-            System.out.println(); // Salto de línea final
+        // Aquí llegamos si el jugador ya no quiere seguir jugando. 
+        // Cerramos el scanner y listo!
+        scanner.close();
+    }
+    private static void iniciarPartida(){
+        //inicializamos el color de los mensajes a informativo, por defecto.
+        colorMensajes=COLOR_INFORMATIVO;
+        inventario= new ArrayList<>();
+        vidaHeroe = VIDA_MAXIMA;
+        for (String objeto : inventarioInicial) {
+            inventario.add(objeto);
         }
+        pocionesHeroe = 2;
+        contadorEnemigos = 0;      
+        
+        // Al tener una función para imprimir la doble línea que usamos para crear "bloques",
+        // otra para la cabecera en sí y otra para mensajes en sí,
+        // se queda todo mucho más limpio
+        imprimirLinea();
+        imprimirCabecera("       BIENVENIDO AL REINO DE JAVA THE HUT       ");
+        imprimirLinea();
+        imprimirMensaje("Introduce el nombre de tu héroe: ");
+        nombreHeroe = scanner.nextLine();
+        imprimirCabecera("¡COMIENZA LA AVENTURA!");
 
+        //Aquí realizamos el GameLoop
+        do {
+           gameLoop(); 
+        }while (vidaHeroe > 0 && !seHaRetirado);
+        
+        /* ----------MENSAJES DE FIN DE PARTIDA---------- */
+        if(vidaHeroe<=0){
+            colorMensajes=COLOR_ENEMIGO;
+            imprimirCabecera(nombreHeroe+" ha sido derrotado! ");
+        }else{
+            colorMensajes= COLOR_JUGADOR;
+            imprimirCabecera(nombreHeroe+" ha escapado con vida!");
+        }
+        colorMensajes = COLOR_INFORMATIVO;
+        imprimirMensaje("Enemigos derrotados:"+contadorEnemigos);
+        imprimirCabecera("GAME OVER"); 
+        
+        /* ----------OPCIONES DE REINICIO---------- */
+        // Aquí metemos la lógica nueva para reiniciar partida
+        colorMensajes=COLOR_OPCIONES;
+        imprimirLinea();
+        imprimirCabecera("¿Quieres empezar de nuevo?");
+        imprimirMensaje(">1. Sí");
+        imprimirMensaje(">2. No");
+        continuarJugando=(validarOpcion(2)==1);
+        scanner.nextLine(); // Limpiamos el buffer del scanner para que no nos de problemas al leer el nombre del héroe en la siguiente partida
+        if(!continuarJugando) imprimirCabecera("¡HASTA OTRA!");
     }
 
+    private static void gameLoop() {
+        colorMensajes=COLOR_INFORMATIVO;
+        imprimirFicha();
+        /* ----------Selección del siguiente enemigo.---------- */
+        tipoEnemigo = aleatorio.nextInt(2) + 1;
+        if (tipoEnemigo == ENEMIGO_TRASGO) {
+            nombreEnemigo = NOMBRE_TRASGO;
+            danioEnemigo = DANIO_TRASGO;
+            vidaEnemigo = VIDA_TRASGO;
+        } else {
+            nombreEnemigo = NOMBRE_TROLL;
+            danioEnemigo = DANIO_TROLL;
+            vidaEnemigo = VIDA_TROLL;
+        }
+        /* ----------COMBAT LOOP---------- */
+        imprimirCabecera("NUEVO ENCUENTRO");
+        imprimirMensaje("\n¡Un " + nombreEnemigo + " salvaje aparece!");
+        while (vidaHeroe > 0 && vidaEnemigo > 0) {
+            combatLoop();
+        }
+        if (vidaHeroe>0) {
+            colorMensajes=COLOR_OPCIONES;
+            imprimirMensaje("Qué quieres hacer?");
+            imprimirMensaje(">1. Retirarte");
+            imprimirMensaje(">2. Continuar sin usar poción");
+            if (pocionesHeroe>0)  imprimirMensaje(">3. Continuar usando una poción");
+            // Aquí antes teníamos una lista de cosas que hacer:
+            // comprobar la opción del usuario, validarla, etc
+            // al sacarlo en la función validarOpcion y usar un  try/catch simplificamos mucho
+            int opcionSeleccionada = validarOpcion(3);
+            seHaRetirado= (opcionSeleccionada==1); 
+            if (opcionSeleccionada==3) {
+                inventario.remove(INVENTARIO_POCION);
+                pocionesHeroe--;
+                vidaHeroe= Math.min(VIDA_MAXIMA, vidaHeroe+CURACION_POCION);
+            }
+        }  
+    }
+
+    public static void combatLoop() {
+        int DanoTemporal = DANIO_ESPADA;
+        int modificadorAtaque = 1;
+        for (String objeto : inventario) {
+            if (objeto.equals(INVENTARIO_ANILLO_ATAQUE)) {
+                modificadorAtaque *= INCREMENTO_ANILLO_ATAQUE;
+            }
+        }
+        DanoTemporal = (int) (DanoTemporal *  modificadorAtaque);
+        System.out.println(COLOR_JUGADOR + "\n¡" + nombreHeroe + " ataca al " + nombreEnemigo + " con la espada y le hace " + DanoTemporal + " de daño!");
+        vidaEnemigo -= DanoTemporal;
+        //Comprobamos si el enemigo ha muerto, para mostrar un 
+        // mensaje de victoria y que suelte un objeto.
+        colorMensajes = COLOR_JUGADOR;
+        if (vidaEnemigo <= 0) {
+            contadorEnemigos++;
+            imprimirMensaje(nombreHeroe + " ha derrotado al " + nombreEnemigo + "! El enemigo suelta un objeto.");
+            int lootRandom = aleatorio.nextInt(100) + 1;
+            for (int i = 0; i < lootProbabilidades.length; i++) {
+                if (lootRandom <= lootProbabilidades[i]) {
+                    String objetoLoot = loot[i];
+                    inventario.add(objetoLoot);
+                    imprimirMensaje("¡Has conseguido " + objetoLoot + "! Se añade a tu inventario.");
+                    if(objetoLoot==INVENTARIO_POCION) pocionesHeroe++;
+                    break;
+                }
+            }
+        }else {
+            // Si no ha muerto, mostramos su vida restante y es el turno del enemigo.
+            colorMensajes=COLOR_ENEMIGO;
+            imprimirMensaje("Vida del " + nombreEnemigo + ": " + vidaEnemigo + " HP");
+            double modificadorDefensa = 1 + DEFENSA_ESCUDO;
+            for (String objeto : inventario) {
+                if (objeto.equals(INVENTARIO_ANILLO_DEFENSA)) {
+                    modificadorDefensa *= INCREMENTO_ANILLO_DEFENSA;
+                }
+            }
+            DanoTemporal = (int) (danioEnemigo / modificadorDefensa);
+            vidaHeroe= Math.max(0, vidaHeroe-DanoTemporal);
+            imprimirMensaje(nombreEnemigo + " ataca a " + nombreHeroe + " y le hace " + DanoTemporal + " de daño!");
+            imprimirMensaje("Vida de " + nombreHeroe + ": " + vidaHeroe + " HP");
+        }
+
+        // Aquí metemos la espera de un segundo que teníamos
+        // pero al poder ya usar try/catch, ya no necesitamos
+        // hacer que las funciones que llamen a esto hagan un throws InterruptedException
+        try {
+            Thread.sleep(TIEMPO_ESPERA);
+        } catch (InterruptedException e) {
+            // Aquí no hace falta hacer nada
+        }
+    }
+
+    private static void imprimirLinea(){
+        System.out.println(colorMensajes + "=================================================");
+    }
+    private static void imprimirMensaje(String mensaje){
+        System.out.println(colorMensajes + mensaje);
+    }
+    private static void imprimirCabecera(String mensaje){
+        System.out.println(colorMensajes + "\n+|=========> " + mensaje + " <=========|+");
+    }
+    private static void imprimirFicha(){
+        // Fijaos que limpita queda ahora la impresión de la ficha del héroe
+        // Además, otra ventaja de sacar todo esto coo funciones aparte
+        // es que si quisiéramos cambiar el estilo de los mensajes, 
+        // como lo tenemos centralizado, lo cambiamos en estas funciones
+        //  y se cambia en todo el juego
+        imprimirCabecera("FICHA DEL HÉROE");
+        imprimirMensaje("Nombre: " + nombreHeroe);
+        imprimirMensaje("Salud: " + vidaHeroe);
+        imprimirMensaje("Inventario: ");
+        for (String objeto : inventario) {
+            imprimirMensaje("- " + objeto);
+        }
+    }
+
+    // Valida opciones numéricas enteras empezando por 1 
+    // y terminando por el parámetro que recibe: numValidas
+    private static int validarOpcion(int numValidas){
+        int opcion=0;
+        try {
+            opcion = scanner.nextInt();
+            if( (opcion > numValidas) || (opcion<1) ) return validarOpcion(numValidas);
+        } catch (InputMismatchException e) {
+            imprimirMensaje(colorMensajes);
+            scanner.next();
+            return validarOpcion(numValidas);
+        }
+        return opcion;
+    }
 }
+
+/*
+ * Ejercicios propuestos:
+ *Que guarde un "record" de enemigos derrotados. 
+ * Al comenzar. el record es cero, claro.
+ * Cada partida (quese continue, claro), si supera el record, actualizarlo 
+ * e informar con un mensajito. 
+ * Usar una fucnión para controlar todo esto.
+*/
