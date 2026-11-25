@@ -48,9 +48,9 @@ public class Main {
     private static final String INVENTARIO_ANILLO_ATAQUE = "Anillo de ataque";
     private static final double INCREMENTO_ANILLO_DEFENSA = 1.5;
     private static final double INCREMENTO_ANILLO_ATAQUE = 1.5;
-    private static final String[] inventarioInicial = {INVENTARIO_POCION,INVENTARIO_POCION, INVENTARIO_ESPADA, INVENTARIO_ESCUDO};
-    private static final String[] loot = {INVENTARIO_POCION, INVENTARIO_ANILLO_DEFENSA, INVENTARIO_ANILLO_ATAQUE};
-    private static final int[] lootProbabilidades = {50, 75, 100}; 
+    private static final String[] INVENTARIO_INICIAL = {INVENTARIO_POCION,INVENTARIO_POCION, INVENTARIO_ESPADA, INVENTARIO_ESCUDO};
+    private static final String[] LOOT = {INVENTARIO_POCION, INVENTARIO_ANILLO_DEFENSA, INVENTARIO_ANILLO_ATAQUE};
+    private static final int[] LOOT_PROBABILIDADES = {50, 75, 100}; 
 
     // Como vamos a usar ahora funciones, he movido las variables
     // que vayamos a usar en más de una aquí para hacerlas accesibles.
@@ -105,7 +105,7 @@ public class Main {
         colorMensajes=COLOR_INFORMATIVO;
         inventario= new ArrayList<>();
         vidaHeroe = VIDA_MAXIMA;
-        for (String objeto : inventarioInicial) {
+        for (String objeto : INVENTARIO_INICIAL) {
             inventario.add(objeto);
         }
         pocionesHeroe = 2;
@@ -156,6 +156,7 @@ public class Main {
         /* ----------Selección del siguiente enemigo.---------- */
         tipoEnemigo = aleatorio.nextInt(2) + 1;
         if (tipoEnemigo == ENEMIGO_TRASGO) {
+            
             nombreEnemigo = NOMBRE_TRASGO;
             danioEnemigo = DANIO_TRASGO;
             vidaEnemigo = VIDA_TRASGO;
@@ -185,15 +186,10 @@ public class Main {
             // al sacarlo en la función validarOpcion y usar un  try/catch simplificamos mucho
             int opcionSeleccionada = validarOpcion(numValidas);
             seHaRetirado= (opcionSeleccionada==1); 
-            if (opcionSeleccionada==3) {
-                inventario.remove(INVENTARIO_POCION);
-                pocionesHeroe--;
-                vidaHeroe= Math.min(VIDA_MAXIMA, vidaHeroe+CURACION_POCION);
-            }
+            if (opcionSeleccionada==3)  beberPocion();
         }  
     }
-
-    public static void combatLoop() {
+    private static void combatLoop() {
         int DanoTemporal = DANIO_ESPADA;
         int modificadorAtaque = 1;
         for (String objeto : inventario) {
@@ -211,9 +207,9 @@ public class Main {
             contadorEnemigos++;
             imprimirMensaje(nombreHeroe + " ha derrotado al " + nombreEnemigo + "! El enemigo suelta un objeto.");
             int lootRandom = aleatorio.nextInt(100) + 1;
-            for (int i = 0; i < lootProbabilidades.length; i++) {
-                if (lootRandom <= lootProbabilidades[i]) {
-                    String objetoLoot = loot[i];
+            for (int i = 0; i < LOOT_PROBABILIDADES.length; i++) {
+                if (lootRandom <= LOOT_PROBABILIDADES[i]) {
+                    String objetoLoot = LOOT[i];
                     inventario.add(objetoLoot);
                     imprimirMensaje("¡Has conseguido " + objetoLoot + "! Se añade a tu inventario.");
                     if(objetoLoot==INVENTARIO_POCION) pocionesHeroe++;
@@ -287,13 +283,15 @@ public class Main {
             return validarOpcion(numValidas);
         } 
     }
+
+    private static void beberPocion(){
+        inventario.remove(INVENTARIO_POCION);
+        pocionesHeroe--;
+        vidaHeroe= Math.min(VIDA_MAXIMA, vidaHeroe+CURACION_POCION);
+    }
 }
 
 /*
  * Ejercicios propuestos:
- *Que guarde un "record" de enemigos derrotados. 
- * Al comenzar. el record es cero, claro.
- * Cada partida (que se continue), si supera el record, actualizarlo 
- * e informar con un mensajito. 
- * Usar una función para controlar todo esto.
+ * Refactorizarlo todo para usar las clases GameConfig, Heroe y Enemigo (al menos)
 */
