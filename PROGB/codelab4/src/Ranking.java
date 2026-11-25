@@ -41,6 +41,9 @@ public class Ranking {
             if (resultado.next()) {
                 ColorTerminal.INFORMACION.imprimirLinea("════════════ RANKING ════════════");
                 // Dibujamos los bordes y dejamos un ancho fijo para cada columna.
+                // %-20s: alinea a la izquierda el texto en un campo de 20 caracteres
+                // %-19s: alinea a la izquierda el texto en un campo de 19 caracteres
+                // %n: salto de línea compatible con cualquier sistema operativo
                 ColorTerminal.INFORMACION.imprimirLinea("┌──────────────────────┬──────────────────────┬─────────────────────┐");
                 ColorTerminal.INFORMACION.imprimirFormato("│ %-20s │ %-20s │ %-19s │%n",
                         "Jugador", "Personaje", "Enemigos derrotados");
