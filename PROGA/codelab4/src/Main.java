@@ -172,14 +172,18 @@ public class Main {
         }
         if (vidaHeroe>0) {
             colorMensajes=COLOR_OPCIONES;
+            int numValidas=2;
             imprimirMensaje("Qué quieres hacer?");
             imprimirMensaje(">1. Retirarte");
             imprimirMensaje(">2. Continuar sin usar poción");
-            if (pocionesHeroe>0)  imprimirMensaje(">3. Continuar usando una poción");
-            // Aquí antes teníamos una lista de cosas que hacer:
+            if (pocionesHeroe>0) {
+                imprimirMensaje(">3. Continuar usando una poción");
+                numValidas=3;
+            }
+                // Aquí antes teníamos una lista de cosas que hacer:
             // comprobar la opción del usuario, validarla, etc
             // al sacarlo en la función validarOpcion y usar un  try/catch simplificamos mucho
-            int opcionSeleccionada = validarOpcion(3);
+            int opcionSeleccionada = validarOpcion(numValidas);
             seHaRetirado= (opcionSeleccionada==1); 
             if (opcionSeleccionada==3) {
                 inventario.remove(INVENTARIO_POCION);
@@ -272,13 +276,16 @@ public class Main {
         int opcion=0;
         try {
             opcion = scanner.nextInt();
-            if( (opcion > numValidas) || (opcion<1) ) return validarOpcion(numValidas);
+            if( (opcion > numValidas) || (opcion<1) ){
+                imprimirMensaje("Opción inválida. Elije un número entre 1 y "+numValidas);
+                return validarOpcion(numValidas);
+            }
+            return opcion;
         } catch (InputMismatchException e) {
-            imprimirMensaje(colorMensajes);
+            imprimirMensaje("Opción inválida. Elije un número entre 1 y "+numValidas);
             scanner.next();
             return validarOpcion(numValidas);
-        }
-        return opcion;
+        } 
     }
 }
 
