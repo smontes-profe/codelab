@@ -45,7 +45,7 @@ public class Main {
     private static final String INVENTARIO_ESPADA = "Espada";
     private static final String INVENTARIO_ESCUDO = "Escudo";
     private static final String INVENTARIO_ANILLO_DEFENSA = "Anillo de defensa";
-    private static final String INVENTARIO_ANILLO_ATAQUE = "Anillo de mágico de la muerte";
+    private static final String INVENTARIO_ANILLO_ATAQUE = "Anillo de ataque";
     private static final double INCREMENTO_ANILLO_DEFENSA = 1.5;
     private static final double INCREMENTO_ANILLO_ATAQUE = 1.5;
     private static final String[] inventarioInicial = {INVENTARIO_POCION,INVENTARIO_POCION, INVENTARIO_ESPADA, INVENTARIO_ESCUDO};
@@ -256,8 +256,8 @@ public class Main {
         System.out.println(colorMensajes + "\n+|=========> " + mensaje + " <=========|+");
     }
     private static void imprimirFicha(){
-        // Fijaos que limpita queda ahora la impresión de la ficha del héroe
-        // Además, otra ventaja de sacar todo esto coo funciones aparte
+        // Fijaos qué limpita queda ahora la impresión de la ficha del héroe
+        // Además, otra ventaja de sacar todo esto con funciones
         // es que si quisiéramos cambiar el estilo de los mensajes, 
         // como lo tenemos centralizado, lo cambiamos en estas funciones
         //  y se cambia en todo el juego
@@ -293,7 +293,7 @@ public class Main {
  * Ejercicios propuestos:
  *Que guarde un "record" de enemigos derrotados. 
  * Al comenzar. el record es cero, claro.
- * Cada partida (quese continue, claro), si supera el record, actualizarlo 
+ * Cada partida (que se continue), si supera el record, actualizarlo 
  * e informar con un mensajito. 
- * Usar una fucnión para controlar todo esto.
+ * Usar una función para controlar todo esto.
 */

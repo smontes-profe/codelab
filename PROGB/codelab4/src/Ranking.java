@@ -10,7 +10,7 @@ public class Ranking {
     private static final String URL = "jdbc:mysql://localhost:3306/codelabs";
     private static final String USUARIO = "root";
     //Si usáis xampp tenemos que cambiar usuario t pass por root y ""
-    private static final String CONTRASENA = "root";
+    private static final String CONTRASENA = "";
     // Las consultas que vamos a hacer contra la base de datos
     // para obtener el top10
     private static final String SQL_TOP10="SELECT jugador, personaje, enemigos_derrotados FROM ranking ORDER BY enemigos_derrotados DESC LIMIT 10";
@@ -64,6 +64,10 @@ public class Ranking {
                 //ya no quedan registros, pintamos el final de la tabla
                 ColorTerminal.INFORMACION.imprimirLinea("└──────────────────────┴──────────────────────┴─────────────────────┘");
             }
+        }catch (SQLException e) {
+            //si falla la conexión o la consulta, lanzamos la excepción para que
+            //la gestione quien llame a este método
+            throw e;
         }
     }
 
