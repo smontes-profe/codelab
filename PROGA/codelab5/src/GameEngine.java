@@ -3,7 +3,6 @@ import java.util.Random;
 public class GameEngine {  
 
     private boolean seHaRetirado;
-    private boolean continuarJugando;
     private Heroe personaje;
     private Enemigo enemigoActual;
     private int trasgosDerrotados;
@@ -15,12 +14,6 @@ public class GameEngine {
         GameConfig.aleatorio = new Random();
         miUI=Interfaz.getInstancia();
         miUI.mostrarInicio(this);
-        // seHaRetirado=false;
-        // continuarJugando=true;
-        // while(continuarJugando){
-        //     iniciarPartida();
-        // }
-        // miUI.salir();
     }
     public void comenzarPartida(String nombre) {
         seHaRetirado = false;
@@ -68,6 +61,8 @@ public class GameEngine {
             miUI.actualizarContadores(trasgosDerrotados, trollsDerrotados);
             miUI.mostrarRecompensa(recompensa);
             miUI.mostrarOpcionesFinEncuentro(personaje.tienePociones());
+        } else if (!personaje.estaVivo()) {
+            miUI.mostrarFinPartida(personaje, false);
         }
     }
 
@@ -96,7 +91,20 @@ public class GameEngine {
     public void retirarse() {
         comprobarFinEncuentro();
         seHaRetirado = true;
-        miUI.mostrarRetirada(personaje);
+        miUI.mostrarFinPartida(personaje, true);
+    }
+
+    /** Vuelve a la pantalla de inicio después de una derrota o retirada. */
+    public void reiniciar() {
+        if (personaje == null || (personaje.estaVivo() && !seHaRetirado)) {
+            throw new IllegalStateException("La partida todavía no ha terminado.");
+        }
+        personaje = null;
+        enemigoActual = null;
+        seHaRetirado = false;
+        trasgosDerrotados = 0;
+        trollsDerrotados = 0;
+        miUI.mostrarInicio(this);
     }
 
     private void comprobarFinEncuentro() {
@@ -106,38 +114,4 @@ public class GameEngine {
         }
     }
 
-    private void iniciarPartida(){
-        personaje = miUI.inicializarHeroe();
-        do {
-           realizarGameLoop(); 
-        }while (personaje.estaVivo() && !seHaRetirado);
-        continuarJugando= miUI.mostrarGameOver();           
-    }
-
-    private void realizarGameLoop() {
-        miUI.imprimirFicha();
-        enemigoActual = new Enemigo();
-        /* ----------COMBAT LOOP---------- */
-        miUI.iniciarNuevoEncuentro(enemigoActual);
-        while (personaje.estaVivo() && enemigoActual.estaVivo()) {
-            realizarCombatLoop();
-        }
-        if (personaje.estaVivo()) {
-            int opcionSeleccionada = miUI.mostrarOpcionesEncuentro();
-            seHaRetirado= (opcionSeleccionada==1); 
-            if (opcionSeleccionada==3)  personaje.beberPocion();
-        }  
-    }
-    private void realizarCombatLoop() {
-        int danioHeroe = personaje.hacerDanio(enemigoActual);
-        miUI.mostrarDanioAlEnemigo(danioHeroe);
-        if (!enemigoActual.estaVivo()) {
-            personaje.enemigosDerrotados++;
-            miUI.mostrarLoot(personaje.getNuevoLoot());
-        }else {
-            int DanioEnemigo = personaje.recibirDanio(enemigoActual.getDanio());
-            miUI.mostrarDanioAlHeroe(DanioEnemigo);
-        }
-        miUI.finalizarCombatLoop();
-    }
 }

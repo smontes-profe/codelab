@@ -2,11 +2,6 @@ import java.util.Random;
 
 public class GameConfig {
 
-    public static final String COLOR_INFORMATIVO = "\u001B[37m";
-    public static final String COLOR_OPCIONES = "\u001B[33m";
-    public static final String COLOR_JUGADOR = "\u001B[32m";
-    public static final String COLOR_ENEMIGO = "\u001B[31m";
-    public static final int TIEMPO_ESPERA = 1000;
     public static final int VIDA_MAXIMA = 100;
     public static final int CURACION_POCION = 50;
     public static final int DANIO_ESPADA = 25;
