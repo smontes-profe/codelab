@@ -12,12 +12,18 @@ public class GameEngine {
     public GameEngine(){
         GameConfig.aleatorio = new Random();
         miUI=Interfaz.getInstancia();
-        seHaRetirado=false;
-        continuarJugando=true;
-        while(continuarJugando){
-            iniciarPartida();
-        }
-        miUI.salir();
+        miUI.mostrarInicio(this);
+        // seHaRetirado=false;
+        // continuarJugando=true;
+        // while(continuarJugando){
+        //     iniciarPartida();
+        // }
+        // miUI.salir();
+    }
+    public void comenzarPartida(String nombre) {
+        seHaRetirado = false;
+        personaje = new Heroe(nombre);
+        miUI.mostrarVistaPrincipal(personaje);
     }
 
     private void iniciarPartida(){

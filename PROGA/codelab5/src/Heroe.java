@@ -6,15 +6,28 @@ public class Heroe {
     private int vida;
     public int enemigosDerrotados;
 
-    public String getNombre(){ return nombre;}
-    public int getVida(){ return vida;}
-    public boolean estaVivo(){ return vida>0;}
-    public ArrayList<String> getInventario(){ return inventario;}
-    public boolean tienePociones(){ return getPocionesDisponibles()>0;}
-    
+    public String getNombre() {
+        return nombre;
+    }
 
-    public Heroe(String nuevoNombre){
-        nombre= nuevoNombre;
+    public int getVida() {
+        return vida;
+    }
+
+    public boolean estaVivo() {
+        return vida > 0;
+    }
+
+    public ArrayList<String> getInventario() {
+        return inventario;
+    }
+
+    public boolean tienePociones() {
+        return getPocionesDisponibles() > 0;
+    }
+
+    public Heroe(String nuevoNombre) {
+        nombre = nuevoNombre;
         vida = GameConfig.VIDA_MAXIMA;
         inventario = new ArrayList<>();
         for (String objeto : GameConfig.INVENTARIO_INICIAL) {
@@ -22,26 +35,33 @@ public class Heroe {
         }
         enemigosDerrotados = 0;
     }
-    private int getPocionesDisponibles(){
-        int contPociones=0;
+
+    private int getPocionesDisponibles() {
+        int contPociones = 0;
         for (String objeto : GameConfig.INVENTARIO_INICIAL) {
-            if(objeto==GameConfig.INVENTARIO_POCION) contPociones++;
+            if (objeto == GameConfig.INVENTARIO_POCION)
+                contPociones++;
         }
         return contPociones;
     }
-    public int hacerDanio(Enemigo enemigoActual){
-        int DanoTemporal = GameConfig.DANIO_ESPADA;
+
+    public int getDanio() {
         double modificadorAtaque = 1;
         for (String objeto : inventario) {
             if (objeto.equals(GameConfig.INVENTARIO_ANILLO_ATAQUE)) {
                 modificadorAtaque *= GameConfig.INCREMENTO_ANILLO_ATAQUE;
             }
         }
-        DanoTemporal = (int) (DanoTemporal *  modificadorAtaque);
-        enemigoActual.recibirDanio(DanoTemporal);
-        return DanoTemporal;
+        return (int) (GameConfig.DANIO_ESPADA * modificadorAtaque);
     }
-    public int recibirDanio(int danioEnemigo){
+
+    public int hacerDanio(Enemigo enemigoActual) {
+        int danio = getDanio();
+        enemigoActual.recibirDanio(danio);
+        return danio;
+    }
+
+    public int recibirDanio(int danioEnemigo) {
         double modificadorDefensa = 1 + GameConfig.DEFENSA_ESCUDO;
         for (String objeto : inventario) {
             if (objeto.equals(GameConfig.INVENTARIO_ANILLO_DEFENSA)) {
@@ -49,17 +69,19 @@ public class Heroe {
             }
         }
         int DanoTemporal = (int) (danioEnemigo / modificadorDefensa);
-        vida= Math.max(0, vida-DanoTemporal);
+        vida = Math.max(0, vida - DanoTemporal);
         return DanoTemporal;
     }
-    public void beberPocion(){
-        if(tienePociones()){
+
+    public void beberPocion() {
+        if (tienePociones()) {
             inventario.remove(GameConfig.INVENTARIO_POCION);
-            vida= Math.min(GameConfig.VIDA_MAXIMA, vida+GameConfig.CURACION_POCION);
+            vida = Math.min(GameConfig.VIDA_MAXIMA, vida + GameConfig.CURACION_POCION);
         }
     }
-    public String getNuevoLoot(){
-        String objetoLoot="";
+
+    public String getNuevoLoot() {
+        String objetoLoot = "";
         int lootRandom = GameConfig.aleatorio.nextInt(100) + 1;
         for (int i = 0; i < GameConfig.LOOT_PROBABILIDADES.length; i++) {
             if (lootRandom <= GameConfig.LOOT_PROBABILIDADES[i]) {
