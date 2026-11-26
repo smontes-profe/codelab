@@ -30,6 +30,14 @@ public class Interfaz {
     private JLabel vidaHeroe;
     private JLabel danioHeroe;
     private JTextArea inventarioHeroe;
+    private JLabel mensajeEncuentro;
+    private JLabel nombreEnemigo;
+    private JLabel vidaEnemigo;
+    private JLabel danioEnemigo;
+    private JLabel contadorTrasgos;
+    private JLabel contadorTrolls;
+    private JButton botonAtacar;
+    private JTextArea resultadoTurno;
 
     public static Interfaz getInstancia() {
         if (instancia == null) {
@@ -83,7 +91,7 @@ public class Interfaz {
         ventana.setVisible(true);
     }
 
-    public void mostrarVistaPrincipal(Heroe heroe) {
+    public void mostrarVistaPrincipal(Heroe heroe, GameEngine motor) {
         JPanel panelPrincipal = new JPanel(new BorderLayout(15, 15));
         panelPrincipal.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
@@ -117,10 +125,48 @@ public class Interfaz {
         panelIzquierdo.add(panelInventario, BorderLayout.CENTER);
         panelPrincipal.add(panelIzquierdo, BorderLayout.WEST);
 
-        // Reservamos esta zona para los encuentros de una siguiente sesión.
-        JLabel zonaEncuentro = new JLabel(
-                "Aquí aparecerán los encuentros", SwingConstants.CENTER);
-        panelPrincipal.add(zonaEncuentro, BorderLayout.CENTER);
+        JPanel panelEncuentro = new JPanel(new BorderLayout());
+        panelEncuentro.setBorder(
+                BorderFactory.createTitledBorder("Encuentro actual"));
+
+        mensajeEncuentro = new JLabel("", SwingConstants.CENTER);
+        nombreEnemigo = new JLabel();
+        vidaEnemigo = new JLabel();
+        danioEnemigo = new JLabel();
+
+        JPanel fichaEnemigo = new JPanel(new GridLayout(3, 1, 0, 8));
+        fichaEnemigo.setBorder(BorderFactory.createTitledBorder("Ficha del enemigo"));
+        fichaEnemigo.add(nombreEnemigo);
+        fichaEnemigo.add(vidaEnemigo);
+        fichaEnemigo.add(danioEnemigo);
+
+        JPanel datosEncuentro = new JPanel(new BorderLayout(0, 10));
+        datosEncuentro.add(mensajeEncuentro, BorderLayout.NORTH);
+        datosEncuentro.add(fichaEnemigo, BorderLayout.CENTER);
+        panelEncuentro.add(datosEncuentro, BorderLayout.NORTH);
+
+        resultadoTurno = new JTextArea();
+        resultadoTurno.setEditable(false);
+        resultadoTurno.setLineWrap(true);
+        resultadoTurno.setWrapStyleWord(true);
+        resultadoTurno.setBorder(BorderFactory.createTitledBorder("Último turno"));
+        panelEncuentro.add(new JScrollPane(resultadoTurno), BorderLayout.CENTER);
+
+        botonAtacar = new JButton("Atacar");
+        botonAtacar.addActionListener(evento -> motor.atacar());
+        panelEncuentro.add(botonAtacar, BorderLayout.SOUTH);
+
+        JPanel panelContadores = new JPanel(new GridLayout(1, 2, 10, 0));
+        panelContadores.setBorder(BorderFactory.createTitledBorder("Encuentros superados"));
+        contadorTrasgos = new JLabel("", SwingConstants.CENTER);
+        contadorTrolls = new JLabel("", SwingConstants.CENTER);
+        panelContadores.add(contadorTrasgos);
+        panelContadores.add(contadorTrolls);
+
+        JPanel panelDerecho = new JPanel(new BorderLayout(0, 15));
+        panelDerecho.add(panelContadores, BorderLayout.NORTH);
+        panelDerecho.add(panelEncuentro, BorderLayout.CENTER);
+        panelPrincipal.add(panelDerecho, BorderLayout.CENTER);
 
         actualizarFicha(heroe);
 
@@ -159,6 +205,65 @@ public class Interfaz {
         }
 
         inventarioHeroe.setText(textoInventario);
+    }
+    public void mostrarEnemigo(Enemigo enemigo) {
+        mensajeEncuentro.setText("¡Aparece un nuevo enemigo!");
+        actualizarEnemigo(enemigo);
+    }
+
+    /**
+     * Actualiza los datos visibles del enemigo después de un ataque.
+     * @param enemigo enemigo del encuentro actual
+     */
+    public void actualizarEnemigo(Enemigo enemigo) {
+        nombreEnemigo.setText("Nombre: " + enemigo.getNombre());
+        vidaEnemigo.setText("Vida: " + enemigo.getVida());
+        danioEnemigo.setText("Daño: " + enemigo.getDanio());
+    }
+
+    /**
+     * Muestra los daños del último turno y bloquea el ataque si el combate ha terminado.
+     * @param heroe héroe que participa en el combate
+     * @param enemigo enemigo que recibe el ataque
+     * @param danioHeroe daño causado por el héroe
+     * @param danioEnemigo daño recibido por el héroe, si hay contraataque
+     */
+    public void mostrarResultadoTurno(Heroe heroe, Enemigo enemigo,
+            int danioHeroe, int danioEnemigo) {
+        String resultado = heroe.getNombre() + " ataca a " + enemigo.getNombre()
+                + " y causa " + danioHeroe + " de daño.\n";
+
+        if (enemigo.estaVivo()) {
+            resultado += enemigo.getNombre() + " contraataca y causa "
+                    + danioEnemigo + " de daño.\n";
+        } else {
+            resultado += "¡" + enemigo.getNombre() + " ha sido derrotado!";
+        }
+        if (!heroe.estaVivo()) {
+            resultado += "¡" + heroe.getNombre() + " ha sido derrotado!";
+        }
+
+        mensajeEncuentro.setText("Resultado del último ataque");
+        resultadoTurno.setText(resultado);
+        botonAtacar.setEnabled(heroe.estaVivo() && enemigo.estaVivo());
+    }
+
+    /**
+     * Actualiza el número de enemigos derrotados de cada tipo.
+     * @param trasgos número de trasgos derrotados en la partida
+     * @param trolls número de trolls derrotados en la partida
+     */
+    public void actualizarContadores(int trasgos, int trolls) {
+        contadorTrasgos.setText("Trasgos: " + trasgos);
+        contadorTrolls.setText("Trolls: " + trolls);
+    }
+
+    /**
+     * Añade al resultado del combate el objeto obtenido como recompensa.
+     * @param objeto nombre del objeto añadido al inventario
+     */
+    public void mostrarRecompensa(String objeto) {
+        resultadoTurno.append("\n¡Has conseguido " + objeto + "!");
     }
 
     /* OLD */

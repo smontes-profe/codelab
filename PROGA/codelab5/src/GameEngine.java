@@ -6,6 +6,8 @@ public class GameEngine {
     private boolean continuarJugando;
     private Heroe personaje;
     private Enemigo enemigoActual;
+    private int trasgosDerrotados;
+    private int trollsDerrotados;
     
     private Interfaz miUI;
 
@@ -23,7 +25,50 @@ public class GameEngine {
     public void comenzarPartida(String nombre) {
         seHaRetirado = false;
         personaje = new Heroe(nombre);
-        miUI.mostrarVistaPrincipal(personaje);
+        trasgosDerrotados = 0;
+        trollsDerrotados = 0;
+
+        miUI.mostrarVistaPrincipal(personaje, this);
+        miUI.actualizarContadores(trasgosDerrotados, trollsDerrotados);
+
+        enemigoActual = new Enemigo();
+        miUI.mostrarEnemigo(enemigoActual);
+    }
+
+    /**
+     * Realiza un turno de combate y actualiza la información de la ventana.
+     * El enemigo solo contraataca si ha sobrevivido al ataque del héroe.
+     */
+    public void atacar() {
+        if (personaje == null || enemigoActual == null
+                || !personaje.estaVivo() || !enemigoActual.estaVivo()) {
+            throw new IllegalStateException("No hay un combate activo.");
+        }
+
+        int danioHeroe = personaje.hacerDanio(enemigoActual);
+        int danioEnemigo = 0;
+        if (enemigoActual.estaVivo()) {
+            danioEnemigo = personaje.recibirDanio(enemigoActual.getDanio());
+        }
+
+        String recompensa = null;
+        if (!enemigoActual.estaVivo()) {
+            personaje.enemigosDerrotados++;
+            if (enemigoActual.getNombre().equals(GameConfig.NOMBRE_TRASGO)) {
+                trasgosDerrotados++;
+            } else if (enemigoActual.getNombre().equals(GameConfig.NOMBRE_TROLL)) {
+                trollsDerrotados++;
+            }
+            recompensa = personaje.getNuevoLoot();
+        }
+
+        miUI.actualizarFicha(personaje);
+        miUI.actualizarEnemigo(enemigoActual);
+        miUI.mostrarResultadoTurno(personaje, enemigoActual, danioHeroe, danioEnemigo);
+        if (recompensa != null) {
+            miUI.actualizarContadores(trasgosDerrotados, trollsDerrotados);
+            miUI.mostrarRecompensa(recompensa);
+        }
     }
 
     private void iniciarPartida(){
