@@ -3,7 +3,7 @@
  * Codelab 5 - Functions & try/catch
  * Fecha: 25-11-2026
  * Autor: Sergio Montes
- * TODO
+ * POO y GUI
  */
 
 import javax.swing.SwingUtilities;
@@ -20,5 +20,5 @@ public class Main {
 
 /*
  * Ejercicios propuestos:
- * TODO
+ * Pasar unas buenas navidades!
 */
