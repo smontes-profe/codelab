@@ -1,6 +1,6 @@
 
 /*
- * Codelab 5 - Functions & try/catch
+ * Codelab 5 - POO y GUI
  * Fecha: 25-11-2026
  * Autor: Sergio Montes
  * POO y GUI
