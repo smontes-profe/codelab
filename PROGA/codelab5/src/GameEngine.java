@@ -31,8 +31,7 @@ public class GameEngine {
         miUI.mostrarVistaPrincipal(personaje, this);
         miUI.actualizarContadores(trasgosDerrotados, trollsDerrotados);
 
-        enemigoActual = new Enemigo();
-        miUI.mostrarEnemigo(enemigoActual);
+        iniciarEncuentro();
     }
 
     /**
@@ -68,6 +67,42 @@ public class GameEngine {
         if (recompensa != null) {
             miUI.actualizarContadores(trasgosDerrotados, trollsDerrotados);
             miUI.mostrarRecompensa(recompensa);
+            miUI.mostrarOpcionesFinEncuentro(personaje.tienePociones());
+        }
+    }
+
+    private void iniciarEncuentro() {
+        enemigoActual = new Enemigo();
+        miUI.mostrarEnemigo(enemigoActual);
+    }
+
+    /**
+     * Continúa la aventura después de ganar un encuentro.
+     * @param usarPocion si se debe consumir una poción antes del nuevo encuentro
+     */
+    public void continuarAventura(boolean usarPocion) {
+        comprobarFinEncuentro();
+        if (usarPocion) {
+            if (!personaje.tienePociones()) {
+                throw new IllegalStateException("No quedan pociones en el inventario.");
+            }
+            personaje.beberPocion();
+            miUI.actualizarFicha(personaje);
+        }
+        iniciarEncuentro();
+    }
+
+    /** Termina la aventura después de ganar un encuentro. */
+    public void retirarse() {
+        comprobarFinEncuentro();
+        seHaRetirado = true;
+        miUI.mostrarRetirada(personaje);
+    }
+
+    private void comprobarFinEncuentro() {
+        if (personaje == null || enemigoActual == null || !personaje.estaVivo()
+                || enemigoActual.estaVivo() || seHaRetirado) {
+            throw new IllegalStateException("No hay un encuentro ganado pendiente de decisión.");
         }
     }
 

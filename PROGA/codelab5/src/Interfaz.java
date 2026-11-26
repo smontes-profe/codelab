@@ -2,6 +2,7 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 
@@ -37,7 +38,10 @@ public class Interfaz {
     private JLabel contadorTrasgos;
     private JLabel contadorTrolls;
     private JButton botonAtacar;
+    private JButton botonPocion;
     private JTextArea resultadoTurno;
+    private CardLayout vistaAcciones;
+    private JPanel panelAcciones;
 
     public static Interfaz getInstancia() {
         if (instancia == null) {
@@ -154,7 +158,25 @@ public class Interfaz {
 
         botonAtacar = new JButton("Atacar");
         botonAtacar.addActionListener(evento -> motor.atacar());
-        panelEncuentro.add(botonAtacar, BorderLayout.SOUTH);
+
+        JButton botonContinuar = new JButton("Continuar");
+        botonContinuar.addActionListener(evento -> motor.continuarAventura(false));
+        botonPocion = new JButton("Usar poción y continuar");
+        botonPocion.addActionListener(evento -> motor.continuarAventura(true));
+        JButton botonRetirarse = new JButton("Retirarse");
+        botonRetirarse.addActionListener(evento -> motor.retirarse());
+
+        JPanel opcionesEncuentro = new JPanel();
+        opcionesEncuentro.add(botonContinuar);
+        opcionesEncuentro.add(botonPocion);
+        opcionesEncuentro.add(botonRetirarse);
+
+        vistaAcciones = new CardLayout();
+        panelAcciones = new JPanel(vistaAcciones);
+        panelAcciones.add(botonAtacar, "combate");
+        panelAcciones.add(opcionesEncuentro, "opciones");
+        panelAcciones.add(new JLabel("Aventura terminada", SwingConstants.CENTER), "terminado");
+        panelEncuentro.add(panelAcciones, BorderLayout.SOUTH);
 
         JPanel panelContadores = new JPanel(new GridLayout(1, 2, 10, 0));
         panelContadores.setBorder(BorderFactory.createTitledBorder("Encuentros superados"));
@@ -209,6 +231,9 @@ public class Interfaz {
     public void mostrarEnemigo(Enemigo enemigo) {
         mensajeEncuentro.setText("¡Aparece un nuevo enemigo!");
         actualizarEnemigo(enemigo);
+        resultadoTurno.setText("");
+        botonAtacar.setEnabled(true);
+        vistaAcciones.show(panelAcciones, "combate");
     }
 
     /**
@@ -264,6 +289,25 @@ public class Interfaz {
      */
     public void mostrarRecompensa(String objeto) {
         resultadoTurno.append("\n¡Has conseguido " + objeto + "!");
+    }
+
+    /**
+     * Muestra las decisiones disponibles tras ganar el encuentro.
+     * @param tienePociones si el héroe puede usar una poción
+     */
+    public void mostrarOpcionesFinEncuentro(boolean tienePociones) {
+        botonPocion.setEnabled(tienePociones);
+        vistaAcciones.show(panelAcciones, "opciones");
+    }
+
+    /**
+     * Muestra que el héroe ha terminado la aventura retirándose.
+     * @param heroe héroe que se retira
+     */
+    public void mostrarRetirada(Heroe heroe) {
+        mensajeEncuentro.setText("¡Aventura terminada!");
+        resultadoTurno.append("\n" + heroe.getNombre() + " se ha retirado con vida.");
+        vistaAcciones.show(panelAcciones, "terminado");
     }
 
     /* OLD */

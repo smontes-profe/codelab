@@ -38,8 +38,8 @@ public class Heroe {
 
     private int getPocionesDisponibles() {
         int contPociones = 0;
-        for (String objeto : GameConfig.INVENTARIO_INICIAL) {
-            if (objeto == GameConfig.INVENTARIO_POCION)
+        for (String objeto : inventario) {
+            if (objeto.equals(GameConfig.INVENTARIO_POCION))
                 contPociones++;
         }
         return contPociones;
