@@ -27,5 +27,6 @@ public class GameConfig {
     public static Random aleatorio;
 
 
+    /** Crea una instancia de la configuración. */
     public GameConfig(){}
 }

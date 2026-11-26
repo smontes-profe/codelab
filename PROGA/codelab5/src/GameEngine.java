@@ -10,11 +10,16 @@ public class GameEngine {
     
     private Interfaz miUI;
 
+    /** Inicializa el generador aleatorio y muestra la pantalla de inicio. */
     public GameEngine(){
         GameConfig.aleatorio = new Random();
         miUI=Interfaz.getInstancia();
         miUI.mostrarInicio(this);
     }
+    /**
+     * Crea un héroe, reinicia los contadores y comienza el primer encuentro.
+     * @param nombre nombre elegido para el héroe
+     */
     public void comenzarPartida(String nombre) {
         seHaRetirado = false;
         personaje = new Heroe(nombre);
@@ -30,6 +35,7 @@ public class GameEngine {
     /**
      * Realiza un turno de combate y actualiza la información de la ventana.
      * El enemigo solo contraataca si ha sobrevivido al ataque del héroe.
+     * @throws IllegalStateException si no hay un combate activo
      */
     public void atacar() {
         if (personaje == null || enemigoActual == null
@@ -74,6 +80,8 @@ public class GameEngine {
     /**
      * Continúa la aventura después de ganar un encuentro.
      * @param usarPocion si se debe consumir una poción antes del nuevo encuentro
+     * @throws IllegalStateException si no hay un encuentro ganado pendiente
+     *         o si se solicita una poción y no queda ninguna
      */
     public void continuarAventura(boolean usarPocion) {
         comprobarFinEncuentro();
@@ -87,14 +95,20 @@ public class GameEngine {
         iniciarEncuentro();
     }
 
-    /** Termina la aventura después de ganar un encuentro. */
+    /**
+     * Termina la aventura después de ganar un encuentro.
+     * @throws IllegalStateException si no hay un encuentro ganado pendiente
+     */
     public void retirarse() {
         comprobarFinEncuentro();
         seHaRetirado = true;
         miUI.mostrarFinPartida(personaje, true);
     }
 
-    /** Vuelve a la pantalla de inicio después de una derrota o retirada. */
+    /**
+     * Vuelve a la pantalla de inicio después de una derrota o retirada.
+     * @throws IllegalStateException si la partida no ha terminado
+     */
     public void reiniciar() {
         if (personaje == null || (personaje.estaVivo() && !seHaRetirado)) {
             throw new IllegalStateException("La partida todavía no ha terminado.");

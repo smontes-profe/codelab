@@ -9,6 +9,10 @@
 import javax.swing.SwingUtilities;
 
 public class Main {
+    /**
+     * Inicia el juego en el hilo de eventos de Swing.
+     * @param args argumentos de inicio; el juego no los utiliza
+     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new GameEngine());
     }

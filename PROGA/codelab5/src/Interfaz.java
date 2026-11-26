@@ -35,6 +35,10 @@ public class Interfaz {
     private CardLayout vistaAcciones;
     private JPanel panelAcciones;
 
+    /**
+     * Obtiene la interfaz compartida, creándola si todavía no existe.
+     * @return instancia de la interfaz
+     */
     public static Interfaz getInstancia() {
         if (instancia == null) {
             instancia = new Interfaz();
@@ -45,6 +49,10 @@ public class Interfaz {
     private Interfaz() {
     }
 
+    /**
+     * Muestra el formulario para introducir el nombre e iniciar una partida.
+     * @param motor motor al que se comunica el nombre introducido
+     */
     public void mostrarInicio(GameEngine motor) {
         if (ventana == null) {
             ventana = new JFrame("Leyendas del código");
@@ -89,6 +97,11 @@ public class Interfaz {
         ventana.setVisible(true);
     }
 
+    /**
+     * Muestra la ficha, el inventario, los contadores y la zona de encuentro.
+     * @param heroe héroe cuyos datos se muestran
+     * @param motor motor que recibe las acciones de los botones
+     */
     public void mostrarVistaPrincipal(Heroe heroe, GameEngine motor) {
         JPanel panelPrincipal = new JPanel(new BorderLayout(15, 15));
         panelPrincipal.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
@@ -201,6 +214,10 @@ public class Interfaz {
         ventana.repaint();
     }
 
+    /**
+     * Actualiza la ficha y las cantidades del inventario del héroe.
+     * @param heroe héroe cuyos datos se van a mostrar
+     */
     public void actualizarFicha(Heroe heroe) {
         nombreHeroe.setText("Nombre: " + heroe.getNombre());
         vidaHeroe.setText("Vida: " + heroe.getVida());
@@ -230,6 +247,10 @@ public class Interfaz {
 
         inventarioHeroe.setText(textoInventario);
     }
+    /**
+     * Prepara la vista de un nuevo encuentro y muestra los datos del enemigo.
+     * @param enemigo enemigo que acaba de aparecer
+     */
     public void mostrarEnemigo(Enemigo enemigo) {
         mensajeEncuentro.setText("¡Aparece un nuevo enemigo!");
         actualizarEnemigo(enemigo);
