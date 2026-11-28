@@ -1,0 +1,178 @@
+import java.util.ArrayList;
+
+public abstract class Personaje {
+
+    private final String nombre;
+    private final String profesion;
+    private final int vidaMaxima;
+    private final int danio;
+    private int vida;
+    private final ArrayList<Objeto> mochila;
+    private boolean pocionAtaqueActiva;
+    private boolean pocionDefensaActiva;
+
+    /** @return los puntos de vida actuales */
+    public int getVida() { return vida; }
+
+    /** @return la profesión del personaje */
+    public String getProfesion() { return profesion; }
+
+    /** @return el nombre del personaje */
+    public String getNombre() { return nombre; }
+
+    /** @return la cantidad de objetos que hay en la mochila */
+    public int getCantidadObjetos() { return mochila.size(); }
+
+    /**
+     * Devuelve el objeto situado en la posición indicada de la mochila.
+     *
+     * @param indice posición del objeto, empezando en cero
+     * @return el objeto de esa posición
+     */
+    public Objeto getObjetoMochila(int indice) { return mochila.get(indice); }
+
+    protected Personaje(String nombre, String miProfesion,  int vidaMaxima, int danio) {
+        this.nombre = nombre;
+        this.profesion = miProfesion;
+        this.vidaMaxima = vidaMaxima;
+        this.danio = danio;
+        this.vida = vidaMaxima;
+        this.mochila = new ArrayList<>();
+        for (Objeto objeto : GameConfig.EQUIPO_INICIAL) {
+            mochila.add(objeto);
+        }
+    }
+
+    /** Muestra por terminal la ficha y el inventario del personaje. */
+    public void mostrarFicha() {
+        ColorTerminal.FICHA.imprimirLinea("┌──────────────  FICHA DEL HÉROE ──────────────┐");
+        ColorTerminal.FICHA.imprimirLinea("   " + nombre + " — " + profesion);
+        ColorTerminal.FICHA.imprimirLinea("    Vida: " + vida + "/" + vidaMaxima);
+        ColorTerminal.FICHA.imprimirLinea("   Mochila:");
+        if (mochila.isEmpty()) {
+            ColorTerminal.FICHA.imprimirLinea("    (vacía)");
+        } else {
+            for (int i = 0; i < mochila.size(); i++) {
+                ColorTerminal.FICHA.imprimirLinea("    " + (i + 1) + ". " + mochila.get(i).getNombre());
+            }
+        }
+        ColorTerminal.FICHA.imprimirLinea("└────────────────────────────────────────────────┘");
+        System.out.println();
+    }
+    
+    /**
+     * Ataca al enemigo indicado y aplica el daño correspondiente.
+     *
+     * @param objetivo enemigo que recibe el ataque
+     */
+    public void atacar(Enemigo objetivo) {
+        int danioRealizado = calcularDanio(danio);
+        ColorTerminal.JUGADOR.imprimirFormato(" %s golpea a %s y le hace %d de daño.%n",
+                nombre, objetivo.getNombre(), danioRealizado);
+        objetivo.recibirDanio(danioRealizado);
+    }
+
+    /**
+     * Intenta atacar al enemigo desde lejos; el personaje base no tiene esa habilidad.
+     *
+     * @param objetivo enemigo que podría recibir el ataque
+     * @return {@code true} si se realizó un ataque a distancia
+     */
+    public boolean atacarADistancia(Enemigo objetivo) {
+        return false;
+    }
+
+    /**
+     * Reduce la vida aplicando los efectos defensivos activos.
+     *
+     * @param cantidad cantidad de daño recibido
+     */
+    public void recibirDanio(int cantidad) {
+        if (cantidad > 0) {
+            int danioRecibido = cantidad;
+            if (pocionDefensaActiva) {
+                danioRecibido = (danioRecibido + 1) / 2;
+                ColorTerminal.JUGADOR.imprimirFormato(
+                        " La poción de defensa reduce el daño de %d a %d.%n", cantidad, danioRecibido);
+            }
+            danioRecibido = reducirDanioPorClase(danioRecibido);
+            vida = Math.max(0, vida - danioRecibido);
+        }
+    }
+
+    protected int reducirDanioPorClase(int cantidad) {
+        return cantidad;
+    }
+
+    protected int calcularDanio(int danioBase) {
+        if (!pocionAtaqueActiva) {
+            return danioBase;
+        }
+        int danioAumentado = danioBase * 2;
+        ColorTerminal.JUGADOR.imprimirFormato(
+                " La poción de ataque duplica el daño de %d a %d.%n", danioBase, danioAumentado);
+        return danioAumentado;
+    }
+
+    /**
+     * Añade un objeto a la mochila.
+     *
+     * @param objeto objeto que se incorpora al inventario
+     */
+    public void agregarObjeto(Objeto objeto) {
+        mochila.add(objeto);
+    }
+
+    /**
+     * Usa y retira de la mochila el objeto de la posición indicada.
+     *
+     * @param indice posición del objeto, empezando en cero
+     */
+    public void usarObjeto(int indice) {
+
+        Objeto objeto = mochila.get(indice);
+        if (objeto == Objeto.POCION_CURACION && vida == vidaMaxima) {
+            ColorTerminal.JUGADOR.imprimirLinea(" Ya tienes la vida al máximo; la poción se queda en la mochila.");
+            return;
+        }
+        mochila.remove(indice);
+        ColorTerminal.JUGADOR.imprimirLinea(" Usas " + objeto.getNombre() + ".");
+
+        if (objeto == Objeto.POCION_CURACION) {
+            int vidaAnterior = vida;
+            vida = Math.min(vidaMaxima, vida + GameConfig.CURACION_POCION);
+            int vidaRecuperada = vida - vidaAnterior;
+            ColorTerminal.JUGADOR.imprimirLinea(" Recuperas " + vidaRecuperada + " puntos de vida.");
+            return;
+        }
+        if (objeto == Objeto.POCION_ATAQUE) {
+            pocionAtaqueActiva = true;
+            ColorTerminal.JUGADOR.imprimirLinea(" Tus ataques harán el doble de daño durante este encuentro.");
+            return;
+        }
+        if (objeto == Objeto.POCION_DEFENSA) {
+            pocionDefensaActiva = true;
+            ColorTerminal.JUGADOR.imprimirLinea(" Recibirás la mitad de daño durante este encuentro.");
+            return;
+        }
+        throw new IllegalStateException("Intentando usar un objeto de la mochila que no existe");
+    }
+
+    /** Termina y anuncia los efectos temporales activos del encuentro. */
+    public void finalizarEfectosDeEncuentro() {
+
+        if (pocionAtaqueActiva) {
+            ColorTerminal.INFORMACION.imprimirLinea(" El efecto de la poción de ataque ha terminado.");
+            pocionAtaqueActiva = false;
+        }
+        if (pocionDefensaActiva) {
+            ColorTerminal.INFORMACION.imprimirLinea(" El efecto de la poción de defensa ha terminado.");
+            pocionDefensaActiva = false;
+        }
+    }
+
+    /** @return {@code true} si el personaje conserva puntos de vida */
+    public boolean estaVivo() {
+        return vida > 0;
+    }
+}
