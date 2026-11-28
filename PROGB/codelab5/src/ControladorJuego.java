@@ -12,6 +12,9 @@ public class ControladorJuego {
     private boolean objetoElegido;
     private boolean turnoDistanciaPendiente;
     private boolean combateTerminado;
+    private boolean partidaFinalizada;
+    private int enfrentamientosSuperados;
+    private Objeto ultimoBotin;
 
     public ControladorJuego(RegistroJuego registro) {
         this.registro = registro;
@@ -26,6 +29,9 @@ public class ControladorJuego {
         this.objetoElegido = false;
         this.turnoDistanciaPendiente = false;
         this.combateTerminado = false;
+        this.partidaFinalizada = false;
+        this.enfrentamientosSuperados = 0;
+        this.ultimoBotin = null;
     }
 
     public String getJugador() {
@@ -36,9 +42,17 @@ public class ControladorJuego {
         return personaje;
     }
 
+    public int getEnfrentamientosSuperados() {
+        return enfrentamientosSuperados;
+    }
+
+    public Objeto getUltimoBotin() {
+        return ultimoBotin;
+    }
+
     // Conservamos el encuentro para poder continuar con él más adelante.
     public Encuentro prepararEncuentro() {
-        if (personaje == null) {
+        if (personaje == null || partidaFinalizada) {
             throw new IllegalStateException("Primero hay que crear un personaje.");
         }
         if (encuentro != null) {
@@ -83,14 +97,41 @@ public class ControladorJuego {
             combateTerminado = true;
             if (!personaje.estaVivo()) {
                 personaje.finalizarEfectosDeEncuentro();
-                registro.informacion("Fin de la aventura.");
+                partidaFinalizada = true;
+                registro.informacion("Fin de la aventura. Has superado "
+                        + enfrentamientosSuperados + " enfrentamiento(s).");
             } else {
                 registro.jugador(" ¡Has derrotado al " + encuentro.getEnemigo().getNombre() + "!");
+                // El botín se guarda antes de terminar los efectos del encuentro.
+                ultimoBotin = Botin.obtenerLoot(random);
+                personaje.agregarObjeto(ultimoBotin);
+                enfrentamientosSuperados++;
                 personaje.finalizarEfectosDeEncuentro();
-                registro.informacion("El botín y la continuación estarán disponibles en el siguiente paso.");
             }
             return false;
         }
         return true;
+    }
+
+    public void continuarAventura() {
+        comprobarVictoria();
+        // Dejamos listo el controlador para preparar el siguiente encuentro.
+        encuentro = null;
+        combate = null;
+        objetoElegido = false;
+        turnoDistanciaPendiente = false;
+        combateTerminado = false;
+        ultimoBotin = null;
+    }
+
+    public void finalizarAventura() {
+        comprobarVictoria();
+        partidaFinalizada = true;
+    }
+
+    private void comprobarVictoria() {
+        if (partidaFinalizada || !combateTerminado || personaje == null || !personaje.estaVivo()) {
+            throw new IllegalStateException("Solo se puede decidir después de ganar un encuentro.");
+        }
     }
 }

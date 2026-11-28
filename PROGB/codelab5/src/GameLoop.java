@@ -104,7 +104,7 @@ public class GameLoop {
             }
 
             ColorTerminal.JUGADOR.imprimirLinea(" ¡Has derrotado al " + enemigoActual.getNombre() + "!");
-            Objeto loot = obtenerLoot();
+            Objeto loot = Botin.obtenerLoot(random);
             miPersonaje.agregarObjeto(loot);
             ColorTerminal.INFORMACION.imprimirLinea(" El " + enemigoActual.getNombre() + " suelta "
                     + loot.getNombre() + ". Lo guardas en la mochila.");
@@ -170,21 +170,6 @@ public class GameLoop {
         } catch (NumberFormatException e) {
             return false;
         }
-    }
-
-    private Objeto obtenerLoot() {
-        if (GameConfig.PROBABILIDADES_LOOT_ACUMULADAS.length != GameConfig.LOOT_POSIBLE.length) {
-            throw new IllegalStateException("Cada posibilidad de loot debe tener una probabilidad asociada.");
-        }
-
-        int tirada = random.nextInt(100) + 1;
-        for (int i = 0; i < GameConfig.PROBABILIDADES_LOOT_ACUMULADAS.length; i++) {
-            if (tirada <= GameConfig.PROBABILIDADES_LOOT_ACUMULADAS[i]) {
-                return GameConfig.LOOT_POSIBLE[i];
-            }
-        }
-
-        throw new IllegalStateException("Las probabilidades de loot no cubren todos los resultados.");
     }
 
     private boolean decidirContinuacion(int enfrentamientosSuperados) {

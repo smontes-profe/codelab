@@ -54,6 +54,9 @@ public class VentanaJuego extends JFrame {
     private final JLabel etiquetaObjeto = new JLabel("Objeto:");
     private final JComboBox<String> objetosEncuentro = new JComboBox<>();
     private final JButton confirmarObjeto = new JButton("Confirmar");
+    private final JButton continuarAventura = new JButton("Continuar aventura");
+    private final JButton finalizarAventura = new JButton("Finalizar aventura");
+    private final JButton nuevaPartida = new JButton("Nueva partida");
     private final Timer turnos = new Timer(GameConfig.TIEMPO_ESPERA, evento -> avanzarCombate());
 
     public VentanaJuego() {
@@ -126,11 +129,20 @@ public class VentanaJuego extends JFrame {
         botones.add(etiquetaObjeto);
         botones.add(objetosEncuentro);
         botones.add(confirmarObjeto);
+        botones.add(continuarAventura);
+        botones.add(finalizarAventura);
+        botones.add(nuevaPartida);
         opciones.add(botones, BorderLayout.CENTER);
         etiquetaObjeto.setVisible(false);
         objetosEncuentro.setVisible(false);
         confirmarObjeto.setVisible(false);
+        continuarAventura.setVisible(false);
+        finalizarAventura.setVisible(false);
+        nuevaPartida.setVisible(false);
         confirmarObjeto.addActionListener(evento -> elegirObjeto());
+        continuarAventura.addActionListener(evento -> continuarAventura());
+        finalizarAventura.addActionListener(evento -> finalizarAventura());
+        nuevaPartida.addActionListener(evento -> volverAlInicio());
 
         JPanel aventura = new JPanel(new BorderLayout(0, 10));
         aventura.add(mensajes, BorderLayout.CENTER);
@@ -292,6 +304,8 @@ public class VentanaJuego extends JFrame {
         Encuentro encuentro = controlador.prepararEncuentro();
         String nombreEnemigo = encuentro.getEnemigo().getNombre();
         nombreEnemigoActual = nombreEnemigo;
+        escribirMensaje(registroEncuentro, "\nENFRENTAMIENTO "
+                + (controlador.getEnfrentamientosSuperados() + 1) + "\n", COLOR_INFORMACION);
         if (encuentro.isEnemigoALejos()) {
             escribirMensaje(registroEncuentro, "\n¡Un " + nombreEnemigo + " aparece a lo lejos!\n",
                     COLOR_INFORMACION);
@@ -336,7 +350,44 @@ public class VentanaJuego extends JFrame {
         mostrarPersonaje();
         if (!continua) {
             turnos.stop();
+            if (controlador.getPersonaje().estaVivo()) {
+                Objeto botin = controlador.getUltimoBotin();
+                escribirMensaje(registroEncuentro, "El " + nombreEnemigoActual + " suelta "
+                        + botin.getNombre() + ". Lo guardas en la mochila.\n", COLOR_INFORMACION);
+                escribirMensaje(registroEncuentro, "¿Quieres continuar o finalizar la aventura?\n",
+                        COLOR_INFORMACION);
+                continuarAventura.setVisible(true);
+                finalizarAventura.setVisible(true);
+            } else {
+                nuevaPartida.setVisible(true);
+            }
         }
+    }
+
+    private void continuarAventura() {
+        controlador.continuarAventura();
+        continuarAventura.setVisible(false);
+        finalizarAventura.setVisible(false);
+        prepararEncuentro();
+    }
+
+    private void finalizarAventura() {
+        controlador.finalizarAventura();
+        continuarAventura.setVisible(false);
+        finalizarAventura.setVisible(false);
+        escribirMensaje(registroEncuentro, controlador.getPersonaje().getNombre()
+                + " finaliza la aventura con vida tras superar "
+                + controlador.getEnfrentamientosSuperados() + " enfrentamiento(s).\n"
+                + "El ranking todavía no se guarda desde la ventana.\n", COLOR_INFORMACION);
+        nuevaPartida.setVisible(true);
+    }
+
+    private void volverAlInicio() {
+        nuevaPartida.setVisible(false);
+        distribucionPantallas.show(pantallas, "inicio");
+        setMinimumSize(new Dimension(0, 0));
+        setSize(480, 240);
+        setLocationRelativeTo(null);
     }
 
     // JTextPane permite combinar colores y estilos en un mismo registro.
