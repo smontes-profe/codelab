@@ -1,12 +1,13 @@
 /*
- * Codelab 5 - GUI y empaquetado
+ * Codelab 5 - GUI
  * Fecha: 17-12-2026
  * Autor: Sergio Montes
- * TODO
+ * GUI!
  */
 import javax.swing.SwingUtilities;
 import vista.VentanaJuego;
 
+/** Punto de entrada de la aplicación. */
 public class Main {
 
     /**
@@ -22,5 +23,6 @@ public class Main {
 
 /*
  * Ejercicios propuestos:
- * TODO
+ * 1. Pasar unas buenas fiestas!
+ * 2. Volver con energía el año que viene.
  */

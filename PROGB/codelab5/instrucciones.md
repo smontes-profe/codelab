@@ -1,24 +1,24 @@
-# Añadir el conector de MySQL
+# Ranking con SQLite
 
-Para que el juego pueda conectarse a la base de datos, necesitamos añadir
-MySQL Connector/J al proyecto:
+El ranking se guarda en `ranking.db`, un archivo SQLite local. No hace falta
+instalar ni arrancar un servidor de base de datos. Para conectarse, el juego
+necesita el controlador SQLite JDBC:
 
-1. Abre la [página de versiones anteriores de MySQL Connector/J](https://dev.mysql.com/downloads/connector/j/).
-2. Selecciona la versión **26.10.0**.
-3. En el sistema operativo, selecciona **Platform Independent**.
-4. Descarga el archivo **ZIP Archive**. Si aparece una pantalla para iniciar
-   sesión, puedes usar la opción **No thanks, just start my download**.
-5. Descomprime el ZIP y busca el archivo `.jar` que haya dentro.
-6. Crea una carpeta llamada `lib` dentro de la carpeta `codelab5` y copia el
-   archivo JAR en ella.
-
-7. Abre la carpeta `codelab5` en VS Code con las extensiones de Java instaladas.
-   El JAR debería aparecer en **Java Projects > Referenced Libraries**.
-   Si no aparece, usa el botón **+** de esa sección para seleccionarlo.
+1. Descarga [SQLite JDBC 3.54.1.0](https://repo.maven.apache.org/maven2/org/xerial/sqlite-jdbc/3.54.1.0/sqlite-jdbc-3.54.1.0.jar).
+2. Copia el archivo JAR en la carpeta `lib` de `codelab5`.
+3. Abre `codelab5` en VS Code con las extensiones de Java instaladas. El JAR
+   debería aparecer en **Java Projects > Referenced Libraries**; si no aparece,
+   usa el botón **+** de esa sección para seleccionarlo.
 
 No es necesario instalar Maven para utilizar el JAR de esta forma.
 
-Para iniciar el juego, ejecuta `Main.java` desde VS Code.
+Para iniciar el juego, ejecuta `Main.java` desde VS Code. El archivo `ranking.db`
+se crea automáticamente en el directorio de trabajo desde el que se inicia el
+juego: al abrir `codelab5` en VS Code, normalmente será esa carpeta. Mantén ese
+archivo para conservar los resultados; cada copia tiene su propio ranking.
+
+Si empaquetas el juego, distribuye también el JAR de SQLite y asegúrate de
+ejecutarlo desde una carpeta con permisos de escritura para guardar `ranking.db`.
 
 El código se organiza en tres paquetes dentro de `src`:
 

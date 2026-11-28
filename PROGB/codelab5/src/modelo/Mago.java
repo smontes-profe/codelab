@@ -1,5 +1,6 @@
 package modelo;
 
+/** Personaje que puede lanzar un conjuro a distancia. */
 public class Mago extends Personaje {
 
     /**
@@ -12,13 +13,13 @@ public class Mago extends Personaje {
         super(nombre, Profesion.MAGO, GameConfig.MAGO_VIDA_MAXIMA, GameConfig.MAGO_DANIO, registro);
     }
 
-    @Override
     /**
      * Lanza un conjuro al enemigo desde lejos.
      *
      * @param objetivo enemigo que recibe el conjuro
      * @return {@code true} porque el mago puede atacar a distancia
      */
+    @Override
     public boolean atacarADistancia(Enemigo objetivo) {
         usarMagia(objetivo);
         return true;

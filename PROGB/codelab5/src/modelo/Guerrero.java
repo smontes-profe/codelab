@@ -1,5 +1,6 @@
 package modelo;
 
+/** Personaje que reduce el daño recibido con su escudo. */
 public class Guerrero extends Personaje {
 
     /**
@@ -14,6 +15,7 @@ public class Guerrero extends Personaje {
 
     @Override
     protected int reducirDanioPorClase(int cantidad) {
+        // El escudo reduce el daño a la mitad, redondeando hacia arriba.
         int danioReducido = cantidad > 0 ? (cantidad + 1) / 2 : cantidad;
         if (cantidad > 0) {
             registro.jugador(String.format(" El escudo reduce el daño de %d a %d.", cantidad, danioReducido));

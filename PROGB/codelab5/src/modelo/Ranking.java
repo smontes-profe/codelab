@@ -5,13 +5,19 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
+/** Consulta y guarda resultados del ranking en una base de datos SQLite local. */
 public class Ranking {
 
-    private static final String URL = "jdbc:mysql://localhost:3306/codelabs";
-    private static final String USUARIO = "root";
-    private static final String CONTRASENA = "root";
+    // SQLite crea este archivo en la carpeta desde la que se inicia el juego.
+    private static final String URL = "jdbc:sqlite:ranking.db";
+    private static final String SQL_CREAR_TABLA = "CREATE TABLE IF NOT EXISTS ranking ("
+            + "id INTEGER PRIMARY KEY, "
+            + "jugador TEXT NOT NULL, "
+            + "personaje TEXT NOT NULL, "
+            + "enemigos_derrotados INTEGER NOT NULL CHECK (enemigos_derrotados >= 0))";
     private static final String SQL_TOP10="SELECT jugador, personaje, enemigos_derrotados FROM ranking ORDER BY enemigos_derrotados DESC LIMIT 10";
     private static final String SQL_INSERT = "INSERT INTO ranking (jugador, personaje, enemigos_derrotados) VALUES (?, ?, ?)";
 
@@ -24,12 +30,15 @@ public class Ranking {
     public ArrayList<EntradaRanking> consultarRanking() throws SQLException {
         ArrayList<EntradaRanking> entradas = new ArrayList<>();
         String consulta = SQL_TOP10;
-        try (Connection conexion = DriverManager.getConnection(URL, USUARIO, CONTRASENA);
-            PreparedStatement sentencia = conexion.prepareStatement(consulta);
-            ResultSet resultado = sentencia.executeQuery()) {
-            while (resultado.next()) {
-                entradas.add(new EntradaRanking(resultado.getString("jugador"),
-                        resultado.getString("personaje"), resultado.getInt("enemigos_derrotados")));
+        // try con recursos cierra la conexión, las sentencias y el resultado al terminar.
+        try (Connection conexion = DriverManager.getConnection(URL)) {
+            prepararTabla(conexion);
+            try (PreparedStatement sentencia = conexion.prepareStatement(consulta);
+                ResultSet resultado = sentencia.executeQuery()) {
+                while (resultado.next()) {
+                    entradas.add(new EntradaRanking(resultado.getString("jugador"),
+                            resultado.getString("personaje"), resultado.getInt("enemigos_derrotados")));
+                }
             }
         }
         return entradas;
@@ -45,12 +54,22 @@ public class Ranking {
      */
     public void guardarRecord(String jugador, String personaje, int enemigosDerrotados) throws SQLException {
         String consulta = SQL_INSERT;
-        try (Connection conexion = DriverManager.getConnection(URL, USUARIO, CONTRASENA);
-            PreparedStatement sentencia = conexion.prepareStatement(consulta)) {
-            sentencia.setString(1, jugador);
-            sentencia.setString(2, personaje);
-            sentencia.setInt(3, enemigosDerrotados);
-            sentencia.executeUpdate();
+        try (Connection conexion = DriverManager.getConnection(URL)) {
+            prepararTabla(conexion);
+            try (PreparedStatement sentencia = conexion.prepareStatement(consulta)) {
+                // Los valores sustituyen a los interrogantes de la consulta preparada.
+                sentencia.setString(1, jugador);
+                sentencia.setString(2, personaje);
+                sentencia.setInt(3, enemigosDerrotados);
+                sentencia.executeUpdate();
+            }
+        }
+    }
+
+    // Si la tabla ya existe, se conserva con todos sus resultados.
+    private void prepararTabla(Connection conexion) throws SQLException {
+        try (Statement sentencia = conexion.createStatement()) {
+            sentencia.executeUpdate(SQL_CREAR_TABLA);
         }
     }
 }

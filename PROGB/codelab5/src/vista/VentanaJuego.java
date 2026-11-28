@@ -40,6 +40,7 @@ import modelo.Personaje;
 import modelo.Profesion;
 import modelo.RegistroJuego;
 
+/** Muestra las pantallas del juego y envía las decisiones al controlador. */
 public class VentanaJuego extends JFrame {
 
     private static final Color COLOR_INFORMACION = new Color(245, 245, 245);
@@ -61,6 +62,7 @@ public class VentanaJuego extends JFrame {
     private final JPanel contenidoRanking = new JPanel(vistasRanking);
     private final DefaultTableModel datosRanking = new DefaultTableModel(
             new String[] {"#", "Jugador", "Personaje", "Derrotados"}, 0) {
+        /** {@inheritDoc} */
         @Override
         public boolean isCellEditable(int fila, int columna) {
             return false;
@@ -88,8 +90,10 @@ public class VentanaJuego extends JFrame {
     private final JButton nuevaPartida = new JButton("Nueva partida");
     private final Timer turnos = new Timer(GameConfig.TIEMPO_ESPERA, evento -> avanzarCombate());
 
+    /** Crea las pantallas y comienza la consulta del ranking. */
     public VentanaJuego() {
         super("Leyendas del código");
+        // Las funciones reciben los mensajes del modelo y los muestran con el color correspondiente.
         controlador = new ControladorJuego(new RegistroJuego(
                 mensaje -> escribirMensaje(registroCombate, mensaje + "\n", COLOR_JUGADOR),
                 mensaje -> escribirMensaje(registroCombate, mensaje + "\n", COLOR_ENEMIGO),
@@ -205,6 +209,7 @@ public class VentanaJuego extends JFrame {
                     new Color(255, 215, 110), new Color(215, 225, 235), new Color(240, 178, 125)
             };
 
+            /** {@inheritDoc} */
             @Override
             public Component getTableCellRendererComponent(JTable tabla, Object valor, boolean seleccionado,
                     boolean conFoco, int fila, int columna) {
@@ -468,6 +473,7 @@ public class VentanaJuego extends JFrame {
             JOptionPane.showMessageDialog(this, "Elige una opción.");
             return;
         }
+        // El índice cero significa no usar nada; los objetos empiezan en la posición uno.
         String resultado = controlador.elegirObjeto(indice - 1);
         escribirMensaje(registroEncuentro, resultado + "\n", COLOR_INFORMACION);
         mostrarPersonaje();
@@ -530,6 +536,7 @@ public class VentanaJuego extends JFrame {
         int numeroConsulta = ++consultaRankingActual;
         estadoRanking.setText("Consultando el ranking...");
         vistasRanking.show(contenidoRanking, "estado");
+        // doInBackground trabaja fuera de Swing; done actualiza la ventana al terminar.
         SwingWorker<ArrayList<EntradaRanking>, Void> consulta = new SwingWorker<ArrayList<EntradaRanking>, Void>() {
             @Override
             protected ArrayList<EntradaRanking> doInBackground() throws SQLException {
@@ -538,6 +545,7 @@ public class VentanaJuego extends JFrame {
 
             @Override
             protected void done() {
+                // Una consulta antigua no debe sustituir los datos de una más reciente.
                 if (numeroConsulta != consultaRankingActual) {
                     return;
                 }
@@ -570,6 +578,7 @@ public class VentanaJuego extends JFrame {
     }
 
     private void guardarResultado() {
+        // Guardamos una copia de los datos antes de iniciar el trabajo en segundo plano.
         String jugador = controlador.getJugador();
         String personaje = controlador.getPersonaje().getNombre();
         int enfrentamientos = controlador.getEnfrentamientosSuperados();

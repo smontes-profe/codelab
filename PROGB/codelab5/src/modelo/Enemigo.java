@@ -2,12 +2,14 @@ package modelo;
 
 import java.util.Objects;
 
+/** Datos y acciones comunes de los enemigos de la aventura. */
 public abstract class Enemigo {
 
     private final String nombre;
     private final int danio;
     private final int vidaMaxima;
     private int vida;
+    /** Destino de los mensajes que también utilizan las clases hijas. */
     protected final RegistroJuego registro;
 
     /** @return el nombre del enemigo */
@@ -16,6 +18,14 @@ public abstract class Enemigo {
     /** @return {@code true} si el enemigo conserva puntos de vida */
     public boolean estaVivo() { return vida > 0; }
 
+    /**
+     * Inicializa los datos comunes de un enemigo.
+     *
+     * @param nombre nombre del enemigo
+     * @param vida vida inicial y máxima
+     * @param danio daño de sus ataques cuerpo a cuerpo
+     * @param registro destinatario de sus mensajes
+     */
     protected Enemigo(String nombre, int vida, int danio, RegistroJuego registro) {
         this.nombre = nombre;
         this.registro = Objects.requireNonNull(registro, "El registro del juego es obligatorio.");
@@ -35,6 +45,12 @@ public abstract class Enemigo {
         }
     }
 
+    /**
+     * Recupera vida sin superar el máximo; un enemigo derrotado no se regenera.
+     *
+     * @param cantidad cantidad que se intenta recuperar
+     * @return cantidad de vida realmente recuperada
+     */
     protected int recuperarVida(int cantidad) {
         if (cantidad <= 0 || !estaVivo()) {
             return 0;

@@ -1,5 +1,6 @@
 package modelo;
 
+/** Objetos que pueden guardarse en la mochila del personaje. */
 public enum Objeto {
     POCION_CURACION("Poción de curación"),
     POCION_ATAQUE("Poción de ataque"),

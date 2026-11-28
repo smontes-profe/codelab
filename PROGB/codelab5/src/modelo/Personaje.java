@@ -3,6 +3,7 @@ package modelo;
 import java.util.ArrayList;
 import java.util.Objects;
 
+/** Datos y acciones comunes de los personajes que controlan los jugadores. */
 public abstract class Personaje {
 
     private final String nombre;
@@ -13,6 +14,7 @@ public abstract class Personaje {
     private final ArrayList<Objeto> mochila;
     private boolean pocionAtaqueActiva;
     private boolean pocionDefensaActiva;
+    /** Destino de los mensajes que también utilizan las clases hijas. */
     protected final RegistroJuego registro;
 
     /** @return los puntos de vida actuales */
@@ -24,7 +26,7 @@ public abstract class Personaje {
     /** @return el daño base de los ataques cuerpo a cuerpo */
     public int getDanio() { return danio; }
 
-    /** @return la profesión del personaje */
+    /** @return el nombre visible de la profesión del personaje */
     public String getProfesion() { return profesion.toString(); }
 
     /** @return el nombre del personaje */
@@ -41,6 +43,15 @@ public abstract class Personaje {
      */
     public Objeto getObjetoMochila(int indice) { return mochila.get(indice); }
 
+    /**
+     * Inicializa los datos comunes y copia el equipo inicial en la mochila.
+     *
+     * @param nombre nombre del personaje
+     * @param miProfesion profesión del personaje
+     * @param vidaMaxima vida inicial y máxima
+     * @param danio daño base cuerpo a cuerpo
+     * @param registro destinatario de los mensajes
+     */
     protected Personaje(String nombre, Profesion miProfesion, int vidaMaxima, int danio, RegistroJuego registro) {
         this.nombre = nombre;
         this.profesion = miProfesion;
@@ -94,10 +105,22 @@ public abstract class Personaje {
         }
     }
 
+    /**
+     * Permite que una clase reduzca el daño que recibe.
+     *
+     * @param cantidad daño después de aplicar la poción de defensa
+     * @return daño tras aplicar la defensa propia de la clase
+     */
     protected int reducirDanioPorClase(int cantidad) {
         return cantidad;
     }
 
+    /**
+     * Aplica al daño base la posible poción de ataque.
+     *
+     * @param danioBase daño antes de aplicar la poción
+     * @return daño que se hará al enemigo
+     */
     protected int calcularDanio(int danioBase) {
         if (!pocionAtaqueActiva) {
             return danioBase;
@@ -119,6 +142,7 @@ public abstract class Personaje {
 
     /**
      * Usa el objeto de la posición indicada y lo retira si se puede utilizar.
+     * La poción de curación no se consume si la vida ya está al máximo.
      *
      * @param indice posición del objeto, empezando en cero
      * @return mensaje que describe el resultado
