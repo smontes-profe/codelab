@@ -20,5 +20,6 @@ public class Main {
 
 /*
  * Ejercicios propuestos:
- * Pasar unas buenas navidades!
+ * 1. Pasar unas buenas navidades!
+ * 2. Volver con las baterías cargadas el año que viene!
 */
