@@ -17,13 +17,20 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 
 public class VentanaJuego extends JFrame {
 
+    private static final Color COLOR_INFORMACION = new Color(245, 245, 245);
+    private static final Color COLOR_JUGADOR = new Color(155, 225, 255);
+    private static final Color COLOR_ENEMIGO = new Color(255, 202, 155);
+
     // El controlador conserva los datos de la partida; la ventana los muestra.
-    private final ControladorJuego controlador = new ControladorJuego();
+    private final ControladorJuego controlador;
 
     // CardLayout permite cambiar entre el formulario y la pantalla de partida.
     private final CardLayout distribucionPantallas = new CardLayout();
@@ -40,11 +47,21 @@ public class VentanaJuego extends JFrame {
     private final JLabel vidaPersonaje = new JLabel();
     private final JLabel danioPersonaje = new JLabel();
     private final JTextArea inventario = new JTextArea();
-    private final JTextArea registro = new JTextArea(10, 30);
+    private final JTextPane registroEncuentro = new JTextPane();
+    private final JTextPane registroCombate = new JTextPane();
+    private String nombreEnemigoActual;
     private final JButton prepararEncuentro = new JButton("Preparar encuentro");
+    private final JLabel etiquetaObjeto = new JLabel("Objeto:");
+    private final JComboBox<String> objetosEncuentro = new JComboBox<>();
+    private final JButton confirmarObjeto = new JButton("Confirmar");
+    private final Timer turnos = new Timer(GameConfig.TIEMPO_ESPERA, evento -> avanzarCombate());
 
     public VentanaJuego() {
         super("Leyendas del código");
+        controlador = new ControladorJuego(new RegistroJuego(
+                mensaje -> escribirMensaje(registroCombate, mensaje + "\n", COLOR_JUGADOR),
+                mensaje -> escribirMensaje(registroCombate, mensaje + "\n", COLOR_ENEMIGO),
+                mensaje -> escribirMensaje(registroCombate, mensaje + "\n", COLOR_INFORMACION)));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         pantallas.add(crearPantallaInicio(), "inicio");
@@ -86,23 +103,62 @@ public class VentanaJuego extends JFrame {
         // La ficha permanece a la izquierda; el registro crece con la ventana.
         partida.add(crearPanelPersonaje(), BorderLayout.WEST);
 
-        registro.setEditable(false);
-        registro.setLineWrap(true);
-        registro.setWrapStyleWord(true);
-        JScrollPane panelRegistro = new JScrollPane(registro);
-        panelRegistro.setBorder(BorderFactory.createTitledBorder("Aventura"));
+        // Los acontecimientos del encuentro y los turnos tienen registros separados.
+        JPanel mensajes = new JPanel(new GridLayout(2, 1, 0, 10));
+        mensajes.add(crearPanelMensajes("ENCUENTRO", registroEncuentro, new Color(32, 75, 110)));
+        mensajes.add(crearPanelMensajes("COMBATE", registroCombate, new Color(92, 48, 56)));
 
         prepararEncuentro.setEnabled(false);
         prepararEncuentro.addActionListener(evento -> prepararEncuentro());
-        JPanel opciones = new JPanel();
-        opciones.setBorder(BorderFactory.createTitledBorder("Opciones"));
-        opciones.add(prepararEncuentro);
+        Color colorOpciones = new Color(39, 50, 64);
+        JPanel opciones = new JPanel(new BorderLayout());
+        opciones.setBackground(colorOpciones);
+        JLabel tituloOpciones = new JLabel("OPCIONES");
+        tituloOpciones.setForeground(new Color(245, 245, 245));
+        tituloOpciones.setFont(tituloOpciones.getFont().deriveFont(Font.BOLD, 16f));
+        tituloOpciones.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
+        opciones.add(tituloOpciones, BorderLayout.NORTH);
+        JPanel botones = new JPanel();
+        botones.setBackground(colorOpciones);
+        etiquetaObjeto.setForeground(new Color(245, 245, 245));
+        etiquetaObjeto.setFont(etiquetaObjeto.getFont().deriveFont(Font.BOLD, 15f));
+        botones.add(prepararEncuentro);
+        botones.add(etiquetaObjeto);
+        botones.add(objetosEncuentro);
+        botones.add(confirmarObjeto);
+        opciones.add(botones, BorderLayout.CENTER);
+        etiquetaObjeto.setVisible(false);
+        objetosEncuentro.setVisible(false);
+        confirmarObjeto.setVisible(false);
+        confirmarObjeto.addActionListener(evento -> elegirObjeto());
 
         JPanel aventura = new JPanel(new BorderLayout(0, 10));
-        aventura.add(panelRegistro, BorderLayout.CENTER);
+        aventura.add(mensajes, BorderLayout.CENTER);
         aventura.add(opciones, BorderLayout.SOUTH);
         partida.add(aventura, BorderLayout.CENTER);
         return partida;
+    }
+
+    private JPanel crearPanelMensajes(String titulo, JTextPane mensajes, Color fondo) {
+        Color colorTexto = new Color(245, 245, 245);
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(fondo);
+
+        JLabel encabezado = new JLabel(titulo);
+        encabezado.setForeground(colorTexto);
+        encabezado.setFont(encabezado.getFont().deriveFont(Font.BOLD, 16f));
+        encabezado.setBorder(BorderFactory.createEmptyBorder(10, 10, 5, 10));
+        panel.add(encabezado, BorderLayout.NORTH);
+
+        mensajes.setEditable(false);
+        mensajes.setBackground(fondo);
+        mensajes.setForeground(colorTexto);
+        mensajes.setFont(mensajes.getFont().deriveFont(15f));
+        mensajes.setBorder(BorderFactory.createEmptyBorder(5, 10, 10, 10));
+        JScrollPane desplazamiento = new JScrollPane(mensajes);
+        desplazamiento.setBorder(null);
+        panel.add(desplazamiento, BorderLayout.CENTER);
+        return panel;
     }
 
     private JPanel crearPanelPersonaje() {
@@ -189,8 +245,10 @@ public class VentanaJuego extends JFrame {
         // Pasamos los datos de la ventana al controlador para iniciar la partida.
         Profesion profesionElegida = profesion.getItemAt(indice);
         controlador.iniciarPartida(nombreJugador.getText(), nombrePersonaje.getText(), profesionElegida);
+        nombreEnemigoActual = null;
         mostrarPersonaje();
-        registro.setText("La aventura está a punto de comenzar.\n");
+        registroEncuentro.setText("La aventura está a punto de comenzar.\n");
+        registroCombate.setText("");
         prepararEncuentro.setEnabled(true);
         // Al comenzar, mostramos la partida en una ventana más grande.
         distribucionPantallas.show(pantallas, "partida");
@@ -210,6 +268,11 @@ public class VentanaJuego extends JFrame {
         StyleConstants.setAlignment(centrado, StyleConstants.ALIGN_CENTER);
         tituloPersonaje.getStyledDocument().setParagraphAttributes(
                 0, tituloPersonaje.getDocument().getLength(), centrado, false);
+        SimpleAttributeSet nombreDestacado = new SimpleAttributeSet();
+        StyleConstants.setBold(nombreDestacado, true);
+        StyleConstants.setItalic(nombreDestacado, true);
+        tituloPersonaje.getStyledDocument().setCharacterAttributes(
+                0, personaje.getNombre().length(), nombreDestacado, false);
         vidaPersonaje.setText("Vida: " + personaje.getVida() + " / " + personaje.getVidaMaxima());
         danioPersonaje.setText("Daño base: " + personaje.getDanio());
 
@@ -228,14 +291,98 @@ public class VentanaJuego extends JFrame {
     private void prepararEncuentro() {
         Encuentro encuentro = controlador.prepararEncuentro();
         String nombreEnemigo = encuentro.getEnemigo().getNombre();
+        nombreEnemigoActual = nombreEnemigo;
         if (encuentro.isEnemigoALejos()) {
-            registro.append("\n¡Un " + nombreEnemigo + " aparece a lo lejos!\n");
+            escribirMensaje(registroEncuentro, "\n¡Un " + nombreEnemigo + " aparece a lo lejos!\n",
+                    COLOR_INFORMACION);
         } else {
-            registro.append("\n¡Un " + nombreEnemigo + " aparece frente a "
-                    + controlador.getPersonaje().getNombre() + "!\n");
+            escribirMensaje(registroEncuentro, "\n¡Un " + nombreEnemigo + " aparece frente a "
+                    + controlador.getPersonaje().getNombre() + "!\n", COLOR_INFORMACION);
         }
-        registro.append("El combate estará disponible en el siguiente paso.\n");
         prepararEncuentro.setEnabled(false);
+        // La primera opción no usa nada; las demás siguen el orden de la mochila.
+        objetosEncuentro.removeAllItems();
+        objetosEncuentro.addItem("No usar nada");
+        Personaje personaje = controlador.getPersonaje();
+        for (int i = 0; i < personaje.getCantidadObjetos(); i++) {
+            objetosEncuentro.addItem(personaje.getObjetoMochila(i).getNombre());
+        }
+        escribirMensaje(registroEncuentro, "¿Quieres usar un objeto antes del combate?\n", COLOR_INFORMACION);
+        etiquetaObjeto.setVisible(true);
+        objetosEncuentro.setVisible(true);
+        confirmarObjeto.setVisible(true);
+    }
+
+    private void elegirObjeto() {
+        int indice = objetosEncuentro.getSelectedIndex();
+        if (indice < 0) {
+            JOptionPane.showMessageDialog(this, "Elige una opción.");
+            return;
+        }
+        String resultado = controlador.elegirObjeto(indice - 1);
+        escribirMensaje(registroEncuentro, resultado + "\n", COLOR_INFORMACION);
+        mostrarPersonaje();
+        etiquetaObjeto.setVisible(false);
+        objetosEncuentro.setVisible(false);
+        confirmarObjeto.setVisible(false);
+        escribirMensaje(registroCombate, "¡Comienza el combate!\n", COLOR_INFORMACION);
+        // Timer espera entre turnos sin bloquear la ventana de Swing.
+        turnos.setInitialDelay(0);
+        turnos.start();
+    }
+
+    private void avanzarCombate() {
+        boolean continua = controlador.avanzarCombate();
+        mostrarPersonaje();
+        if (!continua) {
+            turnos.stop();
+        }
+    }
+
+    // JTextPane permite combinar colores y estilos en un mismo registro.
+    private void escribirMensaje(JTextPane panel, String mensaje, Color color) {
+        StyledDocument documento = panel.getStyledDocument();
+        SimpleAttributeSet estilo = new SimpleAttributeSet();
+        StyleConstants.setForeground(estilo, color);
+        int inicio = documento.getLength();
+        try {
+            documento.insertString(inicio, mensaje, estilo);
+        } catch (BadLocationException e) {
+            throw new IllegalStateException("No se ha podido añadir el mensaje al registro.", e);
+        }
+
+        Personaje personaje = controlador.getPersonaje();
+        if (personaje != null) {
+            resaltarNombre(documento, mensaje, inicio, personaje.getNombre());
+        }
+        resaltarNombre(documento, mensaje, inicio, nombreEnemigoActual);
+        panel.setCaretPosition(documento.getLength());
+    }
+
+    private void resaltarNombre(StyledDocument documento, String mensaje, int inicio, String nombre) {
+        if (nombre == null || nombre.isEmpty()) {
+            return;
+        }
+        SimpleAttributeSet destacado = new SimpleAttributeSet();
+        StyleConstants.setBold(destacado, true);
+        StyleConstants.setItalic(destacado, true);
+        int posicion = mensaje.indexOf(nombre);
+        while (posicion >= 0) {
+            int fin = posicion + nombre.length();
+            // Evitamos destacar el nombre si solo forma parte de otra palabra.
+            boolean inicioValido = posicion == 0 || !esParteDePalabra(mensaje.charAt(posicion - 1))
+                    || !esParteDePalabra(nombre.charAt(0));
+            boolean finValido = fin == mensaje.length() || !esParteDePalabra(mensaje.charAt(fin))
+                    || !esParteDePalabra(nombre.charAt(nombre.length() - 1));
+            if (inicioValido && finValido) {
+                documento.setCharacterAttributes(inicio + posicion, nombre.length(), destacado, false);
+            }
+            posicion = mensaje.indexOf(nombre, fin);
+        }
+    }
+
+    private boolean esParteDePalabra(char caracter) {
+        return Character.isLetterOrDigit(caracter) || caracter == '_';
     }
 
     public static void main(String[] args) {

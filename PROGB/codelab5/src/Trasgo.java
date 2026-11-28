@@ -13,8 +13,8 @@ public class Trasgo extends Enemigo {
      * @param objetivo personaje que recibe el ataque
      */
     public void atacarADistancia(Personaje objetivo) {
-        ColorTerminal.ENEMIGO.imprimirFormato(" ¡El %s lanza una piedra a %s y le hace %d de daño!%n",
-                getNombre(), objetivo.getNombre(), GameConfig.TRASGO_DANIO);
+        registro.enemigo(String.format(" ¡El %s lanza una piedra a %s y le hace %d de daño!",
+                getNombre(), objetivo.getNombre(), GameConfig.TRASGO_DANIO));
         objetivo.recibirDanio(GameConfig.TRASGO_DANIO);
     }
 }

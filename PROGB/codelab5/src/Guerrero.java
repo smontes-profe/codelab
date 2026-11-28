@@ -13,7 +13,7 @@ public class Guerrero extends Personaje {
     protected int reducirDanioPorClase(int cantidad) {
         int danioReducido = cantidad > 0 ? (cantidad + 1) / 2 : cantidad;
         if (cantidad > 0) {
-            ColorTerminal.JUGADOR.imprimirFormato(" El escudo reduce el daño de %d a %d.%n", cantidad, danioReducido);
+            registro.jugador(String.format(" El escudo reduce el daño de %d a %d.", cantidad, danioReducido));
         }
         return danioReducido;
     }

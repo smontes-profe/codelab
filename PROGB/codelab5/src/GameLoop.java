@@ -70,6 +70,7 @@ public class GameLoop {
             Encuentro encuentro = new Encuentro(random);
             Enemigo enemigoActual = encuentro.getEnemigo();
             boolean enemigoALejos = encuentro.isEnemigoALejos();
+            Combate combate = new Combate(miPersonaje, enemigoActual, new RegistroJuego());
             if (enemigoALejos) {
                 ColorTerminal.ENEMIGO.imprimirLinea(" ¡Un " + enemigoActual.getNombre() + " aparece a lo lejos!");
             } else {
@@ -79,12 +80,7 @@ public class GameLoop {
             elegirObjetoParaEncuentro(enemigoActual);
 
             if (enemigoALejos) {
-                if (!miPersonaje.atacarADistancia(enemigoActual)) {
-                    ColorTerminal.JUGADOR.imprimirLinea(" El guerrero espera: ¡solo puede luchar cuerpo a cuerpo!");
-                }
-                if (enemigoActual.estaVivo() && miPersonaje.estaVivo()) {
-                    enemigoActual.atacarADistancia(miPersonaje);
-                }
+                combate.turnoADistancia();
                 if (enemigoActual.estaVivo() && miPersonaje.estaVivo()) {
                     pausaEntreTurnos();
                     ColorTerminal.INFORMACION.imprimirLinea(" El enemigo se acerca... ¡ahora está cuerpo a cuerpo!");
@@ -92,17 +88,7 @@ public class GameLoop {
             }
 
             while (miPersonaje.estaVivo() && enemigoActual.estaVivo()) {
-                miPersonaje.atacar(enemigoActual);
-                if (enemigoActual.estaVivo()) {
-                    enemigoActual.hacerDanio(miPersonaje);
-                }
-                if (enemigoActual.estaVivo()) {
-                    int vidaRecuperada = enemigoActual.regenerar();
-                    if (vidaRecuperada > 0) {
-                        ColorTerminal.ENEMIGO.imprimirLinea(" El " + enemigoActual.getNombre()
-                                + " regenera " + vidaRecuperada + " puntos de vida.");
-                    }
-                }
+                combate.turnoCuerpoACuerpo();
                 if (miPersonaje.estaVivo() && enemigoActual.estaVivo()) {
                     pausaEntreTurnos();
                 }
@@ -173,7 +159,7 @@ public class GameLoop {
 
         int opcion = Integer.parseInt(respuesta);
         if (opcion > 1) {
-            miPersonaje.usarObjeto(opcion - 2);
+            ColorTerminal.JUGADOR.imprimirLinea(miPersonaje.usarObjeto(opcion - 2));
         }
     }
 

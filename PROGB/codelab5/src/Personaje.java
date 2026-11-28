@@ -10,6 +10,11 @@ public abstract class Personaje {
     private final ArrayList<Objeto> mochila;
     private boolean pocionAtaqueActiva;
     private boolean pocionDefensaActiva;
+    protected RegistroJuego registro = new RegistroJuego();
+
+    public void setRegistro(RegistroJuego registro) {
+        this.registro = registro;
+    }
 
     /** @return los puntos de vida actuales */
     public int getVida() { return vida; }
@@ -73,8 +78,8 @@ public abstract class Personaje {
      */
     public void atacar(Enemigo objetivo) {
         int danioRealizado = calcularDanio(danio);
-        ColorTerminal.JUGADOR.imprimirFormato(" %s golpea a %s y le hace %d de daño.%n",
-                nombre, objetivo.getNombre(), danioRealizado);
+        registro.jugador(String.format(" %s golpea a %s y le hace %d de daño.",
+                nombre, objetivo.getNombre(), danioRealizado));
         objetivo.recibirDanio(danioRealizado);
     }
 
@@ -98,8 +103,8 @@ public abstract class Personaje {
             int danioRecibido = cantidad;
             if (pocionDefensaActiva) {
                 danioRecibido = (danioRecibido + 1) / 2;
-                ColorTerminal.JUGADOR.imprimirFormato(
-                        " La poción de defensa reduce el daño de %d a %d.%n", cantidad, danioRecibido);
+                registro.jugador(String.format(
+                        " La poción de defensa reduce el daño de %d a %d.", cantidad, danioRecibido));
             }
             danioRecibido = reducirDanioPorClase(danioRecibido);
             vida = Math.max(0, vida - danioRecibido);
@@ -115,8 +120,8 @@ public abstract class Personaje {
             return danioBase;
         }
         int danioAumentado = danioBase * 2;
-        ColorTerminal.JUGADOR.imprimirFormato(
-                " La poción de ataque duplica el daño de %d a %d.%n", danioBase, danioAumentado);
+        registro.jugador(String.format(
+                " La poción de ataque duplica el daño de %d a %d.", danioBase, danioAumentado));
         return danioAumentado;
     }
 
@@ -130,36 +135,34 @@ public abstract class Personaje {
     }
 
     /**
-     * Usa y retira de la mochila el objeto de la posición indicada.
+     * Usa el objeto de la posición indicada y lo retira si se puede utilizar.
      *
      * @param indice posición del objeto, empezando en cero
+     * @return mensaje que describe el resultado
      */
-    public void usarObjeto(int indice) {
+    public String usarObjeto(int indice) {
 
         Objeto objeto = mochila.get(indice);
         if (objeto == Objeto.POCION_CURACION && vida == vidaMaxima) {
-            ColorTerminal.JUGADOR.imprimirLinea(" Ya tienes la vida al máximo; la poción se queda en la mochila.");
-            return;
+            return " Ya tienes la vida al máximo; la poción se queda en la mochila.";
         }
         mochila.remove(indice);
-        ColorTerminal.JUGADOR.imprimirLinea(" Usas " + objeto.getNombre() + ".");
+        // Devolvemos el mensaje para que la ventana o la terminal puedan mostrarlo.
+        String mensaje = " Usas " + objeto.getNombre() + ".\n";
 
         if (objeto == Objeto.POCION_CURACION) {
             int vidaAnterior = vida;
             vida = Math.min(vidaMaxima, vida + GameConfig.CURACION_POCION);
             int vidaRecuperada = vida - vidaAnterior;
-            ColorTerminal.JUGADOR.imprimirLinea(" Recuperas " + vidaRecuperada + " puntos de vida.");
-            return;
+            return mensaje + " Recuperas " + vidaRecuperada + " puntos de vida.";
         }
         if (objeto == Objeto.POCION_ATAQUE) {
             pocionAtaqueActiva = true;
-            ColorTerminal.JUGADOR.imprimirLinea(" Tus ataques harán el doble de daño durante este encuentro.");
-            return;
+            return mensaje + " Tus ataques harán el doble de daño durante este encuentro.";
         }
         if (objeto == Objeto.POCION_DEFENSA) {
             pocionDefensaActiva = true;
-            ColorTerminal.JUGADOR.imprimirLinea(" Recibirás la mitad de daño durante este encuentro.");
-            return;
+            return mensaje + " Recibirás la mitad de daño durante este encuentro.";
         }
         throw new IllegalStateException("Intentando usar un objeto de la mochila que no existe");
     }
@@ -168,11 +171,11 @@ public abstract class Personaje {
     public void finalizarEfectosDeEncuentro() {
 
         if (pocionAtaqueActiva) {
-            ColorTerminal.INFORMACION.imprimirLinea(" El efecto de la poción de ataque ha terminado.");
+            registro.informacion(" El efecto de la poción de ataque ha terminado.");
             pocionAtaqueActiva = false;
         }
         if (pocionDefensaActiva) {
-            ColorTerminal.INFORMACION.imprimirLinea(" El efecto de la poción de defensa ha terminado.");
+            registro.informacion(" El efecto de la poción de defensa ha terminado.");
             pocionDefensaActiva = false;
         }
     }

@@ -4,6 +4,11 @@ public abstract class Enemigo {
     private final int danio;
     private final int vidaMaxima;
     private int vida;
+    protected RegistroJuego registro = new RegistroJuego();
+
+    public void setRegistro(RegistroJuego registro) {
+        this.registro = registro;
+    }
 
     /** @return el nombre del enemigo */
     public String getNombre() { return nombre; }
@@ -61,8 +66,8 @@ public abstract class Enemigo {
      * @param objetivo personaje que recibe el ataque
      */
     public void hacerDanio(Personaje objetivo) {
-        ColorTerminal.ENEMIGO.imprimirFormato(" ¡El %s ataca a %s y le hace %d de daño!%n",
-                nombre, objetivo.getNombre(), danio);
+        registro.enemigo(String.format(" ¡El %s ataca a %s y le hace %d de daño!",
+                nombre, objetivo.getNombre(), danio));
         objetivo.recibirDanio(danio);
     }
 }

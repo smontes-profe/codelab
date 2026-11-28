@@ -23,8 +23,8 @@ public class Mago extends Personaje {
     
     private void usarMagia(Enemigo objetivo) {
         int danioMagico = calcularDanio(GameConfig.MAGO_DANIO_MAGIA);
-        ColorTerminal.JUGADOR.imprimirFormato(" %s lanza un conjuro contra %s y le hace %d de daño.%n",
-                getNombre(), objetivo.getNombre(), danioMagico);
+        registro.jugador(String.format(" %s lanza un conjuro contra %s y le hace %d de daño.",
+                getNombre(), objetivo.getNombre(), danioMagico));
         objetivo.recibirDanio(danioMagico);
     }
 }
