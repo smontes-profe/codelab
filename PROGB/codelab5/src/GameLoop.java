@@ -52,14 +52,7 @@ public class GameLoop {
 
         System.out.println();
         ColorTerminal.OPCION.imprimirLinea("Elige tu profesión:");
-        ColorTerminal.OPCION.imprimirLinea("  1  Guerrero ");
-        ColorTerminal.OPCION.imprimirLinea("  2  Mago     ");
-        String profesion = scanner.nextLine();
-        while (!"1".equals(profesion) && !"2".equals(profesion)) {
-            ColorTerminal.ERROR.imprimirLinea("XX Opción no válida. Escribe 1 para Guerrero o 2 para Mago.");
-            profesion = scanner.nextLine();
-        }
-        miPersonaje = "1".equals(profesion) ? new Guerrero(nombre) : new Mago(nombre);
+        miPersonaje = elegirProfesion(nombre);
 
         System.out.println();
         ColorTerminal.INFORMACION.imprimirLinea("════════════   PREPARANDO LA EXPEDICIÓN   ════════════");
@@ -142,6 +135,24 @@ public class GameLoop {
         }
 
         return finDePartida();
+    }
+
+    private Personaje elegirProfesion(String nombre) {
+        // La terminal usa las mismas opciones que el desplegable.
+        Profesion[] profesiones = Profesion.values();
+        for (int i = 0; i < profesiones.length; i++) {
+            ColorTerminal.OPCION.imprimirLinea("  " + (i + 1) + "  " + profesiones[i]);
+        }
+
+        while (true) {
+            String respuesta = scanner.nextLine();
+            for (int i = 0; i < profesiones.length; i++) {
+                if (String.valueOf(i + 1).equals(respuesta)) {
+                    return profesiones[i].crearPersonaje(nombre);
+                }
+            }
+            ColorTerminal.ERROR.imprimirLinea("XX Opción no válida. Elige un número de la lista.");
+        }
     }
 
     private Enemigo crearEnemigo() {

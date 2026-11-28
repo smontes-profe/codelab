@@ -1,14 +1,12 @@
 public class Guerrero extends Personaje {
 
-    private static final String CLASE_STRING="Guerrero";
-
     /**
      * Crea un guerrero con sus valores iniciales.
      *
      * @param nombre nombre del personaje
      */
     public Guerrero(String nombre) {
-        super(nombre, CLASE_STRING, GameConfig.GUERRERO_VIDA_MAXIMA, GameConfig.GUERRERO_DANIO);
+        super(nombre, Profesion.GUERRERO, GameConfig.GUERRERO_VIDA_MAXIMA, GameConfig.GUERRERO_DANIO);
     }
 
     @Override

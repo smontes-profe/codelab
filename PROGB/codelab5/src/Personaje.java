@@ -3,7 +3,7 @@ import java.util.ArrayList;
 public abstract class Personaje {
 
     private final String nombre;
-    private final String profesion;
+    private final Profesion profesion;
     private final int vidaMaxima;
     private final int danio;
     private int vida;
@@ -15,7 +15,7 @@ public abstract class Personaje {
     public int getVida() { return vida; }
 
     /** @return la profesión del personaje */
-    public String getProfesion() { return profesion; }
+    public String getProfesion() { return profesion.toString(); }
 
     /** @return el nombre del personaje */
     public String getNombre() { return nombre; }
@@ -31,7 +31,7 @@ public abstract class Personaje {
      */
     public Objeto getObjetoMochila(int indice) { return mochila.get(indice); }
 
-    protected Personaje(String nombre, String miProfesion,  int vidaMaxima, int danio) {
+    protected Personaje(String nombre, Profesion miProfesion,  int vidaMaxima, int danio) {
         this.nombre = nombre;
         this.profesion = miProfesion;
         this.vidaMaxima = vidaMaxima;
