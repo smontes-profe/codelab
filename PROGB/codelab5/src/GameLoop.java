@@ -67,8 +67,9 @@ public class GameLoop {
             ColorTerminal.INFORMACION.imprimirLinea("═══════════   ENFRENTAMIENTO "
                     + enfrentamientosSuperados + "  ═══════════");
 
-            Enemigo enemigoActual = crearEnemigo();
-            boolean enemigoALejos = random.nextBoolean();
+            Encuentro encuentro = new Encuentro(random);
+            Enemigo enemigoActual = encuentro.getEnemigo();
+            boolean enemigoALejos = encuentro.isEnemigoALejos();
             if (enemigoALejos) {
                 ColorTerminal.ENEMIGO.imprimirLinea(" ¡Un " + enemigoActual.getNombre() + " aparece a lo lejos!");
             } else {
@@ -153,10 +154,6 @@ public class GameLoop {
             }
             ColorTerminal.ERROR.imprimirLinea("XX Opción no válida. Elige un número de la lista.");
         }
-    }
-
-    private Enemigo crearEnemigo() {
-        return random.nextBoolean() ? new Troll() : new Trasgo();
     }
 
     private void elegirObjetoParaEncuentro(Enemigo enemigo) {
