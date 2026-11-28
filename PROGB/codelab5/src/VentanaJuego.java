@@ -1,8 +1,10 @@
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.util.Locale;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -13,7 +15,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.SwingUtilities;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
 
 public class VentanaJuego extends JFrame {
 
@@ -29,8 +34,12 @@ public class VentanaJuego extends JFrame {
     private final JTextField nombrePersonaje = new JTextField();
     // values() obtiene todas las opciones del enum para el desplegable.
     private final JComboBox<Profesion> profesion = new JComboBox<>(Profesion.values());
-    // La ficha y el registro ocupan paneles separados durante la partida.
-    private final JTextArea ficha = new JTextArea(10, 30);
+    // Componentes de la ficha que actualizaremos cuando cambie el personaje.
+    private final JTextArea jugadorFicha = new JTextArea();
+    private final JTextPane tituloPersonaje = new JTextPane();
+    private final JLabel vidaPersonaje = new JLabel();
+    private final JLabel danioPersonaje = new JLabel();
+    private final JTextArea inventario = new JTextArea();
     private final JTextArea registro = new JTextArea(10, 30);
     private final JButton prepararEncuentro = new JButton("Preparar encuentro");
 
@@ -75,13 +84,7 @@ public class VentanaJuego extends JFrame {
         partida.add(titulo, BorderLayout.NORTH);
 
         // La ficha permanece a la izquierda; el registro crece con la ventana.
-        ficha.setEditable(false);
-        ficha.setLineWrap(true);
-        ficha.setWrapStyleWord(true);
-        JScrollPane panelFicha = new JScrollPane(ficha);
-        panelFicha.setBorder(BorderFactory.createTitledBorder("Ficha e inventario"));
-        panelFicha.setPreferredSize(new Dimension(250, 0));
-        partida.add(panelFicha, BorderLayout.WEST);
+        partida.add(crearPanelPersonaje(), BorderLayout.WEST);
 
         registro.setEditable(false);
         registro.setLineWrap(true);
@@ -100,6 +103,77 @@ public class VentanaJuego extends JFrame {
         aventura.add(opciones, BorderLayout.SOUTH);
         partida.add(aventura, BorderLayout.CENTER);
         return partida;
+    }
+
+    private JPanel crearPanelPersonaje() {
+        Color colorJugador = new Color(32, 75, 110);
+        Color colorPersonaje = new Color(67, 45, 93);
+        Color colorInventario = new Color(39, 50, 64);
+        Color colorTexto = new Color(245, 245, 245);
+
+        JPanel lateral = new JPanel(new BorderLayout(0, 10));
+        lateral.setPreferredSize(new Dimension(300, 0));
+
+        // Cada bloque tiene su propio color y conserva el texto legible.
+        jugadorFicha.setEditable(false);
+        jugadorFicha.setLineWrap(true);
+        jugadorFicha.setWrapStyleWord(true);
+        jugadorFicha.setBackground(colorJugador);
+        jugadorFicha.setForeground(colorTexto);
+        jugadorFicha.setFont(jugadorFicha.getFont().deriveFont(Font.BOLD, 16f));
+        jugadorFicha.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        JScrollPane panelJugador = new JScrollPane(jugadorFicha);
+        panelJugador.setBorder(null);
+        panelJugador.setPreferredSize(new Dimension(0, 65));
+
+        tituloPersonaje.setEditable(false);
+        tituloPersonaje.setBackground(colorPersonaje);
+        tituloPersonaje.setForeground(colorTexto);
+        tituloPersonaje.setFont(tituloPersonaje.getFont().deriveFont(Font.BOLD, 21f));
+        tituloPersonaje.setBorder(BorderFactory.createEmptyBorder(10, 8, 5, 8));
+        JScrollPane panelTitulo = new JScrollPane(tituloPersonaje);
+        panelTitulo.setBorder(null);
+        panelTitulo.setPreferredSize(new Dimension(0, 90));
+
+        vidaPersonaje.setForeground(colorTexto);
+        danioPersonaje.setForeground(colorTexto);
+        vidaPersonaje.setFont(vidaPersonaje.getFont().deriveFont(Font.BOLD, 15f));
+        danioPersonaje.setFont(danioPersonaje.getFont().deriveFont(Font.BOLD, 15f));
+        JPanel estadisticas = new JPanel(new GridLayout(2, 1, 0, 6));
+        estadisticas.setBackground(colorPersonaje);
+        estadisticas.setBorder(BorderFactory.createEmptyBorder(5, 15, 15, 15));
+        estadisticas.add(vidaPersonaje);
+        estadisticas.add(danioPersonaje);
+
+        JPanel panelPersonaje = new JPanel(new BorderLayout());
+        panelPersonaje.add(panelTitulo, BorderLayout.CENTER);
+        panelPersonaje.add(estadisticas, BorderLayout.SOUTH);
+
+        JPanel cabecera = new JPanel(new BorderLayout(0, 10));
+        cabecera.add(panelJugador, BorderLayout.NORTH);
+        cabecera.add(panelPersonaje, BorderLayout.CENTER);
+        lateral.add(cabecera, BorderLayout.NORTH);
+
+        JLabel tituloInventario = new JLabel("INVENTARIO");
+        tituloInventario.setForeground(colorTexto);
+        tituloInventario.setFont(tituloInventario.getFont().deriveFont(Font.BOLD, 16f));
+        tituloInventario.setBorder(BorderFactory.createEmptyBorder(10, 10, 5, 10));
+        inventario.setEditable(false);
+        inventario.setLineWrap(true);
+        inventario.setWrapStyleWord(true);
+        inventario.setBackground(colorInventario);
+        inventario.setForeground(colorTexto);
+        inventario.setFont(inventario.getFont().deriveFont(15f));
+        inventario.setBorder(BorderFactory.createEmptyBorder(5, 10, 10, 10));
+
+        JPanel panelInventario = new JPanel(new BorderLayout());
+        panelInventario.setBackground(colorInventario);
+        panelInventario.add(tituloInventario, BorderLayout.NORTH);
+        JScrollPane listaObjetos = new JScrollPane(inventario);
+        listaObjetos.setBorder(null);
+        panelInventario.add(listaObjetos, BorderLayout.CENTER);
+        lateral.add(panelInventario, BorderLayout.CENTER);
+        return lateral;
     }
 
     private void iniciarPartida() {
@@ -128,21 +202,27 @@ public class VentanaJuego extends JFrame {
     private void mostrarPersonaje() {
         Personaje personaje = controlador.getPersonaje();
 
-        // Construimos el texto de la ficha antes de mostrarlo en el área de texto.
+        jugadorFicha.setText("Jugador: " + controlador.getJugador());
+        tituloPersonaje.setText(personaje.getNombre() + " el "
+                + personaje.getProfesion().toLowerCase(Locale.ROOT));
+        // Centramos el texto sin interpretar el nombre como HTML.
+        SimpleAttributeSet centrado = new SimpleAttributeSet();
+        StyleConstants.setAlignment(centrado, StyleConstants.ALIGN_CENTER);
+        tituloPersonaje.getStyledDocument().setParagraphAttributes(
+                0, tituloPersonaje.getDocument().getLength(), centrado, false);
+        vidaPersonaje.setText("Vida: " + personaje.getVida() + " / " + personaje.getVidaMaxima());
+        danioPersonaje.setText("Daño base: " + personaje.getDanio());
+
+        // La mochila se muestra en su propio panel.
         StringBuilder texto = new StringBuilder();
-        texto.append("Jugador: ").append(controlador.getJugador()).append("\n");
-        texto.append("Personaje: ").append(personaje.getNombre()).append("\n");
-        texto.append("Profesión: ").append(personaje.getProfesion()).append("\n");
-        texto.append("Vida: ").append(personaje.getVida()).append("\n");
-        texto.append("Mochila:\n");
         if (personaje.getCantidadObjetos() == 0) {
-            texto.append("  (vacía)\n");
+            texto.append("(vacío)\n");
         } else {
             for (int i = 0; i < personaje.getCantidadObjetos(); i++) {
-                texto.append("  - ").append(personaje.getObjetoMochila(i).getNombre()).append("\n");
+                texto.append("- ").append(personaje.getObjetoMochila(i).getNombre()).append("\n");
             }
         }
-        ficha.setText(texto.toString());
+        inventario.setText(texto.toString());
     }
 
     private void prepararEncuentro() {

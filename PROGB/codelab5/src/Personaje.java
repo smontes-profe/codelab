@@ -14,6 +14,12 @@ public abstract class Personaje {
     /** @return los puntos de vida actuales */
     public int getVida() { return vida; }
 
+    /** @return los puntos de vida máximos */
+    public int getVidaMaxima() { return vidaMaxima; }
+
+    /** @return el daño base de los ataques cuerpo a cuerpo */
+    public int getDanio() { return danio; }
+
     /** @return la profesión del personaje */
     public String getProfesion() { return profesion.toString(); }
 
