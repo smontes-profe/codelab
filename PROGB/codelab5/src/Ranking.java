@@ -3,14 +3,35 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class Ranking {
 
     private static final String URL = "jdbc:mysql://localhost:3306/codelabs";
     private static final String USUARIO = "root";
-    private static final String CONTRASENA = "";
+    private static final String CONTRASENA = "root";
     private static final String SQL_TOP10="SELECT jugador, personaje, enemigos_derrotados FROM ranking ORDER BY enemigos_derrotados DESC LIMIT 10";
     private static final String SQL_INSERT = "INSERT INTO ranking (jugador, personaje, enemigos_derrotados) VALUES (?, ?, ?)";
+
+    /**
+     * Consulta los diez mejores resultados.
+     *
+     * @return resultados ordenados de mayor a menor
+     * @throws SQLException si falla la conexión o la consulta
+     */
+    public ArrayList<EntradaRanking> consultarRanking() throws SQLException {
+        ArrayList<EntradaRanking> entradas = new ArrayList<>();
+        String consulta = SQL_TOP10;
+        try (Connection conexion = DriverManager.getConnection(URL, USUARIO, CONTRASENA);
+            PreparedStatement sentencia = conexion.prepareStatement(consulta);
+            ResultSet resultado = sentencia.executeQuery()) {
+            while (resultado.next()) {
+                entradas.add(new EntradaRanking(resultado.getString("jugador"),
+                        resultado.getString("personaje"), resultado.getInt("enemigos_derrotados")));
+            }
+        }
+        return entradas;
+    }
 
     /**
      * Muestra los diez mejores resultados si hay registros guardados.
@@ -18,29 +39,20 @@ public class Ranking {
      * @throws SQLException si falla la conexión o la consulta
      */
     public void mostrarRanking() throws SQLException {
-        String consulta = SQL_TOP10;
-        try (Connection conexion = DriverManager.getConnection(URL, USUARIO, CONTRASENA);
-            PreparedStatement sentencia = conexion.prepareStatement(consulta);
-            ResultSet resultado = sentencia.executeQuery()) {
-            if (resultado.next()) {
-                ColorTerminal.INFORMACION.imprimirLinea("════════════ RANKING ════════════");
-                ColorTerminal.INFORMACION.imprimirLinea("┌──────────────────────┬──────────────────────┬─────────────────────┐");
-                ColorTerminal.INFORMACION.imprimirFormato("│ %-20s │ %-20s │ %-19s │%n",
-                        "Jugador", "Personaje", "Enemigos derrotados");
-                ColorTerminal.INFORMACION.imprimirLinea("├──────────────────────┼──────────────────────┼─────────────────────┤");
-
-                do {
-                    String jugador = resultado.getString("jugador");
-                    String personaje = resultado.getString("personaje");
-                    int enemigosDerrotados = resultado.getInt("enemigos_derrotados");
-                    ColorTerminal.INFORMACION.imprimirFormato("│ %-20s │ %-20s │ %19d │%n",
-                            jugador, personaje, enemigosDerrotados);
-                } while (resultado.next());
-                ColorTerminal.INFORMACION.imprimirLinea("└──────────────────────┴──────────────────────┴─────────────────────┘");
-            }
-        }catch (SQLException e) {
-            throw e;
+        ArrayList<EntradaRanking> entradas = consultarRanking();
+        if (entradas.isEmpty()) {
+            return;
         }
+        ColorTerminal.INFORMACION.imprimirLinea("════════════ RANKING ════════════");
+        ColorTerminal.INFORMACION.imprimirLinea("┌──────────────────────┬──────────────────────┬─────────────────────┐");
+        ColorTerminal.INFORMACION.imprimirFormato("│ %-20s │ %-20s │ %-19s │%n",
+                "Jugador", "Personaje", "Enemigos derrotados");
+        ColorTerminal.INFORMACION.imprimirLinea("├──────────────────────┼──────────────────────┼─────────────────────┤");
+        for (EntradaRanking entrada : entradas) {
+            ColorTerminal.INFORMACION.imprimirFormato("│ %-20s │ %-20s │ %19d │%n",
+                    entrada.getJugador(), entrada.getPersonaje(), entrada.getEnemigosDerrotados());
+        }
+        ColorTerminal.INFORMACION.imprimirLinea("└──────────────────────┴──────────────────────┴─────────────────────┘");
     }
 
     /**
