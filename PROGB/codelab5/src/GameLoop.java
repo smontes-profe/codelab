@@ -39,15 +39,12 @@ public class GameLoop {
         ColorTerminal.INFORMACION.imprimirLinea("║             LEYENDAS DEL CÓDIGO      ║ ");
         ColorTerminal.INFORMACION.imprimirLinea("╚══════════════════════════════════════╝");
 
-        // Consultamos el ranking al empezar cada partida.
-        // Si falla, avisamos y dejamos jugar.
         try {
             ranking.mostrarRanking();
         } catch (SQLException e) {
             ColorTerminal.ERROR.imprimirLinea(" No se ha podido consultar el ranking: " + e.getMessage());
         }
 
-        // El nombre del jugador y el del personaje se guardan por separado.
         ColorTerminal.OPCION.imprimir(" Introduce tu nombre de jugador: ");
         String jugador = scanner.nextLine();
         ColorTerminal.OPCION.imprimir(" Introduce el nombre de tu personaje: ");
@@ -137,7 +134,6 @@ public class GameLoop {
             continuarAventura = decidirContinuacion(enfrentamientosSuperados);
         }
 
-        // Solo guardamos si sobrevive. Misma jugada con el try/catch
         try {
             ranking.guardarRecord(jugador, miPersonaje.getNombre(), enfrentamientosSuperados);
             ColorTerminal.INFORMACION.imprimirLinea(" ¡Record guardado!");
@@ -235,8 +231,6 @@ public class GameLoop {
         try {
             Thread.sleep(GameConfig.TIEMPO_ESPERA);
         } catch (InterruptedException e) {
-            // Aquí no habría que hacer nada. Simplemente añadimos el try/catch
-            // para no estar propagando throws InterruptedException en cada método hasta llegar aquí.
         }
         
     }

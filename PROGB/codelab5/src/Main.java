@@ -14,9 +14,6 @@ public class Main {
      * @param args argumentos de línea de comandos (no se utilizan)
      */
 
-    // Aquí veréis que he eliminado el throws InterruptedException
-    // Le he metido un try/catch al Thread.sleep y con eso ya no hace falta
-    // propagarlo en cada método
     public static void main(String[] args) {
         try (Scanner scanner = new Scanner(System.in)) {
             new GameLoop(scanner).run();
