@@ -1,14 +1,12 @@
+import java.util.Objects;
+
 public abstract class Enemigo {
 
     private final String nombre;
     private final int danio;
     private final int vidaMaxima;
     private int vida;
-    protected RegistroJuego registro = new RegistroJuego();
-
-    public void setRegistro(RegistroJuego registro) {
-        this.registro = registro;
-    }
+    protected final RegistroJuego registro;
 
     /** @return el nombre del enemigo */
     public String getNombre() { return nombre; }
@@ -16,8 +14,9 @@ public abstract class Enemigo {
     /** @return {@code true} si el enemigo conserva puntos de vida */
     public boolean estaVivo() { return vida > 0; }
 
-    protected Enemigo(String nombre, int vida, int danio) {
+    protected Enemigo(String nombre, int vida, int danio, RegistroJuego registro) {
         this.nombre = nombre;
+        this.registro = Objects.requireNonNull(registro, "El registro del juego es obligatorio.");
         this.vidaMaxima = vida;
         this.vida = vida;
         this.danio = danio;

@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Objects;
 
 public abstract class Personaje {
 
@@ -10,11 +11,7 @@ public abstract class Personaje {
     private final ArrayList<Objeto> mochila;
     private boolean pocionAtaqueActiva;
     private boolean pocionDefensaActiva;
-    protected RegistroJuego registro = new RegistroJuego();
-
-    public void setRegistro(RegistroJuego registro) {
-        this.registro = registro;
-    }
+    protected final RegistroJuego registro;
 
     /** @return los puntos de vida actuales */
     public int getVida() { return vida; }
@@ -42,9 +39,10 @@ public abstract class Personaje {
      */
     public Objeto getObjetoMochila(int indice) { return mochila.get(indice); }
 
-    protected Personaje(String nombre, Profesion miProfesion,  int vidaMaxima, int danio) {
+    protected Personaje(String nombre, Profesion miProfesion, int vidaMaxima, int danio, RegistroJuego registro) {
         this.nombre = nombre;
         this.profesion = miProfesion;
+        this.registro = Objects.requireNonNull(registro, "El registro del juego es obligatorio.");
         this.vidaMaxima = vidaMaxima;
         this.danio = danio;
         this.vida = vidaMaxima;
@@ -54,23 +52,6 @@ public abstract class Personaje {
         }
     }
 
-    /** Muestra por terminal la ficha y el inventario del personaje. */
-    public void mostrarFicha() {
-        ColorTerminal.FICHA.imprimirLinea("┌──────────────  FICHA DEL HÉROE ──────────────┐");
-        ColorTerminal.FICHA.imprimirLinea("   " + nombre + " — " + profesion);
-        ColorTerminal.FICHA.imprimirLinea("    Vida: " + vida + "/" + vidaMaxima);
-        ColorTerminal.FICHA.imprimirLinea("   Mochila:");
-        if (mochila.isEmpty()) {
-            ColorTerminal.FICHA.imprimirLinea("    (vacía)");
-        } else {
-            for (int i = 0; i < mochila.size(); i++) {
-                ColorTerminal.FICHA.imprimirLinea("    " + (i + 1) + ". " + mochila.get(i).getNombre());
-            }
-        }
-        ColorTerminal.FICHA.imprimirLinea("└────────────────────────────────────────────────┘");
-        System.out.println();
-    }
-    
     /**
      * Ataca al enemigo indicado y aplica el daño correspondiente.
      *
@@ -147,7 +128,7 @@ public abstract class Personaje {
             return " Ya tienes la vida al máximo; la poción se queda en la mochila.";
         }
         mochila.remove(indice);
-        // Devolvemos el mensaje para que la ventana o la terminal puedan mostrarlo.
+        // Devolvemos el mensaje para que la ventana pueda mostrarlo.
         String mensaje = " Usas " + objeto.getNombre() + ".\n";
 
         if (objeto == Objeto.POCION_CURACION) {

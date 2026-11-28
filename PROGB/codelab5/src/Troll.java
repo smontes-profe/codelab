@@ -2,9 +2,9 @@ public class Troll extends Enemigo {
 
     private static final String NOMBRE_STR = "Troll";
 
-    /** Crea un Troll con sus valores iniciales. */
-    public Troll() {
-        super(NOMBRE_STR, GameConfig.TROLL_VIDA, GameConfig.TROLL_DANIO);
+    /** Crea un Troll con sus valores iniciales y el registro indicado. */
+    public Troll(RegistroJuego registro) {
+        super(NOMBRE_STR, GameConfig.TROLL_VIDA, GameConfig.TROLL_DANIO, registro);
     }
 
     @Override

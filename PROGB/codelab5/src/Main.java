@@ -4,20 +4,18 @@
  * Autor: Sergio Montes
  * TODO
  */
-import java.util.Scanner;
+import javax.swing.SwingUtilities;
 
 public class Main {
 
     /**
-     * Inicia el juego y cierra la entrada estándar al terminar.
+     * Abre la ventana del juego en el hilo de eventos de Swing.
      *
      * @param args argumentos de línea de comandos (no se utilizan)
      */
 
     public static void main(String[] args) {
-        try (Scanner scanner = new Scanner(System.in)) {
-            new GameLoop(scanner).run();
-        }
+        SwingUtilities.invokeLater(() -> new VentanaJuego().setVisible(true));
     }
 }
 

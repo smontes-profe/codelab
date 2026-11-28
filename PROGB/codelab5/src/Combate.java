@@ -8,8 +8,6 @@ public class Combate {
         this.personaje = personaje;
         this.enemigo = enemigo;
         this.registro = registro;
-        personaje.setRegistro(registro);
-        enemigo.setRegistro(registro);
     }
 
     // En la fase a distancia, solo atacan los que tienen esa habilidad.

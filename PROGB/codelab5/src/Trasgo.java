@@ -1,9 +1,9 @@
 public class Trasgo extends Enemigo {
     private static final String NOMBRE_STR = "Trasgo";
 
-    /** Crea un Trasgo con sus valores iniciales. */
-    public Trasgo() {
-        super(NOMBRE_STR, GameConfig.TRASGO_VIDA, GameConfig.TRASGO_DANIO);
+    /** Crea un Trasgo con sus valores iniciales y el registro indicado. */
+    public Trasgo(RegistroJuego registro) {
+        super(NOMBRE_STR, GameConfig.TRASGO_VIDA, GameConfig.TRASGO_DANIO, registro);
     }
 
     @Override

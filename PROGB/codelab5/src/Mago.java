@@ -4,9 +4,10 @@ public class Mago extends Personaje {
      * Crea un mago con sus valores iniciales.
      *
      * @param nombre nombre del personaje
+     * @param registro destino de los mensajes del juego
      */
-    public Mago(String nombre) {
-        super(nombre, Profesion.MAGO, GameConfig.MAGO_VIDA_MAXIMA, GameConfig.MAGO_DANIO);
+    public Mago(String nombre, RegistroJuego registro) {
+        super(nombre, Profesion.MAGO, GameConfig.MAGO_VIDA_MAXIMA, GameConfig.MAGO_DANIO, registro);
     }
 
     @Override

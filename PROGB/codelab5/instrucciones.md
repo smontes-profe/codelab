@@ -9,11 +9,13 @@ MySQL Connector/J al proyecto:
 4. Descarga el archivo **ZIP Archive**. Si aparece una pantalla para iniciar
    sesión, puedes usar la opción **No thanks, just start my download**.
 5. Descomprime el ZIP y busca el archivo `.jar` que haya dentro.
-6. Crea una carpeta llamada `lib` dentro de la carpeta `codelab4` y copia el
+6. Crea una carpeta llamada `lib` dentro de la carpeta `codelab5` y copia el
    archivo JAR en ella.
 
-7. Abre la carpeta `codelab4` en VS Code con las extensiones de Java instaladas.
+7. Abre la carpeta `codelab5` en VS Code con las extensiones de Java instaladas.
    El JAR debería aparecer en **Java Projects > Referenced Libraries**.
    Si no aparece, usa el botón **+** de esa sección para seleccionarlo.
 
 No es necesario instalar Maven para utilizar el JAR de esta forma.
+
+Para iniciar el juego, ejecuta `Main.java` desde VS Code.

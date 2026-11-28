@@ -23,7 +23,7 @@ public class ControladorJuego {
     // Al crear otro personaje, comienza una nueva partida.
     public void iniciarPartida(String jugador, String nombrePersonaje, Profesion profesion) {
         this.jugador = jugador;
-        this.personaje = profesion.crearPersonaje(nombrePersonaje);
+        this.personaje = profesion.crearPersonaje(nombrePersonaje, registro);
         this.encuentro = null;
         this.combate = null;
         this.objetoElegido = false;
@@ -58,7 +58,7 @@ public class ControladorJuego {
         if (encuentro != null) {
             throw new IllegalStateException("Ya hay un encuentro en curso.");
         }
-        encuentro = new Encuentro(random);
+        encuentro = new Encuentro(random, registro);
         combate = new Combate(personaje, encuentro.getEnemigo(), registro);
         turnoDistanciaPendiente = encuentro.isEnemigoALejos();
         return encuentro;

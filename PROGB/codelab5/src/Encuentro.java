@@ -5,9 +5,9 @@ public class Encuentro {
     private final Enemigo enemigo;
     private final boolean enemigoALejos;
 
-    // Elegimos el enemigo y su distancia igual que en el juego de terminal.
-    public Encuentro(Random random) {
-        enemigo = random.nextBoolean() ? new Troll() : new Trasgo();
+    // Elegimos al azar el enemigo y su distancia.
+    public Encuentro(Random random, RegistroJuego registro) {
+        enemigo = random.nextBoolean() ? new Troll(registro) : new Trasgo(registro);
         enemigoALejos = random.nextBoolean();
     }
 

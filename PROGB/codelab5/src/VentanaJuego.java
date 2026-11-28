@@ -21,7 +21,6 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
-import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.Timer;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -640,8 +639,4 @@ public class VentanaJuego extends JFrame {
         return Character.isLetterOrDigit(caracter) || caracter == '_';
     }
 
-    public static void main(String[] args) {
-        // Swing crea y actualiza sus ventanas en su propio hilo de eventos.
-        SwingUtilities.invokeLater(() -> new VentanaJuego().setVisible(true));
-    }
 }

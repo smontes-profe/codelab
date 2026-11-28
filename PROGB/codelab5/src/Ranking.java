@@ -34,28 +34,6 @@ public class Ranking {
     }
 
     /**
-     * Muestra los diez mejores resultados si hay registros guardados.
-     *
-     * @throws SQLException si falla la conexión o la consulta
-     */
-    public void mostrarRanking() throws SQLException {
-        ArrayList<EntradaRanking> entradas = consultarRanking();
-        if (entradas.isEmpty()) {
-            return;
-        }
-        ColorTerminal.INFORMACION.imprimirLinea("════════════ RANKING ════════════");
-        ColorTerminal.INFORMACION.imprimirLinea("┌──────────────────────┬──────────────────────┬─────────────────────┐");
-        ColorTerminal.INFORMACION.imprimirFormato("│ %-20s │ %-20s │ %-19s │%n",
-                "Jugador", "Personaje", "Enemigos derrotados");
-        ColorTerminal.INFORMACION.imprimirLinea("├──────────────────────┼──────────────────────┼─────────────────────┤");
-        for (EntradaRanking entrada : entradas) {
-            ColorTerminal.INFORMACION.imprimirFormato("│ %-20s │ %-20s │ %19d │%n",
-                    entrada.getJugador(), entrada.getPersonaje(), entrada.getEnemigosDerrotados());
-        }
-        ColorTerminal.INFORMACION.imprimirLinea("└──────────────────────┴──────────────────────┴─────────────────────┘");
-    }
-
-    /**
      * Guarda el resultado de una partida en la tabla de ranking.
      *
      * @param jugador nombre del jugador

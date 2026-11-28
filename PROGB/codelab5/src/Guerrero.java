@@ -4,9 +4,10 @@ public class Guerrero extends Personaje {
      * Crea un guerrero con sus valores iniciales.
      *
      * @param nombre nombre del personaje
+     * @param registro destino de los mensajes del juego
      */
-    public Guerrero(String nombre) {
-        super(nombre, Profesion.GUERRERO, GameConfig.GUERRERO_VIDA_MAXIMA, GameConfig.GUERRERO_DANIO);
+    public Guerrero(String nombre, RegistroJuego registro) {
+        super(nombre, Profesion.GUERRERO, GameConfig.GUERRERO_VIDA_MAXIMA, GameConfig.GUERRERO_DANIO, registro);
     }
 
     @Override

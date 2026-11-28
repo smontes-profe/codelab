@@ -5,7 +5,7 @@ public final class Botin {
     private Botin() {
     }
 
-    // Utilizamos las mismas probabilidades tanto en la ventana como en la terminal.
+    // Elegimos el botín según las probabilidades configuradas.
     public static Objeto obtenerLoot(Random random) {
         if (GameConfig.PROBABILIDADES_LOOT_ACUMULADAS.length != GameConfig.LOOT_POSIBLE.length) {
             throw new IllegalStateException("Cada posibilidad de loot debe tener una probabilidad asociada.");
