@@ -50,28 +50,12 @@ versión usada para compilar. Cada carpeta descomprimida tiene su propio ranking
 
 ### Crear el JAR manualmente
 
-Para crear el JAR necesitas un JDK instalado. Abre PowerShell en la carpeta
-`codelab5` y comprueba que existe `lib\sqlite-jdbc-3.54.1.0.jar`.
+En VS Code, instala el Extension Pack for Java (si no lo tienes ya) y abre la carpeta del proyecto. Luego:
+1. Pulsa Ctrl+Shift+P.
+2. Busca Java: Export Jar....
+3. Selecciona el proyecto y sigue los pasos para elegir dónde guardar el .jar.
 
-1. Crea una carpeta `build` **vacía** para los archivos compilados. Si ya
-   existe, usa otra carpeta vacía y cambia su nombre en los comandos siguientes.
-
-   ```powershell
-   New-Item -ItemType Directory -Path build
-   ```
-
-2. Compila todas las clases, incluidas las de los paquetes:
-
-   ```powershell
-   $archivos = Get-ChildItem -Path src -Recurse -Filter *.java | ForEach-Object { $_.FullName }
-   javac -encoding UTF-8 -d build $archivos
-   ```
-
-3. Si la compilación no ha mostrado errores, crea el JAR:
-
-   ```powershell
-   jar cfe LeyendasDelCodigo.jar Main -C build .
-   ```
+### Distribución
 
 Para distribuir el juego, copia `LeyendasDelCodigo.jar` y la carpeta `lib` con
 el JAR de SQLite. La carpeta de destino necesita permisos de escritura para el
