@@ -1,10 +1,24 @@
+package controlador;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Random;
+import modelo.Botin;
+import modelo.Combate;
+import modelo.Encuentro;
+import modelo.EntradaRanking;
+import modelo.Objeto;
+import modelo.Personaje;
+import modelo.Profesion;
+import modelo.Ranking;
+import modelo.RegistroJuego;
 
 public class ControladorJuego {
 
     // Guardamos los datos de la partida para usarlos en los próximos pasos.
     private final Random random = new Random();
     private final RegistroJuego registro;
+    private final Ranking ranking = new Ranking();
     private String jugador;
     private Personaje personaje;
     private Encuentro encuentro;
@@ -48,6 +62,15 @@ public class ControladorJuego {
 
     public Objeto getUltimoBotin() {
         return ultimoBotin;
+    }
+
+    // La vista ejecuta estas operaciones en segundo plano para no bloquear Swing.
+    public ArrayList<EntradaRanking> consultarRanking() throws SQLException {
+        return ranking.consultarRanking();
+    }
+
+    public void guardarResultado(String jugador, String personaje, int enfrentamientos) throws SQLException {
+        ranking.guardarRecord(jugador, personaje, enfrentamientos);
     }
 
     // Conservamos el encuentro para poder continuar con él más adelante.

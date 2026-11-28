@@ -19,3 +19,9 @@ MySQL Connector/J al proyecto:
 No es necesario instalar Maven para utilizar el JAR de esta forma.
 
 Para iniciar el juego, ejecuta `Main.java` desde VS Code.
+
+El código se organiza en tres paquetes dentro de `src`:
+
+- `modelo`: personajes, combates y datos del ranking.
+- `controlador`: coordina las acciones de la partida y el acceso al ranking.
+- `vista`: muestra la ventana y recoge las decisiones del jugador.

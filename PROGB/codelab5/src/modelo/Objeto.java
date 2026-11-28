@@ -1,3 +1,5 @@
+package modelo;
+
 public enum Objeto {
     POCION_CURACION("Poción de curación"),
     POCION_ATAQUE("Poción de ataque"),

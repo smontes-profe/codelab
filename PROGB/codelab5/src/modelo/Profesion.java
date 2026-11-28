@@ -1,3 +1,5 @@
+package modelo;
+
 // Cada opción reúne el nombre visible y la forma de crear su personaje.
 public enum Profesion {
     GUERRERO("Guerrero") {

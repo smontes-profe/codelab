@@ -1,3 +1,5 @@
+package modelo;
+
 public class Trasgo extends Enemigo {
     private static final String NOMBRE_STR = "Trasgo";
 

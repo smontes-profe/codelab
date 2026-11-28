@@ -1,3 +1,5 @@
+package modelo;
+
 public class EntradaRanking {
 
     private final String jugador;

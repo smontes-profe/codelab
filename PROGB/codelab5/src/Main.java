@@ -5,6 +5,7 @@
  * TODO
  */
 import javax.swing.SwingUtilities;
+import vista.VentanaJuego;
 
 public class Main {
 

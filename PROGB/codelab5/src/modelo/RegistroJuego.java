@@ -1,3 +1,5 @@
+package modelo;
+
 import java.util.function.Consumer;
 
 public class RegistroJuego {

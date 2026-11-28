@@ -1,3 +1,5 @@
+package modelo;
+
 public class Troll extends Enemigo {
 
     private static final String NOMBRE_STR = "Troll";

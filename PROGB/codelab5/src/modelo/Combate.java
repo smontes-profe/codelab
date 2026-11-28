@@ -1,3 +1,5 @@
+package modelo;
+
 public class Combate {
 
     private final Personaje personaje;

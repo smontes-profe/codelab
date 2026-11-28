@@ -1,3 +1,6 @@
+package vista;
+
+import controlador.ControladorJuego;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -29,6 +32,13 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
+import modelo.Encuentro;
+import modelo.EntradaRanking;
+import modelo.GameConfig;
+import modelo.Objeto;
+import modelo.Personaje;
+import modelo.Profesion;
+import modelo.RegistroJuego;
 
 public class VentanaJuego extends JFrame {
 
@@ -38,7 +48,6 @@ public class VentanaJuego extends JFrame {
 
     // El controlador conserva los datos de la partida; la ventana los muestra.
     private final ControladorJuego controlador;
-    private final Ranking ranking = new Ranking();
 
     // CardLayout permite cambiar entre el formulario y la pantalla de partida.
     private final CardLayout distribucionPantallas = new CardLayout();
@@ -524,7 +533,7 @@ public class VentanaJuego extends JFrame {
         SwingWorker<ArrayList<EntradaRanking>, Void> consulta = new SwingWorker<ArrayList<EntradaRanking>, Void>() {
             @Override
             protected ArrayList<EntradaRanking> doInBackground() throws SQLException {
-                return ranking.consultarRanking();
+                return controlador.consultarRanking();
             }
 
             @Override
@@ -569,7 +578,7 @@ public class VentanaJuego extends JFrame {
         SwingWorker<Void, Void> guardado = new SwingWorker<Void, Void>() {
             @Override
             protected Void doInBackground() throws SQLException {
-                ranking.guardarRecord(jugador, personaje, enfrentamientos);
+                controlador.guardarResultado(jugador, personaje, enfrentamientos);
                 return null;
             }
 

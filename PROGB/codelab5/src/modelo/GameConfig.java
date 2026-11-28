@@ -1,3 +1,5 @@
+package modelo;
+
 public final class GameConfig {
 
     public static final Objeto[] EQUIPO_INICIAL = {
